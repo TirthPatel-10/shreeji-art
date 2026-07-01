@@ -1,0 +1,28 @@
+# Copy this file to application-dev.yml and fill in real values.
+# application-dev.yml is gitignored and should never be committed.
+
+spring:
+  datasource:
+    url: jdbc:postgresql://db.<project-ref>.supabase.co:5432/postgres
+    username: postgres
+    password: your-supabase-db-password
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 8080
+
+jwt:
+  secret: your-base64-encoded-secret-here
+  expiration-ms: 86400000
+
+app:
+  allowed-origins: http://localhost:3000
+
+logging:
+  level:
+    com.shreejiart: DEBUG
+    org.springframework.security: DEBUG

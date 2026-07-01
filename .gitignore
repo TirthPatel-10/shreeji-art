@@ -1,23 +1,64 @@
-# Dependencies
+# ─── Node / Next.js ───────────────────────────────────────────
 node_modules/
+.next/
+out/
+dist/
+.cache/
+*.tsbuildinfo
+next-env.d.ts
 
-# Environment variables
+# ─── Java / Maven / Spring Boot ───────────────────────────────
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/wrapper/maven-wrapper.jar
+hs_err_pid*
+
+# ─── Environment variables ────────────────────────────────────
 .env
 .env.*
+.env.local
+.env.*.local
+**/application-dev.yml
+**/application-prod.yml
 !.env.example
+!.env.local.example
+!**/application-dev.yml.example
+!**/application-prod.yml.example
 
-# Build outputs
-.next/
-target/
-dist/
-build/
+# ─── IDE / Editor ─────────────────────────────────────────────
+.vscode/settings.json
+.vscode/launch.json
+.idea/
+*.iml
+*.iws
+*.ipr
+.eclipse/
+*.swp
+*.swo
+*~
 
-# Logs
-*.log
-
-# OS files
+# ─── OS ───────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+Desktop.ini
 
-# IDE
-.vscode/settings.json
+# ─── Logs ─────────────────────────────────────────────────────
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Test & Coverage ──────────────────────────────────────────
+coverage/
+.nyc_output/
+
+# ─── Vercel ───────────────────────────────────────────────────
+.vercel
+
+# ─── Supabase ─────────────────────────────────────────────────
+supabase/.branches/
+supabase/.temp/
