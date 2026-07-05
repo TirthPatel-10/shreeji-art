@@ -47,9 +47,10 @@ export const authApi = {
 
 export const publicApi = {
   getServices: () => request("/services"),
-  getService: (slug: string) => request(`/services/${slug}`),
+  getServiceById: (id: number) => request(`/services/${id}`),
   getPortfolio: () => request("/portfolio"),
-  getPortfolioItem: (slug: string) => request(`/portfolio/${slug}`),
+  getPortfolioFeatured: () => request("/portfolio/featured"),
+  getPortfolioItem: (id: number) => request(`/portfolio/${id}`),
   getGallery: (category?: string) =>
     request(`/gallery${category ? `?category=${category}` : ""}`),
   getBlogs: () => request("/blogs"),
@@ -69,25 +70,98 @@ export const customerApi = {
   updateProfile: (body: unknown) =>
     request("/customers/profile", { method: "PUT", body: JSON.stringify(body) }),
   getMyQuotes: () => request("/quotes/my"),
+  getQuote: (id: number) => request(`/quotes/${id}`),
   getMyProjects: () => request("/projects/my"),
+  getProject: (id: number) => request(`/projects/${id}`),
 };
 
 // ─── Admin ────────────────────────────────────────────────────────────────────
 
 export const adminApi = {
-  getCustomers: () => request("/customers"),
-  getLeads: () => request("/leads"),
-  updateLead: (id: number, body: unknown) =>
-    request(`/leads/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  getQuotes: () => request("/quotes"),
-  createQuote: (body: unknown) =>
-    request("/quotes", { method: "POST", body: JSON.stringify(body) }),
-  updateQuote: (id: number, body: unknown) =>
-    request(`/quotes/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  getProjects: () => request("/projects"),
-  createProject: (body: unknown) =>
-    request("/projects", { method: "POST", body: JSON.stringify(body) }),
-  updateProject: (id: number, body: unknown) =>
-    request(`/projects/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  getContactRequests: () => request("/contact"),
+  // Customers
+  getCustomers: () => request("/admin/customers"),
+
+  // Leads
+  getLeads: () => request("/admin/leads"),
+  getLead: (id: number) => request(`/admin/leads/${id}`),
+  updateLeadStatus: (id: number, status: string) =>
+    request(`/admin/leads/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+
+  // Quotes
+  getQuotes: () => request("/admin/quotes"),
+  getQuote: (id: number) => request(`/admin/quotes/${id}`),
+  updateQuoteStatus: (id: number, status: string) =>
+    request(`/admin/quotes/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+
+  // Projects
+  getProjects: () => request("/admin/projects"),
+  getProject: (id: number) => request(`/admin/projects/${id}`),
+  updateProjectStatus: (id: number, status: string) =>
+    request(`/admin/projects/${id}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status }),
+    }),
+
+  // Contact requests
+  getContactRequests: () => request("/admin/contact-requests"),
+  getContactRequest: (id: number) => request(`/admin/contact-requests/${id}`),
+
+  // Services
+  getServices: () => request("/admin/services"),
+  createService: (body: unknown) =>
+    request("/admin/services", { method: "POST", body: JSON.stringify(body) }),
+  updateService: (id: number, body: unknown) =>
+    request(`/admin/services/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteService: (id: number) =>
+    request(`/admin/services/${id}`, { method: "DELETE" }),
+
+  // Gallery
+  getGalleryItems: () => request("/admin/gallery"),
+  createGalleryItem: (body: unknown) =>
+    request("/admin/gallery", { method: "POST", body: JSON.stringify(body) }),
+  updateGalleryItem: (id: number, body: unknown) =>
+    request(`/admin/gallery/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteGalleryItem: (id: number) =>
+    request(`/admin/gallery/${id}`, { method: "DELETE" }),
+
+  // Portfolio
+  getPortfolioItems: () => request("/admin/portfolio"),
+  createPortfolioItem: (body: unknown) =>
+    request("/admin/portfolio", { method: "POST", body: JSON.stringify(body) }),
+  updatePortfolioItem: (id: number, body: unknown) =>
+    request(`/admin/portfolio/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deletePortfolioItem: (id: number) =>
+    request(`/admin/portfolio/${id}`, { method: "DELETE" }),
+
+  // Blog
+  getBlogPosts: () => request("/admin/blogs"),
+  createBlogPost: (body: unknown) =>
+    request("/admin/blogs", { method: "POST", body: JSON.stringify(body) }),
+  updateBlogPost: (id: number, body: unknown) =>
+    request(`/admin/blogs/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteBlogPost: (id: number) =>
+    request(`/admin/blogs/${id}`, { method: "DELETE" }),
+
+  // Testimonials
+  getTestimonials: () => request("/admin/testimonials"),
+  createTestimonial: (body: unknown) =>
+    request("/admin/testimonials", { method: "POST", body: JSON.stringify(body) }),
+  updateTestimonial: (id: number, body: unknown) =>
+    request(`/admin/testimonials/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteTestimonial: (id: number) =>
+    request(`/admin/testimonials/${id}`, { method: "DELETE" }),
+
+  // Settings
+  getSettings: () => request("/admin/settings"),
+  updateSetting: (key: string, value: string) =>
+    request(`/admin/settings/${key}`, {
+      method: "PUT",
+      body: JSON.stringify({ value }),
+    }),
 };

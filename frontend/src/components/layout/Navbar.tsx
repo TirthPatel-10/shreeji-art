@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -16,6 +18,17 @@ const navLinks = [
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const { isAuthenticated, isAdmin, logout } = useAuth();
+  const router = useRouter();
+
+  const dashboardHref = isAdmin ? "/admin/dashboard" : "/dashboard";
+  const dashboardLabel = isAdmin ? "Admin" : "Dashboard";
+
+  function handleLogout() {
+    logout();
+    setOpen(false);
+    router.replace("/");
+  }
 
   return (
     <nav className="bg-brand-navy text-white sticky top-0 z-50 shadow-md">
@@ -44,12 +57,29 @@ export default function Navbar() {
             >
               Get Quote
             </Link>
-            <Link
-              href="/login"
-              className="text-sm border border-white/30 hover:border-brand-gold px-4 py-2 rounded-lg transition-colors"
-            >
-              Login
-            </Link>
+            {isAuthenticated ? (
+              <>
+                <Link
+                  href={dashboardHref}
+                  className="text-sm border border-white/30 hover:border-brand-gold px-4 py-2 rounded-lg transition-colors"
+                >
+                  {dashboardLabel}
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-sm text-gray-300 hover:text-white transition-colors"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm border border-white/30 hover:border-brand-gold px-4 py-2 rounded-lg transition-colors"
+              >
+                Login
+              </Link>
+            )}
           </div>
 
           {/* Mobile toggle */}
@@ -83,13 +113,31 @@ export default function Navbar() {
           >
             Get Quote
           </Link>
-          <Link
-            href="/login"
-            className="block text-sm text-center border border-white/30 px-4 py-2 rounded-lg"
-            onClick={() => setOpen(false)}
-          >
-            Login
-          </Link>
+          {isAuthenticated ? (
+            <>
+              <Link
+                href={dashboardHref}
+                className="block text-sm text-center border border-white/30 px-4 py-2 rounded-lg"
+                onClick={() => setOpen(false)}
+              >
+                {dashboardLabel}
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="block w-full text-sm text-center text-gray-300 py-2 hover:text-white transition-colors"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/login"
+              className="block text-sm text-center border border-white/30 px-4 py-2 rounded-lg"
+              onClick={() => setOpen(false)}
+            >
+              Login
+            </Link>
+          )}
         </div>
       )}
     </nav>

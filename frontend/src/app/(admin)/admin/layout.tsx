@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const adminLinks = [
   { href: "/admin/dashboard", label: "Dashboard", icon: "📊" },
@@ -15,6 +20,32 @@ const adminLinks = [
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading, isAdmin, logout } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user) {
+        router.replace("/login");
+      } else if (!isAdmin) {
+        router.replace("/dashboard");
+      }
+    }
+  }, [loading, user, isAdmin, router]);
+
+  function handleLogout() {
+    logout();
+    router.replace("/");
+  }
+
+  if (loading || !user || !isAdmin) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="w-8 h-8 rounded-full border-4 border-brand-gold border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 flex">
       {/* Sidebar */}
@@ -24,6 +55,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             Shreeji Art
           </Link>
           <p className="text-xs text-gray-400 mt-1">Admin Dashboard</p>
+          <p className="text-xs text-gray-300 mt-2 truncate">
+            {user.firstName} {user.lastName}
+          </p>
         </div>
         <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto">
           {adminLinks.map((l) => (
@@ -44,7 +78,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             Admin Profile
           </Link>
-          <button className="text-xs text-gray-500 hover:text-white transition-colors">
+          <button
+            onClick={handleLogout}
+            className="text-xs text-gray-500 hover:text-white transition-colors"
+          >
             Sign out
           </button>
         </div>

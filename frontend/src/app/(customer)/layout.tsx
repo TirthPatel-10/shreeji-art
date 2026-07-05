@@ -1,4 +1,9 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const portalLinks = [
   { href: "/dashboard", label: "Dashboard" },
@@ -8,6 +13,28 @@ const portalLinks = [
 ];
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading, logout } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.replace("/login");
+    }
+  }, [loading, user, router]);
+
+  function handleLogout() {
+    logout();
+    router.replace("/");
+  }
+
+  if (loading || !user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="w-8 h-8 rounded-full border-4 border-brand-gold border-t-transparent animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
@@ -17,6 +44,9 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
             Shreeji Art
           </Link>
           <p className="text-xs text-gray-400 mt-1">Customer Portal</p>
+          <p className="text-xs text-gray-300 mt-2 truncate">
+            {user.firstName} {user.lastName}
+          </p>
         </div>
         <nav className="flex-1 py-4 px-3 space-y-1">
           {portalLinks.map((l) => (
@@ -30,7 +60,10 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
           ))}
         </nav>
         <div className="p-4 border-t border-white/10">
-          <button className="text-sm text-gray-400 hover:text-white transition-colors">
+          <button
+            onClick={handleLogout}
+            className="text-sm text-gray-400 hover:text-white transition-colors"
+          >
             Sign out
           </button>
         </div>
