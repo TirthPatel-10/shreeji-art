@@ -2,58 +2,214 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ─── Design Tokens ─────────────────────────────────────────────────────────── */
+
 @layer base {
   :root {
+    /* shadcn/ui semantic tokens (preserved for compatibility) */
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 240 10% 4%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 240 10% 4%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 240 10% 4%;
     --primary: 43 80% 46%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
+    --secondary: 240 5% 96%;
+    --secondary-foreground: 240 6% 10%;
+    --muted: 240 5% 96%;
+    --muted-foreground: 240 4% 46%;
+    --accent: 240 5% 96%;
+    --accent-foreground: 240 6% 10%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 6% 90%;
+    --input: 240 6% 90%;
     --ring: 43 80% 46%;
     --radius: 0.5rem;
+
+    /* ── Shreeji Art Design System ─────────────────────────────────────────── */
+
+    /* Surfaces — RGB channels for alpha-value support */
+    --sa-bg:             255 255 255;
+    --sa-surface:        248 248 250;
+    --sa-surface-2:      241 241 245;
+    --sa-surface-raised: 255 255 255;
+
+    /* Borders */
+    --sa-border:         229 229 234;
+    --sa-border-strong:  209 209 214;
+
+    /* Text */
+    --sa-text:           24 24 27;
+    --sa-muted:          113 113 122;
+    --sa-faint:          161 161 170;
+    --sa-disabled:       212 212 216;
+
+    /* Brand RGB */
+    --sa-gold:           212 160 23;
+    --sa-gold-dark:      160 120 16;
+    --sa-gold-light:     240 192 64;
+    --sa-navy:           26 26 46;
+    --sa-red:            233 69 96;
+
+    /* Status */
+    --sa-success:        34 197 94;
+    --sa-success-bg:     240 253 244;
+    --sa-success-border: 187 247 208;
+    --sa-warning:        245 158 11;
+    --sa-warning-bg:     255 251 235;
+    --sa-warning-border: 253 230 138;
+    --sa-error:          239 68 68;
+    --sa-error-bg:       254 242 242;
+    --sa-error-border:   254 202 202;
+    --sa-info:           59 130 246;
+    --sa-info-bg:        239 246 255;
+    --sa-info-border:    191 219 254;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --background: 240 10% 4%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 4%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 4%;
+    --popover-foreground: 0 0% 98%;
     --primary: 43 80% 46%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
+    --secondary: 240 4% 16%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 4% 16%;
+    --muted-foreground: 240 5% 65%;
+    --accent: 240 4% 16%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 4% 16%;
+    --input: 240 4% 16%;
     --ring: 43 80% 46%;
   }
 }
+
+/* ─── Base Styles ────────────────────────────────────────────────────────────── */
 
 @layer base {
   * {
     @apply border-border;
   }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  ::selection {
+    background-color: rgb(212 160 23 / 0.18);
+    color: rgb(26 26 46);
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--sa-gold));
+    outline-offset: 2px;
+  }
+
+  /* Smooth scroll */
+  :root {
+    scroll-behavior: smooth;
+  }
+}
+
+/* ─── Utility Layer ──────────────────────────────────────────────────────────── */
+
+@layer utilities {
+  /* ── Shimmer keyframe (must be here for animate-shimmer class) ── */
+  @keyframes shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+  }
+
+  .animate-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--sa-surface)) 0%,
+      rgb(var(--sa-surface-2)) 50%,
+      rgb(var(--sa-surface)) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.6s ease-in-out infinite;
+  }
+
+  /* ── Glass effects ── */
+  .glass {
+    backdrop-filter: blur(12px) saturate(180%);
+    -webkit-backdrop-filter: blur(12px) saturate(180%);
+    background-color: rgb(255 255 255 / 0.8);
+  }
+
+  .glass-dark {
+    backdrop-filter: blur(16px) saturate(200%);
+    -webkit-backdrop-filter: blur(16px) saturate(200%);
+    background-color: rgb(var(--sa-navy) / 0.92);
+  }
+
+  /* ── Gradient text ── */
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #D4A017 0%, #F0C040 50%, #D4A017 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .text-gradient-navy {
+    background: linear-gradient(135deg, #1A1A2E 0%, #2A2A4E 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ── Subtle gold glow (for focus/active states) ── */
+  .glow-gold {
+    box-shadow: 0 0 0 3px rgb(212 160 23 / 0.15);
+  }
+
+  /* ── Layout grid ── */
+  .container-narrow { @apply max-w-2xl mx-auto px-4 sm:px-6; }
+  .container-prose  { @apply max-w-3xl  mx-auto px-4 sm:px-6; }
+  .container-wide   { @apply max-w-6xl  mx-auto px-4 sm:px-6 lg:px-8; }
+  .container-full   { @apply max-w-7xl  mx-auto px-4 sm:px-6 lg:px-8; }
+
+  /* ── Typography scale ── */
+  .text-display-2xl { @apply font-display text-5xl sm:text-6xl font-bold leading-[1.05] tracking-tight; }
+  .text-display-xl  { @apply font-display text-4xl sm:text-5xl font-bold leading-[1.1]  tracking-tight; }
+  .text-display-lg  { @apply font-display text-3xl sm:text-4xl font-bold leading-[1.15] tracking-tight; }
+  .text-display-md  { @apply font-display text-2xl sm:text-3xl font-bold leading-[1.2]; }
+  .text-display-sm  { @apply font-display text-xl  sm:text-2xl font-semibold leading-snug; }
+
+  .text-heading-xl  { @apply text-2xl font-semibold text-gray-900 leading-snug; }
+  .text-heading-lg  { @apply text-xl  font-semibold text-gray-900 leading-snug; }
+  .text-heading-md  { @apply text-lg  font-semibold text-gray-900 leading-snug; }
+  .text-heading-sm  { @apply text-base font-semibold text-gray-900; }
+  .text-heading-xs  { @apply text-sm  font-semibold text-gray-700; }
+
+  .text-body-lg     { @apply text-lg text-gray-700 leading-relaxed; }
+  .text-body-md     { @apply text-base text-gray-600 leading-relaxed; }
+  .text-body-sm     { @apply text-sm text-gray-500 leading-relaxed; }
+
+  .text-caption     { @apply text-xs font-medium text-gray-400 uppercase tracking-widest; }
+  .text-label       { @apply text-sm font-medium text-gray-700; }
+  .text-mono        { @apply font-mono text-sm text-gray-500 tabular-nums; }
+
+  /* ── Dividers ── */
+  .divider          { @apply border-t border-gray-100 my-6; }
+  .divider-strong   { @apply border-t border-gray-200 my-6; }
+
+  /* ── Section spacing ── */
+  .section-py       { @apply py-16 sm:py-20 lg:py-24; }
+  .section-py-sm    { @apply py-10 sm:py-14; }
 }
