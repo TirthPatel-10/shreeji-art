@@ -1,3 +1,6 @@
+// ─── Animation ───────────────────────────────────────────────────────────────
+export { AnimateIn } from "./animate-in";
+
 // ─── Primitives ──────────────────────────────────────────────────────────────
 export { Spinner } from "./spinner";
 export type { } from "./spinner";
