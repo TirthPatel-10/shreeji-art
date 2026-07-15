@@ -26,6 +26,11 @@ public class GalleryItemController {
 
     // ── Admin ────────────────────────────────────────────────────────────────
 
+    @GetMapping("/api/v1/admin/gallery")
+    public ResponseEntity<ApiResponse<List<GalleryItem>>> adminList() {
+        return ResponseEntity.ok(ApiResponse.success(service.findAll(null)));
+    }
+
     @PostMapping("/api/v1/admin/gallery")
     public ResponseEntity<ApiResponse<GalleryItem>> create(@RequestBody GalleryItem item) {
         return ResponseEntity.status(201).body(ApiResponse.success("Gallery item created", service.create(item)));

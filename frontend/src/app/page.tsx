@@ -6,7 +6,25 @@ import type { Service, PortfolioItem, Testimonial } from "@/types";
 export const metadata: Metadata = {
   title: "Shreeji Art — Premium Signage & Branding, Ahmedabad",
   description:
-    "Shreeji Art crafts premium LED signs, acrylic letters, 3D signs, ACP signage, and custom branding solutions in Ahmedabad, India.",
+    "Premium signage company in Ahmedabad crafting LED signs, acrylic letters, 3D letters, ACP signage, office branding, and custom manufacturing for Gujarat brands.",
+  keywords: [
+    "premium signage Ahmedabad",
+    "LED signs Ahmedabad",
+    "acrylic letters Gujarat",
+    "3D letter signs",
+    "ACP signage",
+    "office branding Ahmedabad",
+    "sign board manufacturer Ahmedabad",
+    "Shreeji Art",
+  ],
+  openGraph: {
+    title: "Shreeji Art — Premium Signage & Branding, Ahmedabad",
+    description:
+      "Premium signage manufacturing for LED signs, acrylic letters, ACP facades, 3D letters, and office branding in Ahmedabad.",
+    type: "website",
+    locale: "en_IN",
+    siteName: "Shreeji Art",
+  },
 };
 
 async function fetchHomeData() {
