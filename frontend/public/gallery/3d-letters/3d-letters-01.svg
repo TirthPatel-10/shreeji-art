@@ -1,0 +1,60 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg11" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#100a1a"/>
+      <stop offset="100%" stop-color="#1a0e28"/>
+    </linearGradient>
+    <linearGradient id="letterFace" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c4b5fd"/>
+      <stop offset="50%" stop-color="#8b5cf6"/>
+      <stop offset="100%" stop-color="#6d28d9"/>
+    </linearGradient>
+    <linearGradient id="letterSide" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#4c1d95"/>
+      <stop offset="100%" stop-color="#2e1065"/>
+    </linearGradient>
+    <linearGradient id="letterTop" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7c3aed"/>
+      <stop offset="100%" stop-color="#5b21b6"/>
+    </linearGradient>
+    <filter id="glow11">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg11)"/>
+  <!-- Ambient glow -->
+  <ellipse cx="400" cy="310" rx="300" ry="150" fill="#7c3aed" opacity="0.08"/>
+  <!-- 3D Letter "S" - depth shadow (back) -->
+  <text x="128" y="348" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="url(#letterSide)">S</text>
+  <!-- 3D Letter "S" - top face offset -->
+  <text x="120" y="340" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="url(#letterTop)">S</text>
+  <!-- 3D Letter "S" - front face -->
+  <text x="112" y="332" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="url(#letterFace)">S</text>
+  <!-- 3D Letter "A" - depth shadow -->
+  <text x="378" y="348" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="url(#letterSide)">A</text>
+  <!-- 3D Letter "A" - top -->
+  <text x="370" y="340" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="url(#letterTop)">A</text>
+  <!-- 3D Letter "A" - front face -->
+  <text x="362" y="332" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="url(#letterFace)">A</text>
+  <!-- Glow halos behind letters -->
+  <text x="112" y="332" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="#a78bfa" filter="url(#glow11)" opacity="0.25">S</text>
+  <text x="362" y="332" font-size="200" font-family="Georgia,serif" font-weight="bold" fill="#a78bfa" filter="url(#glow11)" opacity="0.25">A</text>
+  <!-- Gold accent rule below letters -->
+  <rect x="80" y="360" width="640" height="4" fill="#d4a017"/>
+  <!-- Shadow/ground reflection -->
+  <ellipse cx="230" cy="400" rx="110" ry="18" fill="#7c3aed" opacity="0.12"/>
+  <ellipse cx="510" cy="400" rx="120" ry="18" fill="#7c3aed" opacity="0.12"/>
+  <!-- Depth dimension label -->
+  <text x="660" y="260" font-family="Arial,sans-serif" font-size="14" fill="#a78bfa" opacity="0.6">DEPTH:</text>
+  <text x="660" y="280" font-family="Arial,sans-serif" font-size="14" fill="#c4b5fd" opacity="0.8">25 MM</text>
+  <line x1="648" y1="290" x2="648" y2="350" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+  <line x1="640" y1="290" x2="656" y2="290" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+  <line x1="640" y1="350" x2="656" y2="350" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#100a1a" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#a78bfa" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#c4b5fd" font-weight="600" letter-spacing="2">3D DIMENSIONAL LETTERS</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#a78bfa" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#a78bfa" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

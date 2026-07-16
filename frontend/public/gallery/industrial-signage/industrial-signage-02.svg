@@ -1,0 +1,63 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg18" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0e0a06"/>
+      <stop offset="100%" stop-color="#1c1208"/>
+    </linearGradient>
+    <linearGradient id="panel18" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c1814"/>
+      <stop offset="100%" stop-color="#12100c"/>
+    </linearGradient>
+    <linearGradient id="header18" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg18)"/>
+  <!-- Factory wall suggestion -->
+  <g opacity="0.07" stroke="#f97316" stroke-width="1">
+    <line x1="0" y1="75" x2="800" y2="75"/><line x1="0" y1="150" x2="800" y2="150"/>
+    <line x1="0" y1="225" x2="800" y2="225"/><line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="375" x2="800" y2="375"/><line x1="0" y1="450" x2="800" y2="450"/>
+    <line x1="80" y1="0" x2="80" y2="490"/><line x1="200" y1="0" x2="200" y2="490"/>
+    <line x1="400" y1="0" x2="400" y2="490"/><line x1="600" y1="0" x2="600" y2="490"/>
+    <line x1="720" y1="0" x2="720" y2="490"/>
+  </g>
+  <!-- Industrial sign panel - heavy outer border -->
+  <rect x="80" y="80" width="640" height="360" rx="4" fill="url(#panel18)"/>
+  <rect x="80" y="80" width="640" height="360" rx="4" fill="none" stroke="#f97316" stroke-width="8"/>
+  <!-- Inner border -->
+  <rect x="96" y="96" width="608" height="328" rx="2" fill="none" stroke="#f97316" stroke-width="2" opacity="0.4"/>
+  <!-- Header band -->
+  <rect x="88" y="88" width="624" height="70" rx="2" fill="url(#header18)"/>
+  <!-- Header text -->
+  <text x="400" y="134" font-family="Arial,sans-serif" font-size="28" fill="#fff7ed" text-anchor="middle" font-weight="900" letter-spacing="6">INDUSTRIAL PANEL</text>
+  <!-- Content area - 2x2 grid of data cells -->
+  <rect x="96" y="166" width="300" height="110" fill="#0a0806" opacity="0.5"/>
+  <rect x="404" y="166" width="280" height="110" fill="#0a0806" opacity="0.5"/>
+  <rect x="96" y="284" width="300" height="110" fill="#0a0806" opacity="0.5"/>
+  <rect x="404" y="284" width="280" height="110" fill="#0a0806" opacity="0.5"/>
+  <!-- Grid dividers -->
+  <line x1="400" y1="166" x2="400" y2="394" stroke="#f97316" stroke-width="2" opacity="0.4"/>
+  <line x1="96" y1="280" x2="684" y2="280" stroke="#f97316" stroke-width="2" opacity="0.4"/>
+  <!-- Cell labels -->
+  <text x="110" y="195" font-family="Arial,sans-serif" font-size="11" fill="#f97316" letter-spacing="2" opacity="0.7">ZONE A</text>
+  <text x="110" y="240" font-family="Arial,sans-serif" font-size="30" fill="#fed7aa" font-weight="700">SAFETY</text>
+  <text x="416" y="195" font-family="Arial,sans-serif" font-size="11" fill="#f97316" letter-spacing="2" opacity="0.7">ZONE B</text>
+  <text x="416" y="240" font-family="Arial,sans-serif" font-size="30" fill="#fed7aa" font-weight="700">ACCESS</text>
+  <text x="110" y="314" font-family="Arial,sans-serif" font-size="11" fill="#f97316" letter-spacing="2" opacity="0.7">ZONE C</text>
+  <text x="110" y="358" font-family="Arial,sans-serif" font-size="30" fill="#fed7aa" font-weight="700">PLANT</text>
+  <text x="416" y="314" font-family="Arial,sans-serif" font-size="11" fill="#f97316" letter-spacing="2" opacity="0.7">ZONE D</text>
+  <text x="416" y="358" font-family="Arial,sans-serif" font-size="30" fill="#fed7aa" font-weight="700">EXIT</text>
+  <!-- Corner hex bolts -->
+  <polygon points="98,98 110,92 122,98 122,110 110,116 98,110" fill="#374151" stroke="#f97316" stroke-width="1.5"/>
+  <polygon points="678,98 690,92 702,98 702,110 690,116 678,110" fill="#374151" stroke="#f97316" stroke-width="1.5"/>
+  <polygon points="98,378 110,372 122,378 122,390 110,396 98,390" fill="#374151" stroke="#f97316" stroke-width="1.5"/>
+  <polygon points="678,378 690,372 702,378 702,390 690,396 678,390" fill="#374151" stroke="#f97316" stroke-width="1.5"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0e0a06" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#f97316" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#fb923c" font-weight="600" letter-spacing="2">INDUSTRIAL PANEL SIGN</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#f97316" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#f97316" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

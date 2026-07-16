@@ -1,0 +1,61 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg10" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a1208"/>
+      <stop offset="100%" stop-color="#241a0a"/>
+    </linearGradient>
+    <linearGradient id="signBox" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#292010"/>
+      <stop offset="100%" stop-color="#1a1408"/>
+    </linearGradient>
+    <filter id="stripGlow">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg10)"/>
+  <!-- Sign cabinet 3D (side + bottom) -->
+  <polygon points="660,130 690,100 690,380 660,350" fill="#0e0b04"/>
+  <polygon points="110,350 660,350 690,380 140,380" fill="#0c0a04"/>
+  <!-- Sign cabinet face -->
+  <rect x="110" y="130" width="550" height="220" rx="4" fill="url(#signBox)"/>
+  <rect x="110" y="130" width="550" height="220" rx="4" fill="none" stroke="#78350f" stroke-width="2"/>
+  <!-- LED strip rows - 6 strips -->
+  <rect x="130" y="155" width="510" height="14" rx="7" fill="#fbbf24" opacity="0.9" filter="url(#stripGlow)"/>
+  <rect x="130" y="155" width="510" height="14" rx="7" fill="#fcd34d" opacity="0.6"/>
+  <rect x="130" y="191" width="510" height="14" rx="7" fill="#fbbf24" opacity="0.9" filter="url(#stripGlow)"/>
+  <rect x="130" y="191" width="510" height="14" rx="7" fill="#fcd34d" opacity="0.6"/>
+  <rect x="130" y="227" width="510" height="14" rx="7" fill="#fbbf24" opacity="0.9" filter="url(#stripGlow)"/>
+  <rect x="130" y="227" width="510" height="14" rx="7" fill="#fcd34d" opacity="0.6"/>
+  <rect x="130" y="263" width="510" height="14" rx="7" fill="#fbbf24" opacity="0.9" filter="url(#stripGlow)"/>
+  <rect x="130" y="263" width="510" height="14" rx="7" fill="#fcd34d" opacity="0.6"/>
+  <rect x="130" y="299" width="510" height="14" rx="7" fill="#fbbf24" opacity="0.9" filter="url(#stripGlow)"/>
+  <rect x="130" y="299" width="510" height="14" rx="7" fill="#fcd34d" opacity="0.6"/>
+  <rect x="130" y="320" width="510" height="14" rx="7" fill="#fbbf24" opacity="0.9" filter="url(#stripGlow)"/>
+  <rect x="130" y="320" width="510" height="14" rx="7" fill="#fcd34d" opacity="0.6"/>
+  <!-- LED dots on each strip -->
+  <g fill="#fffbeb" opacity="0.5">
+    <circle cx="155" cy="162" r="4"/><circle cx="195" cy="162" r="4"/><circle cx="235" cy="162" r="4"/><circle cx="275" cy="162" r="4"/>
+    <circle cx="315" cy="162" r="4"/><circle cx="355" cy="162" r="4"/><circle cx="395" cy="162" r="4"/><circle cx="435" cy="162" r="4"/>
+    <circle cx="475" cy="162" r="4"/><circle cx="515" cy="162" r="4"/><circle cx="555" cy="162" r="4"/><circle cx="595" cy="162" r="4"/>
+    <circle cx="635" cy="162" r="4"/>
+    <circle cx="155" cy="198" r="4"/><circle cx="195" cy="198" r="4"/><circle cx="235" cy="198" r="4"/>
+    <circle cx="155" cy="234" r="4"/><circle cx="195" cy="234" r="4"/><circle cx="235" cy="234" r="4"/>
+    <circle cx="155" cy="270" r="4"/><circle cx="195" cy="270" r="4"/><circle cx="235" cy="270" r="4"/>
+    <circle cx="155" cy="306" r="4"/><circle cx="195" cy="306" r="4"/>
+    <circle cx="155" cy="327" r="4"/><circle cx="195" cy="327" r="4"/>
+  </g>
+  <!-- Overlay: Sign board name over strips -->
+  <rect x="130" y="160" width="510" height="185" fill="#1a1408" opacity="0.55"/>
+  <text x="385" y="258" font-family="Arial,sans-serif" font-size="50" fill="#fcd34d" text-anchor="middle" font-weight="900" letter-spacing="3" filter="url(#stripGlow)" opacity="0.4">LED SIGN</text>
+  <text x="385" y="258" font-family="Arial,sans-serif" font-size="50" fill="#fcd34d" text-anchor="middle" font-weight="900" letter-spacing="3">LED SIGN</text>
+  <text x="385" y="300" font-family="Arial,sans-serif" font-size="14" fill="#fbbf24" text-anchor="middle" letter-spacing="5">PREMIUM ILLUMINATED</text>
+  <!-- Ground ambient -->
+  <ellipse cx="400" cy="420" rx="260" ry="20" fill="#fbbf24" opacity="0.05"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#1a1208" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#fbbf24" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#fcd34d" font-weight="600" letter-spacing="2">LED SIGN BOARD</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#fbbf24" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#fbbf24" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

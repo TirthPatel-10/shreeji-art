@@ -1,0 +1,67 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080d1c"/>
+      <stop offset="100%" stop-color="#0c1628"/>
+    </linearGradient>
+    <linearGradient id="edgeGlow" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="80%" stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="edgeGlowV" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="80%" stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="cornerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.6"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="glow3">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg3)"/>
+  <!-- Subtle starfield -->
+  <g opacity="0.3" fill="#38bdf8">
+    <circle cx="80" cy="60" r="1.5"/><circle cx="720" cy="80" r="1"/><circle cx="350" cy="40" r="1"/>
+    <circle cx="600" cy="120" r="1.5"/><circle cx="150" cy="180" r="1"/><circle cx="680" cy="400" r="1.5"/>
+    <circle cx="50" cy="350" r="1"/><circle cx="750" cy="300" r="1"/>
+  </g>
+  <!-- Edge-lit acrylic panel - glow halo around edges -->
+  <!-- Outer glow -->
+  <rect x="150" y="120" width="500" height="260" rx="4" fill="#38bdf8" opacity="0.03" filter="url(#glow3)"/>
+  <!-- Top edge glow -->
+  <rect x="152" y="120" width="496" height="6" fill="url(#edgeGlow)" opacity="0.9" filter="url(#glow3)"/>
+  <!-- Bottom edge glow -->
+  <rect x="152" y="374" width="496" height="6" fill="url(#edgeGlow)" opacity="0.9" filter="url(#glow3)"/>
+  <!-- Left edge glow -->
+  <rect x="150" y="122" width="6" height="256" fill="url(#edgeGlowV)" opacity="0.9" filter="url(#glow3)"/>
+  <!-- Right edge glow -->
+  <rect x="644" y="122" width="6" height="256" fill="url(#edgeGlowV)" opacity="0.9" filter="url(#glow3)"/>
+  <!-- Corner glow points -->
+  <circle cx="156" cy="126" r="20" fill="url(#cornerGlow)"/>
+  <circle cx="644" cy="126" r="20" fill="url(#cornerGlow)"/>
+  <circle cx="156" cy="374" r="20" fill="url(#cornerGlow)"/>
+  <circle cx="644" cy="374" r="20" fill="url(#cornerGlow)"/>
+  <!-- Acrylic panel face (slightly transparent) -->
+  <rect x="156" y="126" width="488" height="248" rx="2" fill="#0a1a30" opacity="0.85"/>
+  <rect x="156" y="126" width="488" height="248" rx="2" fill="none" stroke="#38bdf8" stroke-width="1.5" opacity="0.7"/>
+  <!-- Inner reflection gradient -->
+  <rect x="156" y="126" width="488" height="60" rx="2" fill="#38bdf8" opacity="0.04"/>
+  <!-- Text on acrylic - appears backlit -->
+  <text x="400" y="245" font-family="Arial,sans-serif" font-size="52" fill="#e0f2fe" text-anchor="middle" font-weight="700" letter-spacing="3" filter="url(#glow3)">SHREEJI ART</text>
+  <text x="400" y="290" font-family="Arial,sans-serif" font-size="16" fill="#7dd3fc" text-anchor="middle" letter-spacing="5">PREMIUM SIGNAGE</text>
+  <!-- Horizontal divider line -->
+  <line x1="220" y1="308" x2="580" y2="308" stroke="#38bdf8" stroke-width="1" opacity="0.4"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#080d1c" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#38bdf8" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#7dd3fc" font-weight="600" letter-spacing="2">EDGE-LIT ACRYLIC SIGN</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#38bdf8" opacity="0.15"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#38bdf8" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

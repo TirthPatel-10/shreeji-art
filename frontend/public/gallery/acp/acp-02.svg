@@ -1,0 +1,50 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg6" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#090d16"/>
+      <stop offset="100%" stop-color="#0c1828"/>
+    </linearGradient>
+    <linearGradient id="fascia" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#172035"/>
+      <stop offset="50%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#0c1220"/>
+    </linearGradient>
+    <linearGradient id="fasciaSide" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0a1020"/>
+      <stop offset="100%" stop-color="#050810"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg6)"/>
+  <!-- Building outline suggestion -->
+  <rect x="80" y="50" width="640" height="390" rx="0" fill="#0a0f1e" opacity="0.7"/>
+  <rect x="80" y="50" width="640" height="390" fill="none" stroke="#22d3ee" stroke-width="0.5" opacity="0.2"/>
+  <!-- Fascia 3D depth side (bottom edge) -->
+  <polygon points="100,350 700,350 720,370 80,370" fill="url(#fasciaSide)" opacity="0.9"/>
+  <!-- Fascia 3D depth side (right edge) -->
+  <polygon points="700,160 720,140 720,370 700,350" fill="#060c1c" opacity="0.8"/>
+  <!-- Main fascia face -->
+  <rect x="80" y="160" width="620" height="190" fill="url(#fascia)"/>
+  <!-- Top accent stripe (cyan ACP panel edge) -->
+  <rect x="80" y="160" width="620" height="8" fill="#22d3ee" opacity="0.7"/>
+  <!-- Bottom accent stripe -->
+  <rect x="80" y="342" width="620" height="8" fill="#22d3ee" opacity="0.7"/>
+  <!-- Vertical panel seam lines -->
+  <line x1="280" y1="160" x2="280" y2="350" stroke="#22d3ee" stroke-width="2" opacity="0.4"/>
+  <line x1="520" y1="160" x2="520" y2="350" stroke="#22d3ee" stroke-width="2" opacity="0.4"/>
+  <!-- Fascia text -->
+  <text x="400" y="256" font-family="Arial,sans-serif" font-size="44" fill="#e0f9ff" text-anchor="middle" font-weight="700" letter-spacing="6">SHREEJI ART</text>
+  <text x="400" y="300" font-family="Arial,sans-serif" font-size="15" fill="#67e8f9" text-anchor="middle" letter-spacing="5">ACP FASCIA SIGN</text>
+  <!-- Sheen line -->
+  <rect x="80" y="162" width="620" height="25" fill="#22d3ee" opacity="0.03"/>
+  <!-- Window panes suggestion -->
+  <rect x="120" y="80" width="80" height="70" rx="2" fill="#0ea5e9" opacity="0.08" stroke="#22d3ee" stroke-width="0.5"/>
+  <rect x="240" y="80" width="80" height="70" rx="2" fill="#0ea5e9" opacity="0.06" stroke="#22d3ee" stroke-width="0.5"/>
+  <rect x="460" y="80" width="80" height="70" rx="2" fill="#0ea5e9" opacity="0.08" stroke="#22d3ee" stroke-width="0.5"/>
+  <rect x="580" y="80" width="80" height="70" rx="2" fill="#0ea5e9" opacity="0.06" stroke="#22d3ee" stroke-width="0.5"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#090d16" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#22d3ee" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#67e8f9" font-weight="600" letter-spacing="2">ACP FASCIA SIGNAGE</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#22d3ee" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#22d3ee" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

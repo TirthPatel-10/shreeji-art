@@ -1,0 +1,53 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg19" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#dcfce7"/>
+    </linearGradient>
+    <linearGradient id="sign19" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="signDown" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <filter id="shadow19">
+      <feDropShadow dx="3" dy="4" stdDeviation="6" flood-color="#0f172a" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg19)"/>
+  <!-- Ground line -->
+  <rect x="0" y="460" width="800" height="30" fill="#d1fae5" opacity="0.7"/>
+  <line x1="0" y1="460" x2="800" y2="460" stroke="#6ee7b7" stroke-width="2"/>
+  <!-- Pole -->
+  <rect x="384" y="160" width="32" height="310" rx="4" fill="#374151"/>
+  <rect x="384" y="160" width="8" height="310" fill="#4b5563" opacity="0.4"/>
+  <!-- Pole cap -->
+  <rect x="376" y="155" width="48" height="14" rx="7" fill="#6b7280"/>
+  <!-- Upper sign pointing RIGHT -->
+  <polygon points="180,178 590,178 630,208 590,238 180,238" fill="url(#sign19)" filter="url(#shadow19)"/>
+  <text x="240" y="216" font-family="Arial,sans-serif" font-size="22" fill="#f0fdf4" font-weight="700" letter-spacing="3">RECEPTION</text>
+  <polygon points="600,207 620,208 600,209" fill="#f0fdf4" opacity="0.5"/>
+  <!-- Lower sign pointing LEFT (opposite direction) -->
+  <polygon points="620,258 210,258 170,288 210,318 620,318" fill="url(#signDown)" filter="url(#shadow19)"/>
+  <text x="260" y="296" font-family="Arial,sans-serif" font-size="22" fill="#f0fdf4" font-weight="700" letter-spacing="3">EMERGENCY</text>
+  <polygon points="200,287 180,288 200,289" fill="#f0fdf4" opacity="0.5"/>
+  <!-- Third sign pointing RIGHT, lower -->
+  <polygon points="180,338 560,338 600,368 560,398 180,398" fill="url(#sign19)" opacity="0.85" filter="url(#shadow19)"/>
+  <text x="240" y="376" font-family="Arial,sans-serif" font-size="22" fill="#f0fdf4" font-weight="700" letter-spacing="3">PARKING</text>
+  <!-- Arrows on signs -->
+  <polygon points="578,193 598,208 578,223" fill="#a7f3d0"/>
+  <polygon points="202,273 182,288 202,303" fill="#94a3b8"/>
+  <polygon points="578,353 598,368 578,383" fill="#a7f3d0"/>
+  <!-- Bracket connectors -->
+  <rect x="376" y="200" width="16" height="16" rx="2" fill="#6b7280"/>
+  <rect x="376" y="280" width="16" height="16" rx="2" fill="#6b7280"/>
+  <rect x="376" y="358" width="16" height="16" rx="2" fill="#6b7280"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0f172a" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#10b981" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#6ee7b7" font-weight="600" letter-spacing="2">WAYFINDING DIRECTIONAL SIGNS</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#10b981" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#10b981" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

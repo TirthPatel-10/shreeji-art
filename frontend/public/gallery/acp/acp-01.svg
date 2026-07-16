@@ -1,0 +1,52 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg5" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a0e18"/>
+      <stop offset="100%" stop-color="#0f1a2e"/>
+    </linearGradient>
+    <linearGradient id="panel1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#0f172a"/>
+    </linearGradient>
+    <linearGradient id="panel2" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#172035"/>
+      <stop offset="100%" stop-color="#0c1526"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg5)"/>
+  <!-- ACP facade panel grid - 4 columns x 3 rows -->
+  <!-- Gap between panels = 6px, panel w=(800-100-6*5)/4=158, h=(490-60-6*4)/3=127 -->
+  <!-- Col 1 -->
+  <rect x="50" y="50" width="158" height="127" rx="2" fill="url(#panel1)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="50" y="183" width="158" height="127" rx="2" fill="url(#panel2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="50" y="316" width="158" height="124" rx="2" fill="url(#panel1)" stroke="#22d3ee" stroke-width="1.5"/>
+  <!-- Col 2 -->
+  <rect x="214" y="50" width="158" height="127" rx="2" fill="url(#panel2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="214" y="183" width="158" height="127" rx="2" fill="url(#panel1)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="214" y="316" width="158" height="124" rx="2" fill="url(#panel2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <!-- Col 3 -->
+  <rect x="378" y="50" width="158" height="127" rx="2" fill="url(#panel1)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="378" y="183" width="158" height="127" rx="2" fill="url(#panel2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="378" y="316" width="158" height="124" rx="2" fill="url(#panel1)" stroke="#22d3ee" stroke-width="1.5"/>
+  <!-- Col 4 -->
+  <rect x="542" y="50" width="208" height="127" rx="2" fill="url(#panel2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="542" y="183" width="208" height="127" rx="2" fill="url(#panel1)" stroke="#22d3ee" stroke-width="1.5"/>
+  <rect x="542" y="316" width="208" height="124" rx="2" fill="url(#panel2)" stroke="#22d3ee" stroke-width="1.5"/>
+  <!-- Cyan accent lines (reveal joints) -->
+  <line x1="50" y1="177" x2="750" y2="177" stroke="#22d3ee" stroke-width="3" opacity="0.6"/>
+  <line x1="50" y1="310" x2="750" y2="310" stroke="#22d3ee" stroke-width="3" opacity="0.6"/>
+  <line x1="208" y1="50" x2="208" y2="440" stroke="#22d3ee" stroke-width="3" opacity="0.6"/>
+  <line x1="372" y1="50" x2="372" y2="440" stroke="#22d3ee" stroke-width="3" opacity="0.6"/>
+  <line x1="536" y1="50" x2="536" y2="440" stroke="#22d3ee" stroke-width="3" opacity="0.6"/>
+  <!-- Sheen / reflection on top of each panel -->
+  <rect x="50" y="50" width="158" height="20" rx="2" fill="#22d3ee" opacity="0.04"/>
+  <rect x="214" y="50" width="158" height="20" rx="2" fill="#22d3ee" opacity="0.03"/>
+  <rect x="378" y="50" width="158" height="20" rx="2" fill="#22d3ee" opacity="0.04"/>
+  <rect x="542" y="50" width="208" height="20" rx="2" fill="#22d3ee" opacity="0.03"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0a0e18" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#22d3ee" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#67e8f9" font-weight="600" letter-spacing="2">ACP PANEL FACADE</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#22d3ee" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#22d3ee" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

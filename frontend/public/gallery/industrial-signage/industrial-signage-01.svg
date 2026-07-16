@@ -1,0 +1,64 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg17" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0c0904"/>
+      <stop offset="100%" stop-color="#1a1004"/>
+    </linearGradient>
+    <linearGradient id="board17" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+    <linearGradient id="board17Side" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#92400e"/>
+      <stop offset="100%" stop-color="#5c2a00"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg17)"/>
+  <!-- Post / pole -->
+  <rect x="376" y="60" width="48" height="430" rx="4" fill="#374151"/>
+  <rect x="376" y="60" width="8" height="430" fill="#4b5563" opacity="0.5"/>
+  <!-- Sign board 3D bottom -->
+  <polygon points="100,355 700,355 720,380 120,380" fill="url(#board17Side)"/>
+  <!-- Sign board 3D right side -->
+  <polygon points="700,120 720,100 720,380 700,355" fill="#78350a"/>
+  <!-- Main board face -->
+  <rect x="100" y="120" width="600" height="235" rx="3" fill="url(#board17)"/>
+  <!-- Black diagonal warning stripes (classic industrial safety) -->
+  <clipPath id="boardClip17">
+    <rect x="100" y="120" width="600" height="235" rx="3"/>
+  </clipPath>
+  <g clip-path="url(#boardClip17)">
+    <!-- Diagonal black stripes -->
+    <polygon points="100,120 160,120 100,180" fill="#1c1400" opacity="0.7"/>
+    <polygon points="190,120 310,120 190,240 70,240" fill="#1c1400" opacity="0.7"/>
+    <polygon points="380,120 500,120 380,240 260,240" fill="#1c1400" opacity="0.7"/>
+    <polygon points="570,120 690,120 570,240 450,240" fill="#1c1400" opacity="0.7"/>
+    <polygon points="680,120 700,120 700,140" fill="#1c1400" opacity="0.7"/>
+    <polygon points="100,230 220,120 190,120 100,210" fill="#1c1400" opacity="0.7"/>
+    <polygon points="100,290 220,170 190,170" fill="#1c1400" opacity="0.7"/>
+    <!-- Repeat stripes below center -->
+    <polygon points="100,300 220,180 190,180 100,270" fill="#1c1400" opacity="0.5"/>
+  </g>
+  <!-- White text region (center of board) -->
+  <rect x="140" y="175" width="520" height="120" rx="2" fill="#fffbeb" opacity="0.9"/>
+  <!-- Warning text -->
+  <text x="400" y="228" font-family="Arial,sans-serif" font-size="32" fill="#1c1400" text-anchor="middle" font-weight="900" letter-spacing="4">CAUTION</text>
+  <text x="400" y="266" font-family="Arial,sans-serif" font-size="15" fill="#78350f" text-anchor="middle" letter-spacing="3">INDUSTRIAL SAFETY SIGNAGE</text>
+  <!-- Border on main board -->
+  <rect x="100" y="120" width="600" height="235" rx="3" fill="none" stroke="#92400e" stroke-width="4"/>
+  <!-- Corner bolt indicators -->
+  <circle cx="128" cy="148" r="10" fill="#f59e0b" stroke="#92400e" stroke-width="2"/>
+  <circle cx="128" cy="148" r="4" fill="#92400e"/>
+  <circle cx="672" cy="148" r="10" fill="#f59e0b" stroke="#92400e" stroke-width="2"/>
+  <circle cx="672" cy="148" r="4" fill="#92400e"/>
+  <circle cx="128" cy="327" r="10" fill="#f59e0b" stroke="#92400e" stroke-width="2"/>
+  <circle cx="128" cy="327" r="4" fill="#92400e"/>
+  <circle cx="672" cy="327" r="10" fill="#f59e0b" stroke="#92400e" stroke-width="2"/>
+  <circle cx="672" cy="327" r="4" fill="#92400e"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0c0904" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#f59e0b" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#fbbf24" font-weight="600" letter-spacing="2">INDUSTRIAL SAFETY SIGNAGE</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#f59e0b" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#f59e0b" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

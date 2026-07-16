@@ -1,0 +1,56 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg4" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#060c1a"/>
+      <stop offset="100%" stop-color="#0e1e35"/>
+    </linearGradient>
+    <linearGradient id="layer1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0284c7" stop-opacity="0.1"/>
+    </linearGradient>
+    <linearGradient id="layer2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.15"/>
+    </linearGradient>
+    <linearGradient id="layer3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#7dd3fc" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0.18"/>
+    </linearGradient>
+    <filter id="glow4">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg4)"/>
+  <!-- Background glow -->
+  <ellipse cx="400" cy="275" rx="300" ry="200" fill="#0ea5e9" opacity="0.04"/>
+  <!-- Layer 1 - back panel (darkest, widest) -->
+  <rect x="100" y="100" width="560" height="310" rx="4" fill="url(#layer1)" stroke="#0ea5e9" stroke-width="1.5" opacity="0.8"/>
+  <rect x="100" y="100" width="560" height="310" rx="4" fill="none" stroke="#38bdf8" stroke-width="0.5" opacity="0.3"/>
+  <!-- Layer 2 - middle panel -->
+  <rect x="140" y="140" width="480" height="230" rx="4" fill="url(#layer2)" stroke="#38bdf8" stroke-width="1.5"/>
+  <rect x="140" y="140" width="480" height="230" rx="4" fill="none" stroke="#7dd3fc" stroke-width="0.5" opacity="0.4"/>
+  <!-- Layer 3 - front panel (lightest, narrowest) -->
+  <rect x="180" y="175" width="400" height="160" rx="3" fill="url(#layer3)" stroke="#7dd3fc" stroke-width="2"/>
+  <!-- Panel reflections -->
+  <rect x="100" y="100" width="560" height="40" rx="4" fill="#38bdf8" opacity="0.06"/>
+  <rect x="140" y="140" width="480" height="30" rx="4" fill="#7dd3fc" opacity="0.07"/>
+  <rect x="180" y="175" width="400" height="22" rx="3" fill="#bae6fd" opacity="0.08"/>
+  <!-- Mounting standoffs (visible spacers) -->
+  <line x1="220" y1="175" x2="220" y2="140" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+  <circle cx="220" cy="140" r="5" fill="#38bdf8" opacity="0.8"/>
+  <line x1="540" y1="175" x2="540" y2="140" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+  <circle cx="540" cy="140" r="5" fill="#38bdf8" opacity="0.8"/>
+  <line x1="220" y1="335" x2="220" y2="370" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+  <circle cx="220" cy="370" r="5" fill="#38bdf8" opacity="0.8"/>
+  <line x1="540" y1="335" x2="540" y2="370" stroke="#38bdf8" stroke-width="2" opacity="0.6"/>
+  <circle cx="540" cy="370" r="5" fill="#38bdf8" opacity="0.8"/>
+  <!-- Glowing text on front panel -->
+  <text x="380" y="267" font-family="Arial,sans-serif" font-size="36" fill="#e0f2fe" text-anchor="middle" font-weight="700" letter-spacing="4">ACRYLIC SIGN</text>
+  <text x="380" y="305" font-family="Arial,sans-serif" font-size="13" fill="#7dd3fc" text-anchor="middle" letter-spacing="5">LAYERED PANEL SYSTEM</text>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#060c1a" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#38bdf8" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#7dd3fc" font-weight="600" letter-spacing="2">LAYERED ACRYLIC SIGNAGE</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#38bdf8" opacity="0.15"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#38bdf8" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

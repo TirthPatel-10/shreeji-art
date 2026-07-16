@@ -1,109 +1,61 @@
-"use client";
-
-import { useState, useEffect } from "react";
+import type { Metadata } from "next";
 import { publicApi } from "@/lib/api";
 import type { GalleryItem } from "@/types";
+import { GALLERY_DATA, GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
+import type { DisplayGalleryItem } from "@/data/gallery";
+import GalleryClient from "./GalleryClient";
 
-export default function GalleryPage() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
-  const [category, setCategory] = useState<string>("");
-  const [categories, setCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
+export const metadata: Metadata = {
+  title: "Gallery | Shreeji Art — Signage & Branding Work",
+  description:
+    "Browse Shreeji Art's project gallery — stainless steel signs, acrylic lettering, ACP cladding, LED channel letters, 3D dimensional letters, retail branding, office signage, wayfinding systems, and custom fabrication in Ahmedabad.",
+  openGraph: {
+    title: "Gallery | Shreeji Art — Premium Signage & Branding",
+    description:
+      "Explore signage examples across 12 categories, including commercial, retail, corporate, and industrial signage work in Gujarat.",
+    type: "website",
+  },
+};
 
-  useEffect(() => {
-    publicApi
-      .getGallery()
-      .then((res) => {
-        const all = (res.data as GalleryItem[]) ?? [];
-        setItems(all);
-        const unique = Array.from(
-          new Set(all.map((i) => i.category).filter(Boolean))
-        );
-        setCategories(unique);
-      })
-      .finally(() => setLoading(false));
-  }, []);
+export default async function GalleryPage() {
+  let items: DisplayGalleryItem[] = [];
+  let isLiveData = false;
 
-  const displayed =
-    category ? items.filter((i) => i.category === category) : items;
+  try {
+    const res = await publicApi.getGallery();
+    const apiItems = res.success && Array.isArray(res.data)
+      ? (res.data as GalleryItem[])
+      : [];
 
-  return (
-    <main className="max-w-6xl mx-auto px-6 py-16">
-      <h1 className="text-4xl font-display font-bold text-brand-navy mb-4 text-center">
-        Gallery
-      </h1>
-      <p className="text-center text-gray-500 mb-8">
-        Browse our work — filter by signage type
-      </p>
+    if (apiItems.length > 0) {
+      items = apiItems.map((item) => ({
+        id: String(item.id),
+        title: item.title || "Gallery item",
+        category: item.category || "Signage",
+        image: item.imageUrl || GALLERY_FALLBACK_IMAGE,
+        alt: item.title
+          ? `${item.title} signage project`
+          : "Signage gallery item",
+        placeholder: false,
+      }));
+      isLiveData = true;
+    }
+  } catch {
+    // fall through to local data
+  }
 
-      {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 justify-center mb-10">
-          <button
-            onClick={() => setCategory("")}
-            className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              category === ""
-                ? "bg-brand-gold text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-            }`}
-          >
-            All
-          </button>
-          {categories.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategory(c)}
-              className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                category === c
-                  ? "bg-brand-gold text-white"
-                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-              }`}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-      )}
+  if (!isLiveData) {
+    items = GALLERY_DATA.map((item) => ({
+      id: item.id,
+      title: item.title,
+      category: item.category,
+      categorySlug: item.categorySlug,
+      image: item.image,
+      alt: item.alt,
+      description: item.description,
+      placeholder: item.placeholder,
+    }));
+  }
 
-      {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {Array.from({ length: 12 }).map((_, i) => (
-            <div
-              key={i}
-              className="bg-gray-100 rounded-lg aspect-square animate-pulse"
-            />
-          ))}
-        </div>
-      ) : displayed.length === 0 ? (
-        <div className="text-center text-gray-400 py-16">
-          <p className="text-4xl mb-3">🖼️</p>
-          <p>No gallery items found.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {displayed.map((item) => (
-            <div
-              key={item.id}
-              className="bg-gray-100 rounded-lg aspect-square overflow-hidden relative group"
-            >
-              {item.imageUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={item.imageUrl}
-                  alt={item.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center text-gray-400 text-xs p-2 text-center">
-                  {item.title}
-                </div>
-              )}
-              <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-3">
-                <p className="text-white text-xs font-medium">{item.title}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </main>
-  );
+  return <GalleryClient items={items} />;
 }

@@ -1,0 +1,72 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg21" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#12100a"/>
+      <stop offset="100%" stop-color="#1e1808"/>
+    </linearGradient>
+    <linearGradient id="goldShape" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0c040"/>
+      <stop offset="50%" stop-color="#d4a017"/>
+      <stop offset="100%" stop-color="#a37800"/>
+    </linearGradient>
+    <linearGradient id="goldShapeB" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4a017"/>
+      <stop offset="100%" stop-color="#f0c040"/>
+    </linearGradient>
+    <filter id="glow21">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="8" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+    <filter id="glowSm21">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="3"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg21)"/>
+  <!-- Work surface / mat grid -->
+  <g opacity="0.07" stroke="#d4a017" stroke-width="0.5">
+    <line x1="0" y1="50" x2="800" y2="50"/><line x1="0" y1="100" x2="800" y2="100"/>
+    <line x1="0" y1="150" x2="800" y2="150"/><line x1="0" y1="200" x2="800" y2="200"/>
+    <line x1="0" y1="250" x2="800" y2="250"/><line x1="0" y1="300" x2="800" y2="300"/>
+    <line x1="0" y1="350" x2="800" y2="350"/><line x1="0" y1="400" x2="800" y2="400"/>
+    <line x1="0" y1="450" x2="800" y2="450"/>
+    <line x1="50" y1="0" x2="50" y2="490"/><line x1="100" y1="0" x2="100" y2="490"/>
+    <line x1="150" y1="0" x2="150" y2="490"/><line x1="200" y1="0" x2="200" y2="490"/>
+    <line x1="250" y1="0" x2="250" y2="490"/><line x1="300" y1="0" x2="300" y2="490"/>
+    <line x1="350" y1="0" x2="350" y2="490"/><line x1="400" y1="0" x2="400" y2="490"/>
+    <line x1="450" y1="0" x2="450" y2="490"/><line x1="500" y1="0" x2="500" y2="490"/>
+    <line x1="550" y1="0" x2="550" y2="490"/><line x1="600" y1="0" x2="600" y2="490"/>
+    <line x1="650" y1="0" x2="650" y2="490"/><line x1="700" y1="0" x2="700" y2="490"/>
+    <line x1="750" y1="0" x2="750" y2="490"/>
+  </g>
+  <!-- CNC-cut shapes arranged artistically -->
+  <!-- Large gold circle (center-left) -->
+  <circle cx="240" cy="240" r="130" fill="url(#goldShape)" filter="url(#glowSm21)" opacity="0.3"/>
+  <circle cx="240" cy="240" r="130" fill="url(#goldShape)" opacity="0.9"/>
+  <!-- Cut-out circle holes in big circle (CNC pattern) -->
+  <circle cx="240" cy="240" r="90" fill="#12100a"/>
+  <!-- Gold ring result -->
+  <!-- Inner detail rings -->
+  <circle cx="240" cy="240" r="70" fill="none" stroke="#d4a017" stroke-width="2" opacity="0.3"/>
+  <circle cx="240" cy="240" r="50" fill="none" stroke="#d4a017" stroke-width="1.5" opacity="0.2"/>
+  <!-- Gold rectangle (right) -->
+  <rect x="430" y="110" width="200" height="120" rx="3" fill="url(#goldShapeB)" opacity="0.9"/>
+  <rect x="450" y="130" width="160" height="80" rx="2" fill="#12100a"/>
+  <!-- Gold hexagon (bottom right) -->
+  <polygon points="600,340 660,308 720,340 720,404 660,436 600,404" fill="url(#goldShape)" opacity="0.85"/>
+  <polygon points="620,350 660,328 700,350 700,395 660,417 620,395" fill="#12100a"/>
+  <!-- Gold triangle (bottom left) -->
+  <polygon points="100,430 230,200 360,430" fill="url(#goldShapeB)" opacity="0.8"/>
+  <polygon points="130,420 230,238 330,420" fill="#12100a"/>
+  <!-- CNC cut marks (dashed paths showing where cuts were made) -->
+  <circle cx="240" cy="240" r="133" fill="none" stroke="#d4a017" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+  <rect x="427" y="107" width="206" height="126" rx="4" fill="none" stroke="#d4a017" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+  <!-- Ambient glow under shapes -->
+  <circle cx="240" cy="240" r="150" fill="#d4a017" opacity="0.04" filter="url(#glow21)"/>
+  <polygon points="600,340 660,308 720,340 720,404 660,436 600,404" fill="#d4a017" opacity="0.05" filter="url(#glow21)"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#12100a" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#d4a017" opacity="0.6"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#f0c040" font-weight="600" letter-spacing="2">CUSTOM CNC FABRICATION</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#d4a017" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#d4a017" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

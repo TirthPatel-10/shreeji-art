@@ -1,0 +1,55 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f1419"/>
+      <stop offset="100%" stop-color="#1a2332"/>
+    </linearGradient>
+    <linearGradient id="steel1" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#e2e8f0"/>
+      <stop offset="25%" stop-color="#94a3b8"/>
+      <stop offset="55%" stop-color="#64748b"/>
+      <stop offset="100%" stop-color="#b0bec5"/>
+    </linearGradient>
+    <linearGradient id="steelB" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#c8d6e5"/>
+      <stop offset="50%" stop-color="#78909c"/>
+      <stop offset="100%" stop-color="#9eabb8"/>
+    </linearGradient>
+  </defs>
+  <!-- Background -->
+  <rect width="800" height="550" fill="url(#bg1)"/>
+  <!-- Subtle grid texture -->
+  <g opacity="0.04" stroke="#94a3b8" stroke-width="1">
+    <line x1="0" y1="55" x2="800" y2="55"/><line x1="0" y1="110" x2="800" y2="110"/>
+    <line x1="0" y1="165" x2="800" y2="165"/><line x1="0" y1="220" x2="800" y2="220"/>
+    <line x1="0" y1="275" x2="800" y2="275"/><line x1="0" y1="330" x2="800" y2="330"/>
+    <line x1="0" y1="385" x2="800" y2="385"/><line x1="0" y1="440" x2="800" y2="440"/>
+    <line x1="55" y1="0" x2="55" y2="490"/><line x1="110" y1="0" x2="110" y2="490"/>
+    <line x1="165" y1="0" x2="165" y2="490"/><line x1="220" y1="0" x2="220" y2="490"/>
+    <line x1="330" y1="0" x2="330" y2="490"/><line x1="440" y1="0" x2="440" y2="490"/>
+    <line x1="550" y1="0" x2="550" y2="490"/><line x1="660" y1="0" x2="660" y2="490"/>
+    <line x1="745" y1="0" x2="745" y2="490"/>
+  </g>
+  <!-- 3D extrusion shadow for letter S -->
+  <text x="158" y="348" font-size="240" font-family="Georgia,serif" font-weight="bold" fill="#0d1520" opacity="0.8">S</text>
+  <!-- Front face letter S -->
+  <text x="150" y="340" font-size="240" font-family="Georgia,serif" font-weight="bold" fill="url(#steel1)">S</text>
+  <!-- 3D extrusion shadow for letter A -->
+  <text x="378" y="348" font-size="240" font-family="Georgia,serif" font-weight="bold" fill="#0d1520" opacity="0.8">A</text>
+  <!-- Front face letter A -->
+  <text x="370" y="340" font-size="240" font-family="Georgia,serif" font-weight="bold" fill="url(#steelB)">A</text>
+  <!-- Gold accent rule -->
+  <rect x="100" y="370" width="580" height="5" fill="#d4a017"/>
+  <rect x="100" y="377" width="580" height="2" fill="#f0c040" opacity="0.5"/>
+  <!-- Mounting screw circles -->
+  <circle cx="140" cy="300" r="8" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="140" cy="300" r="3" fill="#64748b"/>
+  <circle cx="670" cy="300" r="8" fill="#1e293b" stroke="#94a3b8" stroke-width="2"/>
+  <circle cx="670" cy="300" r="3" fill="#64748b"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0d1520" opacity="0.95"/>
+  <rect x="0" y="490" width="800" height="1" fill="#d4a017" opacity="0.6"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#94a3b8" font-weight="600" letter-spacing="2">STAINLESS STEEL SIGNAGE</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#d4a017" opacity="0.15"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#d4a017" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

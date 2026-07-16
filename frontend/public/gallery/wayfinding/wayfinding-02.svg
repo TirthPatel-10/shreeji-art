@@ -1,0 +1,70 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg20" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f0fdf4"/>
+      <stop offset="100%" stop-color="#d1fae5"/>
+    </linearGradient>
+    <linearGradient id="dirBoard" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#1e293b"/>
+    </linearGradient>
+    <linearGradient id="dirHeader" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#047857"/>
+    </linearGradient>
+    <filter id="shadow20">
+      <feDropShadow dx="4" dy="6" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg20)"/>
+  <!-- Floor suggestion -->
+  <rect x="0" y="450" width="800" height="40" fill="#bbf7d0" opacity="0.5"/>
+  <line x1="0" y1="450" x2="800" y2="450" stroke="#6ee7b7" stroke-width="1.5"/>
+  <!-- Directory board main frame (3D) -->
+  <polygon points="650,430 680,400 680,90 650,120" fill="#0a1020" opacity="0.8"/>
+  <polygon points="100,430 650,430 680,400 130,400" fill="#0c1424" opacity="0.7"/>
+  <!-- Directory board face -->
+  <rect x="100" y="90" width="550" height="340" rx="4" fill="url(#dirBoard)" filter="url(#shadow20)"/>
+  <!-- Header -->
+  <rect x="100" y="90" width="550" height="52" rx="4" fill="url(#dirHeader)"/>
+  <rect x="100" y="128" width="550" height="14" fill="url(#dirHeader)" opacity="0.5"/>
+  <text x="375" y="124" font-family="Arial,sans-serif" font-size="20" fill="#f0fdf4" text-anchor="middle" font-weight="700" letter-spacing="4">DIRECTORY</text>
+  <!-- Floor rows (6 rows) -->
+  <!-- Row 1 -->
+  <line x1="116" y1="174" x2="634" y2="174" stroke="#1e3a2e" stroke-width="1"/>
+  <text x="130" y="164" font-family="Arial,sans-serif" font-size="13" fill="#6ee7b7" font-weight="700">FLOOR 1</text>
+  <text x="210" y="164" font-family="Arial,sans-serif" font-size="13" fill="#d1fae5">Reception · Security · Lounge</text>
+  <polygon points="622,157 634,163 622,169" fill="#10b981"/>
+  <!-- Row 2 -->
+  <line x1="116" y1="220" x2="634" y2="220" stroke="#1e3a2e" stroke-width="1"/>
+  <text x="130" y="210" font-family="Arial,sans-serif" font-size="13" fill="#6ee7b7" font-weight="700">FLOOR 2</text>
+  <text x="210" y="210" font-family="Arial,sans-serif" font-size="13" fill="#d1fae5">Accounts · HR · Admin</text>
+  <polygon points="622,203 634,209 622,215" fill="#10b981"/>
+  <!-- Row 3 -->
+  <line x1="116" y1="266" x2="634" y2="266" stroke="#1e3a2e" stroke-width="1"/>
+  <text x="130" y="256" font-family="Arial,sans-serif" font-size="13" fill="#6ee7b7" font-weight="700">FLOOR 3</text>
+  <text x="210" y="256" font-family="Arial,sans-serif" font-size="13" fill="#d1fae5">Sales · Marketing · CRM</text>
+  <polygon points="622,249 634,255 622,261" fill="#10b981"/>
+  <!-- Row 4 -->
+  <line x1="116" y1="312" x2="634" y2="312" stroke="#1e3a2e" stroke-width="1"/>
+  <text x="130" y="302" font-family="Arial,sans-serif" font-size="13" fill="#6ee7b7" font-weight="700">FLOOR 4</text>
+  <text x="210" y="302" font-family="Arial,sans-serif" font-size="13" fill="#d1fae5">Operations · Production</text>
+  <polygon points="622,295 634,301 622,307" fill="#10b981"/>
+  <!-- Row 5 -->
+  <line x1="116" y1="358" x2="634" y2="358" stroke="#1e3a2e" stroke-width="1"/>
+  <text x="130" y="348" font-family="Arial,sans-serif" font-size="13" fill="#6ee7b7" font-weight="700">FLOOR 5</text>
+  <text x="210" y="348" font-family="Arial,sans-serif" font-size="13" fill="#d1fae5">Management · Board Room</text>
+  <polygon points="622,341 634,347 622,353" fill="#10b981"/>
+  <!-- Row 6 -->
+  <text x="130" y="394" font-family="Arial,sans-serif" font-size="13" fill="#6ee7b7" font-weight="700">TERRACE</text>
+  <text x="210" y="394" font-family="Arial,sans-serif" font-size="13" fill="#d1fae5">Cafeteria · Parking</text>
+  <polygon points="622,387 634,393 622,399" fill="#10b981"/>
+  <!-- Frame decoration -->
+  <rect x="100" y="90" width="550" height="340" rx="4" fill="none" stroke="#10b981" stroke-width="2" opacity="0.4"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0f172a" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#10b981" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#6ee7b7" font-weight="600" letter-spacing="2">WAYFINDING DIRECTORY BOARD</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#10b981" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#10b981" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

@@ -1,0 +1,88 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg23" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#080c18"/>
+      <stop offset="100%" stop-color="#0e1828"/>
+    </linearGradient>
+    <linearGradient id="wall23" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0f1a2e"/>
+      <stop offset="100%" stop-color="#0a1220"/>
+    </linearGradient>
+    <linearGradient id="bracket23" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#4b5563"/>
+      <stop offset="100%" stop-color="#374151"/>
+    </linearGradient>
+    <filter id="glow23">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg23)"/>
+  <!-- Wall surface -->
+  <rect x="50" y="50" width="700" height="400" rx="2" fill="url(#wall23)"/>
+  <!-- Wall surface texture (subtle concrete look) -->
+  <g opacity="0.05" stroke="#3b82f6" stroke-width="0.5">
+    <line x1="50" y1="100" x2="750" y2="100"/><line x1="50" y1="150" x2="750" y2="150"/>
+    <line x1="50" y1="200" x2="750" y2="200"/><line x1="50" y1="250" x2="750" y2="250"/>
+    <line x1="50" y1="300" x2="750" y2="300"/><line x1="50" y1="350" x2="750" y2="350"/>
+    <line x1="50" y1="400" x2="750" y2="400"/>
+    <line x1="150" y1="50" x2="150" y2="450"/><line x1="300" y1="50" x2="300" y2="450"/>
+    <line x1="500" y1="50" x2="500" y2="450"/><line x1="650" y1="50" x2="650" y2="450"/>
+  </g>
+  <!-- Installation measurement guide lines -->
+  <!-- Horizontal center line (dashed blue) -->
+  <line x1="50" y1="250" x2="750" y2="250" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="8,5" opacity="0.5"/>
+  <!-- Vertical center line -->
+  <line x1="400" y1="50" x2="400" y2="450" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="8,5" opacity="0.5"/>
+  <!-- Crosshair at center -->
+  <circle cx="400" cy="250" r="20" fill="none" stroke="#3b82f6" stroke-width="1.5" opacity="0.5"/>
+  <circle cx="400" cy="250" r="4" fill="#3b82f6" opacity="0.8"/>
+  <!-- Alignment dimension arrows (horizontal) -->
+  <line x1="150" y1="100" x2="650" y2="100" stroke="#60a5fa" stroke-width="1" opacity="0.4"/>
+  <polygon points="150,96 140,100 150,104" fill="#60a5fa" opacity="0.4"/>
+  <polygon points="650,96 660,100 650,104" fill="#60a5fa" opacity="0.4"/>
+  <text x="400" y="95" font-family="Arial Monospace,monospace" font-size="11" fill="#60a5fa" text-anchor="middle" opacity="0.7">1200 mm</text>
+  <!-- Alignment dimension arrows (vertical) -->
+  <line x1="680" y1="130" x2="680" y2="380" stroke="#60a5fa" stroke-width="1" opacity="0.4"/>
+  <polygon points="676,130 680,120 684,130" fill="#60a5fa" opacity="0.4"/>
+  <polygon points="676,380 680,390 684,380" fill="#60a5fa" opacity="0.4"/>
+  <text x="700" y="260" font-family="Arial Monospace,monospace" font-size="11" fill="#60a5fa" opacity="0.7" transform="rotate(90,700,260)">600 mm</text>
+  <!-- Mounting bracket positions (4 corners) -->
+  <g fill="url(#bracket23)" stroke="#60a5fa" stroke-width="1.5">
+    <!-- Top-left bracket -->
+    <rect x="148" y="128" width="24" height="24" rx="3"/>
+    <circle cx="160" cy="140" r="5" fill="#0a1220" stroke="#60a5fa" stroke-width="1"/>
+    <!-- Top-right bracket -->
+    <rect x="628" y="128" width="24" height="24" rx="3"/>
+    <circle cx="640" cy="140" r="5" fill="#0a1220" stroke="#60a5fa" stroke-width="1"/>
+    <!-- Bottom-left bracket -->
+    <rect x="148" y="358" width="24" height="24" rx="3"/>
+    <circle cx="160" cy="370" r="5" fill="#0a1220" stroke="#60a5fa" stroke-width="1"/>
+    <!-- Bottom-right bracket -->
+    <rect x="628" y="358" width="24" height="24" rx="3"/>
+    <circle cx="640" cy="370" r="5" fill="#0a1220" stroke="#60a5fa" stroke-width="1"/>
+  </g>
+  <!-- Bracket connecting lines -->
+  <rect x="160" y="140" width="480" height="230" rx="2" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="6,4" opacity="0.35"/>
+  <!-- Level indicator (spirit level icon) -->
+  <rect x="280" y="240" width="240" height="22" rx="11" fill="#1e3a5f" stroke="#3b82f6" stroke-width="1.5"/>
+  <circle cx="400" cy="251" r="7" fill="none" stroke="#60a5fa" stroke-width="1.5"/>
+  <circle cx="400" cy="251" r="3" fill="#3b82f6"/>
+  <text x="248" y="256" font-family="Arial Monospace,monospace" font-size="9" fill="#60a5fa" opacity="0.6">LEVEL</text>
+  <text x="548" y="256" font-family="Arial Monospace,monospace" font-size="9" fill="#60a5fa" opacity="0.6">OK</text>
+  <!-- Drill marks at anchors -->
+  <circle cx="160" cy="140" r="15" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+  <circle cx="640" cy="140" r="15" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+  <circle cx="160" cy="370" r="15" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+  <circle cx="640" cy="370" r="15" fill="none" stroke="#60a5fa" stroke-width="1" stroke-dasharray="3,3" opacity="0.3"/>
+  <!-- Sign outline (preview of sign that will be mounted) -->
+  <rect x="172" y="152" width="456" height="206" rx="3" fill="#3b82f6" opacity="0.06"/>
+  <rect x="172" y="152" width="456" height="206" rx="3" fill="none" stroke="#60a5fa" stroke-width="2" stroke-dasharray="10,5"/>
+  <text x="400" y="258" font-family="Arial,sans-serif" font-size="16" fill="#60a5fa" text-anchor="middle" opacity="0.5" letter-spacing="4">SIGN POSITION</text>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#080c18" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#3b82f6" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#93c5fd" font-weight="600" letter-spacing="2">SIGN INSTALLATION PLANNING</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#3b82f6" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#3b82f6" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>

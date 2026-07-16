@@ -1,0 +1,64 @@
+<svg viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" width="800" height="550">
+  <defs>
+    <linearGradient id="bg15" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a0c08"/>
+      <stop offset="100%" stop-color="#2a1208"/>
+    </linearGradient>
+    <linearGradient id="sky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e3a5f" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#0f1e33" stop-opacity="0.2"/>
+    </linearGradient>
+    <linearGradient id="fascia15" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1c1208"/>
+      <stop offset="100%" stop-color="#100a04"/>
+    </linearGradient>
+    <filter id="glow15">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur"/>
+      <feComposite in="blur" in2="SourceGraphic" operator="over"/>
+    </filter>
+  </defs>
+  <rect width="800" height="550" fill="url(#bg15)"/>
+  <!-- Sky gradient suggestion -->
+  <rect x="0" y="0" width="800" height="260" fill="url(#sky)"/>
+  <!-- Building outline / roof line -->
+  <rect x="60" y="230" width="680" height="260" rx="0" fill="#0e0806" opacity="0.9"/>
+  <!-- Building face brickwork suggestion -->
+  <g opacity="0.08" stroke="#f97316" stroke-width="0.5">
+    <line x1="60" y1="270" x2="740" y2="270"/><line x1="60" y1="295" x2="740" y2="295"/>
+    <line x1="60" y1="320" x2="740" y2="320"/><line x1="60" y1="345" x2="740" y2="345"/>
+    <line x1="60" y1="370" x2="740" y2="370"/>
+    <line x1="150" y1="270" x2="150" y2="370"/><line x1="280" y1="270" x2="280" y2="370"/>
+    <line x1="410" y1="270" x2="410" y2="370"/><line x1="540" y1="270" x2="540" y2="370"/>
+    <line x1="670" y1="270" x2="670" y2="370"/>
+  </g>
+  <!-- Storefront fascia band -->
+  <rect x="60" y="200" width="680" height="110" fill="url(#fascia15)"/>
+  <!-- Fascia top orange stripe -->
+  <rect x="60" y="200" width="680" height="6" fill="#f97316"/>
+  <!-- Fascia bottom orange stripe -->
+  <rect x="60" y="304" width="680" height="6" fill="#f97316"/>
+  <!-- Awning / canopy shape -->
+  <polygon points="60,310 740,310 760,340 40,340" fill="#1a0a04" opacity="0.9"/>
+  <rect x="40" y="340" width="720" height="6" fill="#ea580c" opacity="0.7"/>
+  <!-- Sign text on fascia -->
+  <text x="400" y="248" font-family="Arial,sans-serif" font-size="48" fill="#fed7aa" text-anchor="middle" font-weight="900" letter-spacing="5" filter="url(#glow15)" opacity="0.4">SHREEJI ART</text>
+  <text x="400" y="248" font-family="Arial,sans-serif" font-size="48" fill="#fed7aa" text-anchor="middle" font-weight="900" letter-spacing="5">SHREEJI ART</text>
+  <text x="400" y="290" font-family="Arial,sans-serif" font-size="14" fill="#fb923c" text-anchor="middle" letter-spacing="5">SIGNAGE &amp; BRANDING</text>
+  <!-- Storefront windows -->
+  <rect x="100" y="360" width="160" height="130" rx="2" fill="#0ea5e9" opacity="0.06" stroke="#f97316" stroke-width="2"/>
+  <rect x="320" y="360" width="160" height="130" rx="2" fill="#0ea5e9" opacity="0.06" stroke="#f97316" stroke-width="2"/>
+  <rect x="540" y="360" width="160" height="130" rx="2" fill="#0ea5e9" opacity="0.06" stroke="#f97316" stroke-width="2"/>
+  <!-- Window cross bars -->
+  <line x1="180" y1="360" x2="180" y2="490" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+  <line x1="100" y1="425" x2="260" y2="425" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+  <line x1="400" y1="360" x2="400" y2="490" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+  <line x1="320" y1="425" x2="480" y2="425" stroke="#f97316" stroke-width="1.5" opacity="0.5"/>
+  <!-- Ambient orange ground -->
+  <ellipse cx="400" cy="490" rx="380" ry="20" fill="#f97316" opacity="0.04"/>
+  <!-- Label bar -->
+  <rect x="0" y="490" width="800" height="60" fill="#0e0806" opacity="0.97"/>
+  <rect x="0" y="490" width="800" height="1" fill="#f97316" opacity="0.5"/>
+  <text x="40" y="527" font-family="Arial,sans-serif" font-size="16" fill="#fb923c" font-weight="600" letter-spacing="2">RETAIL STOREFRONT BRANDING</text>
+  <rect x="680" y="507" width="80" height="24" rx="3" fill="#f97316" opacity="0.12"/>
+  <text x="720" y="524" font-family="Arial,sans-serif" font-size="12" fill="#f97316" text-anchor="middle" font-weight="600">SAMPLE</text>
+</svg>
