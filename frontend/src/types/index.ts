@@ -136,11 +136,13 @@ export interface PortfolioItem {
   title: string;
   slug: string;
   description: string;
-  clientName: string;
+  clientName?: string;
+  serviceId?: number;
   service?: Service;
-  images: string[];
-  tags: string[];
+  images?: string[];
+  tags?: string[];
   isFeatured: boolean;
+  displayOrder?: number;
 }
 
 // ─── Gallery ──────────────────────────────────────────────────────────────────

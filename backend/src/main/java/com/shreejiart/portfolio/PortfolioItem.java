@@ -3,7 +3,9 @@ package com.shreejiart.portfolio;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 
@@ -34,6 +36,14 @@ public class PortfolioItem {
 
     @Column(name = "service_id")
     private Long serviceId;
+
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "images", columnDefinition = "TEXT[]")
+    private String[] images;
+
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "tags", columnDefinition = "TEXT[]")
+    private String[] tags;
 
     @Column(name = "is_featured", nullable = false)
     @Builder.Default
