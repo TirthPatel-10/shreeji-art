@@ -141,7 +141,7 @@ function PortfolioCardImage({
 
 function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) {
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const firstImage = item.images?.[0];
+  const firstImage = item.images?.find(Boolean);
 
   return (
     <Link
@@ -162,7 +162,7 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
         <div className="absolute top-3 left-3 z-10 flex gap-1.5">
           {item.isFeatured && (
             <span className="flex items-center gap-1 bg-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
-              <Star className="h-2.5 w-2.5" />
+              <Star className="h-2.5 w-2.5" aria-hidden="true" />
               Featured
             </span>
           )}
@@ -176,7 +176,7 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
         <div className="absolute inset-0 bg-brand-navy/75 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
           <span className="inline-flex items-center gap-2 text-white text-sm font-semibold">
             View Project
-            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+            <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
           </span>
         </div>
       </div>
@@ -291,7 +291,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 className="group inline-flex items-center gap-2 rounded-xl bg-brand-gold px-6 py-3 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-all duration-200 active:scale-[0.98]"
               >
                 Request a Quote
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
               </Link>
               <Link
                 href="/services"
@@ -342,9 +342,9 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 </div>
                 <Link
                   href="#all-projects"
-                  className="hidden sm:inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-brand-gold transition-colors"
+                  className="hidden rounded-sm text-sm text-gray-400 transition-colors hover:text-brand-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold sm:inline-flex sm:items-center sm:gap-1.5"
                 >
-                  View all <ArrowRight className="h-3.5 w-3.5" />
+                  View all <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -352,7 +352,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featured.slice(0, 3).map((item, i) => {
                 const gradient = CARD_GRADIENTS[i % CARD_GRADIENTS.length];
-                const firstImage = item.images?.[0];
+                const firstImage = item.images?.find(Boolean);
                 return (
                   <AnimateIn key={item.id} from="bottom" delay={i * 100}>
                     <Link
@@ -369,12 +369,12 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                         />
                         <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
                           <span className="inline-flex items-center gap-2 text-white text-sm font-semibold">
-                            View Project <ArrowRight className="h-4 w-4" />
+                            View Project <ArrowRight className="h-4 w-4" aria-hidden="true" />
                           </span>
                         </div>
                         <div className="absolute top-3 left-3 z-10">
                           <span className="flex items-center gap-1 bg-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
-                            <Star className="h-2.5 w-2.5" /> Featured
+                            <Star className="h-2.5 w-2.5" aria-hidden="true" /> Featured
                           </span>
                         </div>
                       </div>
@@ -409,7 +409,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 <p className="text-caption text-brand-gold mb-1.5">
                   {activeCategory === "all" ? "Complete Portfolio" : CATEGORIES.find((c) => c.id === activeCategory)?.label}
                 </p>
-                <h2 className="font-display font-bold text-brand-navy text-2xl sm:text-3xl">
+                <h2 className="font-display font-bold text-brand-navy text-2xl sm:text-3xl" aria-live="polite">
                   {filtered.length} Project{filtered.length !== 1 ? "s" : ""}
                 </h2>
               </div>
@@ -425,10 +425,11 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 const isActive = activeCategory === cat.id;
                 return (
                   <button
+                    type="button"
                     key={cat.id}
                     onClick={() => setActiveCategory(cat.id)}
                     className={[
-                      "rounded-full px-3.5 py-1.5 text-xs font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold",
+                      "rounded-full px-4 py-2.5 text-xs font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none",
                       isActive
                         ? "bg-brand-gold text-white shadow-sa-gold"
                         : "border border-gray-200 text-gray-500 hover:border-brand-gold/40 hover:text-brand-gold bg-white",
@@ -453,8 +454,9 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 <p className="text-gray-500 text-sm max-w-xs mx-auto">
                   We have not yet tagged projects in this category. Try{" "}
                   <button
+                    type="button"
                     onClick={() => setActiveCategory("all")}
-                    className="text-brand-gold underline underline-offset-2 hover:no-underline"
+                    className="rounded-sm text-brand-gold underline underline-offset-2 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
                   >
                     All Projects
                   </button>{" "}
@@ -477,7 +479,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                   href="/contact"
                   className="mt-2 inline-flex items-center gap-2 rounded-xl bg-brand-gold px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-colors"
                 >
-                  Contact Us <ArrowRight className="h-4 w-4" />
+                  Contact Us <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             </AnimateIn>
@@ -514,7 +516,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 <AnimateIn key={cap.title} from="bottom" delay={i * 60}>
                   <div className="flex flex-col gap-3 rounded-2xl bg-white border border-gray-100 p-5 hover:border-brand-gold/30 hover:shadow-sa-sm transition-all duration-200">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gold/8">
-                      <Icon className="h-5 w-5 text-brand-gold" />
+                      <Icon className="h-5 w-5 text-brand-gold" aria-hidden="true" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-brand-navy text-sm mb-1">{cap.title}</h3>
@@ -544,7 +546,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
               return (
                 <AnimateIn key={ind.label} from="bottom" delay={i * 50}>
                   <div className="flex flex-col items-center gap-2 rounded-2xl border border-gray-100 p-4 hover:border-brand-gold/30 hover:bg-brand-gold/4 transition-all duration-200 group cursor-default text-center">
-                    <Icon className="h-6 w-6 text-gray-400 group-hover:text-brand-gold transition-colors" />
+                    <Icon className="h-6 w-6 text-gray-400 group-hover:text-brand-gold transition-colors motion-reduce:transition-none" aria-hidden="true" />
                     <p className="text-[11px] font-medium text-gray-500 group-hover:text-brand-gold transition-colors leading-tight">
                       {ind.label}
                     </p>
@@ -596,7 +598,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                 className="group inline-flex items-center gap-2 rounded-xl bg-brand-gold px-7 py-3.5 text-sm font-semibold text-white shadow-sa-gold hover:bg-brand-gold-dark transition-all duration-200 active:scale-[0.98]"
               >
                 Request a Quote
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
               </Link>
               <Link
                 href="/contact"

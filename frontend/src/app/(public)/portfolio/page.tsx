@@ -13,7 +13,7 @@ export default async function PortfolioPage() {
   let items: PortfolioItem[] = [];
   try {
     const res = await publicApi.getPortfolio();
-    items = (res.data as PortfolioItem[]) ?? [];
+    items = res.success ? ((res.data as PortfolioItem[]) ?? []) : [];
   } catch {
     /* PortfolioClient shows empty state */
   }

@@ -54,9 +54,9 @@ function GradientHero({ item }: { item: PortfolioItem }) {
 
 // Image with error fallback
 function DetailImage({
-  src, alt, fill = false, item,
+  src, alt, fill = false, item, priority = false,
 }: {
-  src: string; alt: string; fill?: boolean; item: PortfolioItem;
+  src: string; alt: string; fill?: boolean; item: PortfolioItem; priority?: boolean;
 }) {
   const [err, setErr] = useState(false);
   if (err) return <GradientHero item={item} />;
@@ -69,7 +69,7 @@ function DetailImage({
         className="object-cover"
         sizes="(max-width: 768px) 100vw, 80vw"
         onError={() => setErr(true)}
-        priority
+        priority={priority}
       />
     );
   }
@@ -88,7 +88,7 @@ function DetailImage({
 // ─── Gallery ─────────────────────────────────────────────────────────────────
 
 function ImageGallery({ item }: { item: PortfolioItem }) {
-  const images = item.images ?? [];
+  const images = (item.images ?? []).filter(Boolean);
   const [active, setActive] = useState(0);
 
   if (images.length === 0) {
@@ -110,33 +110,37 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
     <div>
       {/* Main image */}
       <div className="relative rounded-2xl overflow-hidden h-64 sm:h-96 bg-gray-100 mb-3">
-        <DetailImage src={images[active]} alt={`${item.title} — image ${active + 1}`} fill item={item} />
+        <DetailImage src={images[active]} alt={`${item.title} — image ${active + 1}`} fill item={item} priority={active === 0} />
         {images.length > 1 && (
           <>
             <button
+              type="button"
               onClick={prev}
               className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
               aria-label="Previous image"
             >
-              <ChevronLeft className="h-5 w-5" />
+              <ChevronLeft className="h-5 w-5" aria-hidden="true" />
             </button>
             <button
+              type="button"
               onClick={next}
               className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center text-white hover:bg-black/60 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
               aria-label="Next image"
             >
-              <ChevronRight className="h-5 w-5" />
+              <ChevronRight className="h-5 w-5" aria-hidden="true" />
             </button>
             <div className="absolute bottom-3 inset-x-0 flex justify-center gap-1.5">
               {images.map((_, i) => (
                 <button
                   key={i}
+                  type="button"
                   onClick={() => setActive(i)}
                   className={[
                     "h-1.5 rounded-full transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold",
                     i === active ? "w-5 bg-brand-gold" : "w-1.5 bg-white/40",
                   ].join(" ")}
                   aria-label={`Go to image ${i + 1}`}
+                  aria-current={i === active ? "true" : undefined}
                 />
               ))}
             </div>
@@ -150,12 +154,14 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
           {images.map((src, i) => (
             <button
               key={i}
+              type="button"
               onClick={() => setActive(i)}
               className={[
                 "relative shrink-0 h-16 w-24 rounded-lg overflow-hidden border-2 transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold",
                 i === active ? "border-brand-gold" : "border-transparent opacity-60 hover:opacity-100",
               ].join(" ")}
               aria-label={`Thumbnail ${i + 1}`}
+              aria-current={i === active ? "true" : undefined}
             >
               <DetailImage src={src} alt={`Thumbnail ${i + 1}`} fill item={item} />
             </button>
@@ -170,7 +176,7 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
 
 function RelatedCard({ item, index }: { item: PortfolioItem; index: number }) {
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const firstImage = item.images?.[0];
+  const firstImage = item.images?.find(Boolean);
   const Icon = SERVICE_ICONS[index % SERVICE_ICONS.length];
 
   return (
@@ -195,7 +201,7 @@ function RelatedCard({ item, index }: { item: PortfolioItem; index: number }) {
         )}
         <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
           <span className="text-white text-xs font-semibold flex items-center gap-1.5">
-            View Project <ArrowRight className="h-3.5 w-3.5" />
+            View Project <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
           </span>
         </div>
       </div>
@@ -242,7 +248,7 @@ export default function PortfolioDetailClient({
             href="/portfolio"
             className="group inline-flex items-center gap-1.5 text-xs font-medium text-gray-400 hover:text-brand-gold transition-colors mb-6"
           >
-            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5" />
+            <ArrowLeft className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
             Back to Portfolio
           </Link>
 
@@ -254,26 +260,26 @@ export default function PortfolioDetailClient({
               </h1>
               {item.isFeatured && (
                 <span className="flex items-center gap-1 bg-brand-gold text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest self-start mt-2">
-                  <Star className="h-3 w-3" /> Featured
+                  <Star className="h-3 w-3" aria-hidden="true" /> Featured
                 </span>
               )}
             </div>
             <div className="flex flex-wrap items-center gap-4 text-sm text-gray-400">
               {item.clientName && (
                 <span className="flex items-center gap-1.5">
-                  <User2 className="h-3.5 w-3.5 text-gray-500" />
+                  <User2 className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
                   {item.clientName}
                 </span>
               )}
               {item.service?.name && (
                 <span className="flex items-center gap-1.5">
-                  <Building2 className="h-3.5 w-3.5 text-gray-500" />
+                  <Building2 className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
                   {item.service.name}
                 </span>
               )}
               {item.tags && item.tags.length > 0 && (
                 <span className="flex items-center gap-1.5">
-                  <Tag className="h-3.5 w-3.5 text-gray-500" />
+                  <Tag className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
                   {item.tags.join(", ")}
                 </span>
               )}
@@ -297,7 +303,7 @@ export default function PortfolioDetailClient({
                 <AnimateIn from="bottom" delay={100}>
                   <div>
                     <h2 className="font-display font-bold text-brand-navy text-xl mb-4 flex items-center gap-2">
-                      <CheckCircle2 className="h-5 w-5 text-brand-gold shrink-0" />
+                      <CheckCircle2 className="h-5 w-5 text-brand-gold shrink-0" aria-hidden="true" />
                       Project Overview
                     </h2>
                     <p className="text-gray-600 text-[15px] leading-relaxed whitespace-pre-line">
@@ -373,7 +379,7 @@ export default function PortfolioDetailClient({
                     className="group flex items-center justify-center gap-2 w-full rounded-xl bg-brand-gold px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-all duration-200 active:scale-[0.98]"
                   >
                     Request a Quote
-                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
                   </Link>
                 </div>
 
@@ -402,7 +408,7 @@ export default function PortfolioDetailClient({
                 href="/portfolio"
                 className="hidden sm:inline-flex items-center gap-1.5 text-sm text-gray-400 hover:text-brand-gold transition-colors"
               >
-                View all <ArrowRight className="h-3.5 w-3.5" />
+                View all <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
               </Link>
             </AnimateIn>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -435,7 +441,7 @@ export default function PortfolioDetailClient({
                 className="group inline-flex items-center gap-2 rounded-xl bg-brand-gold px-7 py-3.5 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-all duration-200 active:scale-[0.98]"
               >
                 Request a Quote
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
               </Link>
               <Link
                 href="/contact"

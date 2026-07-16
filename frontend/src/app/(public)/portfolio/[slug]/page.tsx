@@ -11,6 +11,7 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await publicApi.getPortfolioBySlug(params.slug);
+    if (!res.success) return { title: "Project Not Found | Shreeji Art" };
     const item = res.data as PortfolioItem | null;
     if (!item) return { title: "Project Not Found | Shreeji Art" };
     return {
@@ -38,7 +39,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
       item = itemRes.value.data as PortfolioItem;
     }
     if (allRes.status === "fulfilled") {
-      const all = (allRes.value.data as PortfolioItem[]) ?? [];
+      const all = allRes.value.success ? ((allRes.value.data as PortfolioItem[]) ?? []) : [];
       related = all.filter((p) => p.slug !== params.slug).slice(0, 3);
     }
   } catch {
