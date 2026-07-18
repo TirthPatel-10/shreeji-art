@@ -3,6 +3,17 @@ spring:
     name: shreeji-art-backend
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
+  datasource:
+    hikari:
+      # Disable PostgreSQL server-side prepared statements.
+      # Required when connecting through Supabase transaction pooler
+      # (PgBouncer, port 6543). PgBouncer rotates the underlying
+      # PostgreSQL connection between transactions, so a prepared
+      # statement named S_1 on connection A is invisible on connection B.
+      # prepareThreshold=0 forces the simple query protocol for all
+      # statements, which is fully compatible with transaction pooling.
+      data-source-properties:
+        prepareThreshold: 0
   jpa:
     hibernate:
       ddl-auto: validate
