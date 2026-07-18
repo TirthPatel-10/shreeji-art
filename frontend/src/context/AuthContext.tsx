@@ -37,6 +37,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.setItem("sa_token", token);
     localStorage.setItem("sa_user", JSON.stringify(userData));
     document.cookie = `sa_auth=1; path=/; max-age=86400; SameSite=Strict`;
+    document.cookie = `sa_role=${userData.role}; path=/; max-age=86400; SameSite=Strict`;
     setUser(userData);
   }
 
@@ -44,6 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem("sa_token");
     localStorage.removeItem("sa_user");
     document.cookie = "sa_auth=; path=/; max-age=0; SameSite=Strict";
+    document.cookie = "sa_role=; path=/; max-age=0; SameSite=Strict";
     setUser(null);
   }
 

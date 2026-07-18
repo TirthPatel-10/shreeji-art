@@ -32,7 +32,7 @@ export default function AdminLoginForm() {
       if (res.success && res.data) {
         if (res.data.user.role !== "ROLE_ADMIN") {
           setError(
-            "Access denied. This portal is for administrators only. Use the customer login instead."
+            "You do not have permission to access the admin portal."
           );
           return;
         }

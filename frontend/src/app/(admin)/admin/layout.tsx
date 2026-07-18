@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   function handleLogout() {
     logout();
-    router.replace("/");
+    router.replace("/admin/login");
   }
 
   if (loading || !user || !isAdmin) {

@@ -22,3 +22,9 @@ jwt:
 
 app:
   allowed-origins: ${ALLOWED_ORIGINS}
+
+admin:
+  bootstrap:
+    enabled: ${ADMIN_BOOTSTRAP_ENABLED:false}
+    email: ${ADMIN_EMAIL:}
+    password: ${ADMIN_PASSWORD:}
