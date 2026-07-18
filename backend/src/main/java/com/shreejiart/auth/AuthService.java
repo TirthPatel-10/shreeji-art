@@ -8,11 +8,13 @@ import com.shreejiart.users.User;
 import com.shreejiart.users.UserRepository;
 import com.shreejiart.users.UserRole;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
@@ -44,14 +46,19 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        log.info("Login attempt: email={}", request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
+        log.info("Authentication passed: email={}", request.getEmail());
 
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        log.info("User loaded: role={}, active={}", user.getRole(), user.isActive());
 
         String token = jwtUtil.generateToken(user);
+        log.info("Token generated: email={}", request.getEmail());
+
         return buildAuthResponse(token, user);
     }
 
