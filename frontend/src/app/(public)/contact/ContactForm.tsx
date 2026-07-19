@@ -2,8 +2,15 @@
 
 import { useState } from "react";
 import { publicApi } from "@/lib/api";
+import { Send, CheckCircle2 } from "lucide-react";
 
 type Status = "idle" | "loading" | "success" | "error";
+
+const inputCls =
+  "w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-brand-gold/50 transition-all duration-200";
+
+const labelCls =
+  "block text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5";
 
 export default function ContactForm() {
   const [form, setForm] = useState({
@@ -42,97 +49,138 @@ export default function ContactForm() {
 
   if (status === "success") {
     return (
-      <div className="text-center py-12">
-        <p className="text-4xl mb-4">✅</p>
-        <p className="text-xl font-bold text-brand-navy mb-2">Message Sent!</p>
-        <p className="text-gray-500">We&apos;ll get back to you within 24 hours.</p>
+      <div className="flex flex-col items-center justify-center py-12 text-center">
+        <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4">
+          <CheckCircle2 className="w-8 h-8 text-emerald-500" aria-hidden="true" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent!</h3>
+        <p className="text-gray-500 text-sm mb-6 max-w-xs">
+          Thank you for reaching out. We&apos;ll get back to you within 24 hours.
+        </p>
         <button
           onClick={() => setStatus("idle")}
-          className="mt-6 text-brand-gold hover:underline text-sm"
+          className="text-brand-gold text-sm font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold rounded"
         >
-          Send another message
+          ← Send another message
         </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       {status === "error" && (
-        <div className="text-sm text-brand-red bg-red-50 border border-red-100 rounded-lg px-4 py-2">
-          {errorMsg}
+        <div className="flex items-start gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
+          <svg
+            className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+            aria-hidden="true"
+          >
+            <path
+              fillRule="evenodd"
+              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-sm text-red-600">{errorMsg}</p>
         </div>
       )}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Name *
-        </label>
-        <input
-          type="text"
-          required
-          value={form.name}
-          onChange={set("name")}
-          placeholder="Your name"
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
-        />
+
+      {/* Name + Email */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label htmlFor="cf-name" className={labelCls}>Name *</label>
+          <input
+            id="cf-name"
+            type="text"
+            required
+            value={form.name}
+            onChange={set("name")}
+            placeholder="Your full name"
+            className={inputCls}
+          />
+        </div>
+        <div>
+          <label htmlFor="cf-email" className={labelCls}>Email *</label>
+          <input
+            id="cf-email"
+            type="email"
+            required
+            value={form.email}
+            onChange={set("email")}
+            placeholder="your@email.com"
+            className={inputCls}
+          />
+        </div>
       </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Email *
-        </label>
-        <input
-          type="email"
-          required
-          value={form.email}
-          onChange={set("email")}
-          placeholder="your@email.com"
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
-        />
+
+      {/* Phone + Subject */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+        <div>
+          <label htmlFor="cf-phone" className={labelCls}>Phone</label>
+          <input
+            id="cf-phone"
+            type="tel"
+            value={form.phone}
+            onChange={set("phone")}
+            placeholder="+91 XXXXX XXXXX"
+            className={inputCls}
+          />
+        </div>
+        <div>
+          <label htmlFor="cf-subject" className={labelCls}>Subject *</label>
+          <input
+            id="cf-subject"
+            type="text"
+            required
+            value={form.subject}
+            onChange={set("subject")}
+            placeholder="How can we help?"
+            className={inputCls}
+          />
+        </div>
       </div>
+
+      {/* Message */}
       <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Phone
-        </label>
-        <input
-          type="tel"
-          value={form.phone}
-          onChange={set("phone")}
-          placeholder="+91 XXXXX XXXXX"
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Subject *
-        </label>
-        <input
-          type="text"
-          required
-          value={form.subject}
-          onChange={set("subject")}
-          placeholder="How can we help?"
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
-        />
-      </div>
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Message *
-        </label>
+        <label htmlFor="cf-message" className={labelCls}>Message *</label>
         <textarea
+          id="cf-message"
           required
-          rows={4}
+          rows={5}
           value={form.message}
           onChange={set("message")}
-          placeholder="Tell us about your project..."
-          className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
+          placeholder="Tell us about your signage project — type, size, quantity, timeline..."
+          className={`${inputCls} resize-none`}
         />
       </div>
+
       <button
         type="submit"
         disabled={status === "loading"}
-        className="w-full bg-brand-gold hover:bg-brand-gold-dark text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-60"
+        className="w-full inline-flex items-center justify-center gap-2 bg-brand-gold hover:bg-brand-gold/90 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-sa-sm hover:shadow-sa-md active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
       >
-        {status === "loading" ? "Sending..." : "Send Message"}
+        {status === "loading" ? (
+          <>
+            <svg
+              className="w-4 h-4 animate-spin"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2.5}
+              aria-hidden="true"
+            >
+              <path d="M12 2a10 10 0 1 0 10 10" />
+            </svg>
+            Sending…
+          </>
+        ) : (
+          <>
+            Send Message
+            <Send className="w-4 h-4" aria-hidden="true" />
+          </>
+        )}
       </button>
     </form>
   );
