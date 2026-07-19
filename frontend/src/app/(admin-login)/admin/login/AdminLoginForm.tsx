@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { authApi } from "@/lib/api";
 
@@ -58,11 +59,18 @@ export default function AdminLoginForm() {
     <div className="min-h-screen bg-brand-navy flex flex-col items-center justify-center px-4 py-12">
       {/* Brand + portal label */}
       <div className="mb-10 text-center select-none">
-        <Link
-          href="/"
-          className="text-brand-gold font-display text-3xl font-bold tracking-wide"
-        >
-          Shreeji Art
+        <Link href="/" className="inline-flex flex-col items-center gap-3">
+          <Image
+            src="/SA.png"
+            alt="Shreeji Art"
+            width={64}
+            height={64}
+            priority
+            className="invert mix-blend-screen"
+          />
+          <span className="text-brand-gold font-display text-3xl font-bold tracking-wide">
+            Shreeji Art
+          </span>
         </Link>
         <div className="mt-3 flex items-center justify-center gap-2 text-gray-500 text-xs font-medium tracking-widest uppercase">
           <LockIcon />

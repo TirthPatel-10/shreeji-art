@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { authApi } from "@/lib/api";
 
@@ -41,7 +42,27 @@ export default function LoginForm() {
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+      {/* Logo badge above card */}
+      <div className="w-full max-w-md">
+        <div className="flex flex-col items-center mb-6 select-none">
+          <Link href="/" className="inline-flex flex-col items-center gap-2">
+            <div className="w-14 h-14 rounded-full bg-brand-navy flex items-center justify-center shadow-lg">
+              <Image
+                src="/SA.png"
+                alt="Shreeji Art"
+                width={48}
+                height={48}
+                priority
+                className="invert mix-blend-screen"
+              />
+            </div>
+            <span className="font-display font-bold text-lg text-brand-navy tracking-tight">
+              Shreeji Art
+            </span>
+          </Link>
+        </div>
+
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
         <h1 className="text-2xl font-display font-bold text-brand-navy mb-1 text-center">
           Welcome Back
         </h1>
@@ -97,6 +118,7 @@ export default function LoginForm() {
             Register
           </Link>
         </p>
+      </div>
       </div>
     </main>
   );

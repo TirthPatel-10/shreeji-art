@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
@@ -90,27 +91,16 @@ export default function ContactClient() {
             </defs>
             <rect width="100%" height="100%" fill="url(#contact-hero-dots)" />
           </svg>
-          {/* Decorative sign frame — right side, desktop only */}
-          <div className="absolute right-[7%] top-1/2 -translate-y-1/2 hidden xl:block opacity-[0.06]">
-            <svg
-              viewBox="0 0 340 210"
-              className="w-80 h-52"
-              fill="none"
-              stroke="#D4A017"
-              strokeWidth="1.5"
+          {/* Logo watermark — right side, desktop only */}
+          <div className="absolute right-[6%] top-1/2 -translate-y-1/2 hidden xl:block opacity-[0.08] pointer-events-none select-none">
+            <Image
+              src="/SA.png"
+              alt=""
+              width={180}
+              height={180}
               aria-hidden="true"
-            >
-              <rect x="4" y="4" width="332" height="202" rx="10" />
-              <rect x="18" y="18" width="304" height="174" rx="5" />
-              <line x1="44" y1="60" x2="296" y2="60" />
-              <line x1="44" y1="105" x2="210" y2="105" />
-              <line x1="44" y1="140" x2="254" y2="140" />
-              <circle cx="280" cy="60" r="9" />
-              <circle cx="280" cy="105" r="9" />
-              <line x1="154" y1="4" x2="154" y2="-2" />
-              <line x1="186" y1="4" x2="186" y2="-2" />
-              <rect x="106" y="-18" width="128" height="22" rx="5" />
-            </svg>
+              className="invert mix-blend-screen"
+            />
           </div>
         </div>
 

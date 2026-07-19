@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Phone, Mail, ArrowRight } from "lucide-react";
 
 const SERVICES_COL = [
@@ -29,7 +30,14 @@ export default function Footer() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Brand column */}
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="inline-block mb-5">
+            <Link href="/" className="inline-flex items-center gap-3 mb-5">
+              <Image
+                src="/SA.png"
+                alt=""
+                width={42}
+                height={42}
+                className="invert mix-blend-screen"
+              />
               <span className="font-display font-bold text-2xl text-brand-gold tracking-tight">
                 Shreeji Art
               </span>

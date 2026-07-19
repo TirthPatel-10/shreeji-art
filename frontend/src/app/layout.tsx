@@ -10,6 +10,10 @@ export const metadata: Metadata = {
     default: "Shreeji Art — Premium Signage & Branding, Ahmedabad",
     template: "%s | Shreeji Art",
   },
+  icons: {
+    icon: "/SA.png",
+    apple: "/SA.png",
+  },
   description:
     "Shreeji Art crafts premium LED signs, acrylic letters, 3D signs, ACP signage, and custom branding solutions in Ahmedabad, India.",
   keywords: [
