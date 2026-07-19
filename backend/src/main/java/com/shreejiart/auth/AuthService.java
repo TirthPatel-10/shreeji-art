@@ -46,20 +46,35 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        log.info("Login attempt: email={}", request.getEmail());
+        // [3] Password authentication started
+        log.info("[AUTH] authenticate() starting: email={}", request.getEmail());
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
         );
-        log.info("Authentication passed: email={}", request.getEmail());
+        // [4] Password authentication succeeded
+        log.info("[AUTH] authenticate() passed: email={}", request.getEmail());
 
+        // [2] User loaded
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        log.info("User loaded: role={}, active={}", user.getRole(), user.isActive());
+        log.info("[AUTH] User loaded: id={}, role={}, active={}", user.getId(), user.getRole(), user.isActive());
 
+        // [5] Authorities loaded
+        var authorities = user.getAuthorities();
+        log.info("[AUTH] Authorities: count={}, values={}", authorities.size(), authorities);
+
+        // [6] JWT generation started
+        log.info("[AUTH] JWT generation starting");
         String token = jwtUtil.generateToken(user);
-        log.info("Token generated: email={}", request.getEmail());
+        // [7] JWT generation succeeded
+        log.info("[AUTH] JWT generation succeeded");
 
-        return buildAuthResponse(token, user);
+        // [8] Login response created
+        AuthResponse response = buildAuthResponse(token, user);
+        log.info("[AUTH] Response built: tokenType={}, role={}", response.getTokenType(), response.getUser() != null ? response.getUser().getRole() : "null");
+
+        // [9] Response returned (logged in AuthController after this returns)
+        return response;
     }
 
     private AuthResponse buildAuthResponse(String token, User user) {

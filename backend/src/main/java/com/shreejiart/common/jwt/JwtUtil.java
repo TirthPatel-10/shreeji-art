@@ -4,6 +4,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Component
 public class JwtUtil {
 
@@ -22,6 +25,19 @@ public class JwtUtil {
 
     @Value("${jwt.expiration-ms}")
     private long jwtExpirationMs;
+
+    @PostConstruct
+    public void validateKey() {
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(jwtSecret);
+            log.info("[JWT] Signing key loaded: {} bytes ({} bits)", keyBytes.length, keyBytes.length * 8);
+            if (keyBytes.length < 32) {
+                log.error("[JWT] FATAL: JWT_SECRET decodes to {} bytes — minimum 32 bytes (256 bits) required for HMAC-SHA256", keyBytes.length);
+            }
+        } catch (Exception e) {
+            log.error("[JWT] FATAL: JWT_SECRET is not valid Base64 — {}: {}", e.getClass().getSimpleName(), e.getMessage());
+        }
+    }
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
