@@ -61,12 +61,12 @@ export default function AdminLoginForm() {
       <div className="mb-10 text-center select-none">
         <Link href="/" className="inline-flex flex-col items-center gap-3">
           <Image
-            src="/SA.png"
+            src="/shreeji-final-logo.png"
             alt="Shreeji Art"
-            width={64}
-            height={64}
+            width={72}
+            height={72}
             priority
-            className="invert mix-blend-screen"
+            className="rounded-full object-cover"
           />
           <span className="text-brand-gold font-display text-3xl font-bold tracking-wide">
             Shreeji Art

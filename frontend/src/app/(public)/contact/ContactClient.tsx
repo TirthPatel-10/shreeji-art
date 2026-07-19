@@ -92,14 +92,14 @@ export default function ContactClient() {
             <rect width="100%" height="100%" fill="url(#contact-hero-dots)" />
           </svg>
           {/* Logo watermark — right side, desktop only */}
-          <div className="absolute right-[6%] top-1/2 -translate-y-1/2 hidden xl:block opacity-[0.08] pointer-events-none select-none">
+          <div className="absolute right-[6%] top-1/2 -translate-y-1/2 hidden xl:block opacity-[0.12] pointer-events-none select-none">
             <Image
-              src="/SA.png"
+              src="/shreeji-final-logo.png"
               alt=""
               width={180}
               height={180}
               aria-hidden="true"
-              className="invert mix-blend-screen"
+              className="rounded-full object-cover"
             />
           </div>
         </div>

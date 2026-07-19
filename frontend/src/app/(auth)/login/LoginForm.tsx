@@ -46,16 +46,14 @@ export default function LoginForm() {
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-6 select-none">
           <Link href="/" className="inline-flex flex-col items-center gap-2">
-            <div className="w-14 h-14 rounded-full bg-brand-navy flex items-center justify-center shadow-lg">
-              <Image
-                src="/SA.png"
-                alt="Shreeji Art"
-                width={48}
-                height={48}
-                priority
-                className="invert mix-blend-screen"
-              />
-            </div>
+            <Image
+              src="/shreeji-final-logo.png"
+              alt="Shreeji Art"
+              width={64}
+              height={64}
+              priority
+              className="rounded-full object-cover shadow-lg"
+            />
             <span className="font-display font-bold text-lg text-brand-navy tracking-tight">
               Shreeji Art
             </span>

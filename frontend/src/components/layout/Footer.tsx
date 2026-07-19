@@ -32,11 +32,11 @@ export default function Footer() {
           <div className="sm:col-span-2 lg:col-span-1">
             <Link href="/" className="inline-flex items-center gap-3 mb-5">
               <Image
-                src="/SA.png"
+                src="/shreeji-final-logo.png"
                 alt=""
-                width={42}
-                height={42}
-                className="invert mix-blend-screen"
+                width={44}
+                height={44}
+                className="rounded-full object-cover"
               />
               <span className="font-display font-bold text-2xl text-brand-gold tracking-tight">
                 Shreeji Art

@@ -38,12 +38,12 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2.5">
             <Image
-              src="/SA.png"
+              src="/shreeji-final-logo.png"
               alt=""
-              width={34}
-              height={34}
+              width={44}
+              height={44}
               priority
-              className="invert mix-blend-screen"
+              className="rounded-full object-cover"
             />
             <span className="text-brand-gold font-display font-bold text-xl">
               Shreeji Art
