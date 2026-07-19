@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
@@ -20,6 +20,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { isAuthenticated, isAdmin, logout } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
 
   const dashboardHref = isAdmin ? "/admin/dashboard" : "/dashboard";
   const dashboardLabel = isAdmin ? "Admin" : "Dashboard";
@@ -46,7 +47,11 @@ export default function Navbar() {
               <Link
                 key={l.href}
                 href={l.href}
-                className="text-sm hover:text-brand-gold transition-colors"
+                className={
+                  pathname === l.href
+                    ? "text-sm text-brand-gold font-medium transition-colors"
+                    : "text-sm hover:text-brand-gold transition-colors"
+                }
               >
                 {l.label}
               </Link>
@@ -100,7 +105,11 @@ export default function Navbar() {
             <Link
               key={l.href}
               href={l.href}
-              className="block py-2 text-sm hover:text-brand-gold transition-colors"
+              className={
+                pathname === l.href
+                  ? "block py-2 text-sm text-brand-gold font-medium transition-colors"
+                  : "block py-2 text-sm hover:text-brand-gold transition-colors"
+              }
               onClick={() => setOpen(false)}
             >
               {l.label}

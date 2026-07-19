@@ -9,6 +9,7 @@ import React, {
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import Navbar from "@/components/layout/Navbar";
 import { AnimateIn } from "@/components/ui/animate-in";
 import { GALLERY_CATEGORIES, GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
@@ -357,7 +358,9 @@ export default function GalleryClient({ items }: Props) {
   }, []);
 
   return (
-    <main>
+    <>
+      <Navbar />
+      <main>
       {/* ── Hero ────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden bg-brand-navy py-24 md:py-32">
         {/* Background decoration */}
@@ -420,7 +423,7 @@ export default function GalleryClient({ items }: Props) {
       </section>
 
       {/* ── Category Filters ─────────────────────────────────────────────────── */}
-      <section className="sticky top-0 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sa-xs">
+      <section className="sticky top-16 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sa-xs">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
           {/* Horizontally scrollable on mobile, wrapping on desktop */}
           <div className="overflow-x-auto pb-1 -mb-1 scrollbar-none">
@@ -588,7 +591,7 @@ export default function GalleryClient({ items }: Props) {
         />
       )}
 
-      {/* ── CTA Section ───────────────────────────────────────────────────────── */}
+      {/* ── CTA / Footer area ─────────────────────────────────────────────────── */}
       <section className="bg-sa-surface border-t border-sa-border py-20">
         <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
           <AnimateIn from="bottom" duration={600}>
@@ -664,5 +667,6 @@ export default function GalleryClient({ items }: Props) {
         </div>
       </section>
     </main>
+    </>
   );
 }
