@@ -2,6 +2,7 @@ package com.shreejiart.quotes;
 
 import com.shreejiart.common.response.ApiResponse;
 import com.shreejiart.users.User;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,11 +13,25 @@ import java.util.List;
 
 record QuoteStatusRequest(@NotBlank String status) {}
 
+record CreateQuoteRequest(
+        @NotBlank String serviceType,
+        @NotBlank String description,
+        String companyName
+) {}
+
 @RestController
 @RequiredArgsConstructor
 public class QuoteController {
 
     private final QuoteService service;
+
+    @PostMapping("/api/v1/quotes")
+    public ResponseEntity<ApiResponse<QuoteDto>> create(
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody CreateQuoteRequest req) {
+        QuoteDto created = service.createFromRequest(user, req.serviceType(), req.description(), req.companyName());
+        return ResponseEntity.status(201).body(ApiResponse.success("Quote request submitted successfully", created));
+    }
 
     @GetMapping("/api/v1/quotes/my")
     public ResponseEntity<ApiResponse<List<QuoteDto>>> myQuotes(@AuthenticationPrincipal User user) {

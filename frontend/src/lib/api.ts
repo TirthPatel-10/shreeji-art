@@ -24,9 +24,19 @@ async function request<T>(
     ...options.headers,
   };
 
-  const res = await fetch(`${API_URL}${path}`, { ...options, headers });
-  const json = await res.json();
-  return json as ApiResponse<T>;
+  let res: Response;
+  try {
+    res = await fetch(`${API_URL}${path}`, { ...options, headers });
+  } catch {
+    throw new Error("NETWORK_ERROR");
+  }
+
+  try {
+    const json = await res.json();
+    return json as ApiResponse<T>;
+  } catch {
+    throw new Error(`HTTP_${res.status}`);
+  }
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
@@ -75,6 +85,8 @@ export const customerApi = {
     request("/customers/profile", { method: "PUT", body: JSON.stringify(body) }),
   getMyQuotes: () => request("/quotes/my"),
   getQuote: (id: number) => request(`/quotes/${id}`),
+  submitQuoteRequest: (body: { serviceType: string; description: string; companyName?: string }) =>
+    request("/quotes", { method: "POST", body: JSON.stringify(body) }),
   getMyProjects: () => request("/projects/my"),
   getProject: (id: number) => request(`/projects/${id}`),
 };

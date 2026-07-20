@@ -71,7 +71,7 @@ export interface Lead {
 
 // ─── Quote ────────────────────────────────────────────────────────────────────
 
-export type QuoteStatus = "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED";
+export type QuoteStatus = "PENDING" | "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED";
 
 export interface QuoteItem {
   id: number;
@@ -88,10 +88,16 @@ export interface Quote {
   title: string;
   description?: string;
   status: QuoteStatus;
-  totalAmount: number;
-  validUntil: string;
-  items: QuoteItem[];
+  totalAmount?: number;
+  validUntil?: string;
+  customerId?: number;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  companyName?: string;
+  items?: QuoteItem[];
   createdAt: string;
+  updatedAt?: string;
 }
 
 // ─── Project ──────────────────────────────────────────────────────────────────

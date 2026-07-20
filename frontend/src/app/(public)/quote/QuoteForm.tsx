@@ -57,11 +57,28 @@ export default function QuoteForm() {
         });
       } else {
         setStatus("error");
-        setErrorMsg(res.message || "Failed to submit request.");
+        if (res.errors) {
+          const firstError = Object.values(res.errors)[0];
+          setErrorMsg(firstError || res.message || "Validation failed. Please check your details.");
+        } else {
+          setErrorMsg(res.message || "Failed to submit request.");
+        }
       }
-    } catch {
+    } catch (err) {
       setStatus("error");
-      setErrorMsg("Connection error. Please try again.");
+      const msg = err instanceof Error ? err.message : "";
+      if (msg === "NETWORK_ERROR") {
+        setErrorMsg("Cannot reach the server. Please check your internet connection and try again.");
+      } else if (msg.startsWith("HTTP_5")) {
+        setErrorMsg("Server error. Please try again in a moment.");
+      } else if (msg.startsWith("HTTP_4")) {
+        setErrorMsg("Invalid request. Please check your details and try again.");
+      } else {
+        setErrorMsg("An unexpected error occurred. Please try again.");
+      }
+      if (process.env.NODE_ENV === "development") {
+        console.error("[QuoteForm] submission error:", err);
+      }
     }
   }
 
