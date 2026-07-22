@@ -1,184 +1,220 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+import { AlertCircle, CheckCircle2, Loader2, Send } from "lucide-react";
 import { publicApi } from "@/lib/api";
-import { Send, CheckCircle2 } from "lucide-react";
 
 type Status = "idle" | "loading" | "success" | "error";
 
-const inputCls =
-  "w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-gold/50 focus:border-brand-gold/50 transition-all duration-200";
+const fieldClass =
+  "w-full rounded-2xl border border-[#E5E7EB] bg-white px-4 py-3.5 text-base text-[#121426] shadow-sm transition-colors duration-200 placeholder:text-[#667085]/60 hover:border-[#D9A514]/60 focus:border-[#D9A514] focus:outline-none focus:ring-4 focus:ring-[#D9A514]/18 disabled:cursor-not-allowed disabled:bg-[#FAF8F2] disabled:opacity-70 motion-reduce:transition-none";
 
-const labelCls =
-  "block text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1.5";
+const labelClass =
+  "mb-2 block text-sm font-semibold text-[#121426]";
+
+const initialForm = {
+  name: "",
+  email: "",
+  phone: "",
+  subject: "",
+  message: "",
+};
 
 export default function ContactForm() {
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
+  const [form, setForm] = useState(initialForm);
   const [status, setStatus] = useState<Status>("idle");
   const [errorMsg, setErrorMsg] = useState("");
 
+  const isSubmitting = status === "loading";
+
   function set(field: keyof typeof form) {
-    return (
-      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-    ) => setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    return (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setForm((prev) => ({ ...prev, [field]: event.target.value }));
+      if (status === "error") {
+        setStatus("idle");
+        setErrorMsg("");
+      }
+    };
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setStatus("loading");
+    setErrorMsg("");
+
     try {
       const res = await publicApi.submitContact(form);
+
       if (res.success) {
         setStatus("success");
-        setForm({ name: "", email: "", phone: "", subject: "", message: "" });
+        setForm(initialForm);
       } else {
         setStatus("error");
-        setErrorMsg(res.message || "Failed to send message.");
+        setErrorMsg(
+          res.message ||
+            "We could not send your message. Please check the details and try again."
+        );
       }
     } catch {
       setStatus("error");
-      setErrorMsg("Connection error. Please try again.");
+      setErrorMsg(
+        "We could not reach the server. Please check your connection and try again."
+      );
     }
   }
 
   if (status === "success") {
     return (
-      <div className="flex flex-col items-center justify-center py-12 text-center">
-        <div className="w-16 h-16 rounded-full bg-emerald-50 border border-emerald-100 flex items-center justify-center mb-4">
-          <CheckCircle2 className="w-8 h-8 text-emerald-500" aria-hidden="true" />
+      <div
+        className="rounded-[1.5rem] border border-[#E5E7EB] bg-[#FAF8F2] px-6 py-12 text-center"
+        role="status"
+        aria-live="polite"
+      >
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-[#D9A514]/35 bg-white text-[#D9A514] shadow-sm">
+          <CheckCircle2 className="h-8 w-8" aria-hidden="true" />
         </div>
-        <h3 className="text-xl font-bold text-gray-900 mb-2">Message Sent!</h3>
-        <p className="text-gray-500 text-sm mb-6 max-w-xs">
-          Thank you for reaching out. We&apos;ll get back to you within 24 hours.
+        <h3 className="font-display text-2xl font-semibold text-[#121426]">
+          Message sent
+        </h3>
+        <p className="mx-auto mt-3 max-w-sm text-base leading-7 text-[#667085]">
+          Thank you for contacting Shreeji Art. We will get back to you within
+          24 working hours.
         </p>
         <button
+          type="button"
           onClick={() => setStatus("idle")}
-          className="text-brand-gold text-sm font-semibold hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold rounded"
+          className="mt-7 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white px-5 py-2.5 text-sm font-semibold text-[#121426] transition-colors hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 motion-reduce:transition-none"
         >
-          ← Send another message
+          Send another message
         </button>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      {status === "error" && (
-        <div className="flex items-start gap-3 bg-red-50 border border-red-100 rounded-xl px-4 py-3">
-          <svg
-            className="w-4 h-4 text-red-400 flex-shrink-0 mt-0.5"
-            viewBox="0 0 20 20"
-            fill="currentColor"
+    <form onSubmit={handleSubmit} className="space-y-5" noValidate={false}>
+      {status === "error" ? (
+        <div
+          className="flex items-start gap-3 rounded-2xl border border-[#D9A514]/45 bg-[#FAF8F2] px-4 py-3.5 text-[#121426]"
+          role="alert"
+        >
+          <AlertCircle
+            className="mt-0.5 h-5 w-5 shrink-0 text-[#D9A514]"
             aria-hidden="true"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-              clipRule="evenodd"
-            />
-          </svg>
-          <p className="text-sm text-red-600">{errorMsg}</p>
+          />
+          <p className="text-base leading-6">{errorMsg}</p>
         </div>
-      )}
+      ) : null}
 
-      {/* Name + Email */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="cf-name" className={labelCls}>Name *</label>
+          <label htmlFor="cf-name" className={labelClass}>
+            Name *
+          </label>
           <input
             id="cf-name"
+            name="name"
             type="text"
             required
+            autoComplete="name"
             value={form.name}
             onChange={set("name")}
             placeholder="Your full name"
-            className={inputCls}
+            className={fieldClass}
+            disabled={isSubmitting}
           />
         </div>
+
         <div>
-          <label htmlFor="cf-email" className={labelCls}>Email *</label>
+          <label htmlFor="cf-email" className={labelClass}>
+            Email *
+          </label>
           <input
             id="cf-email"
+            name="email"
             type="email"
             required
+            autoComplete="email"
             value={form.email}
             onChange={set("email")}
             placeholder="your@email.com"
-            className={inputCls}
+            className={fieldClass}
+            disabled={isSubmitting}
           />
         </div>
       </div>
 
-      {/* Phone + Subject */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label htmlFor="cf-phone" className={labelCls}>Phone</label>
+          <label htmlFor="cf-phone" className={labelClass}>
+            Phone
+          </label>
           <input
             id="cf-phone"
+            name="phone"
             type="tel"
+            autoComplete="tel"
             value={form.phone}
             onChange={set("phone")}
             placeholder="+91 XXXXX XXXXX"
-            className={inputCls}
+            className={fieldClass}
+            disabled={isSubmitting}
           />
         </div>
+
         <div>
-          <label htmlFor="cf-subject" className={labelCls}>Subject *</label>
+          <label htmlFor="cf-subject" className={labelClass}>
+            Subject *
+          </label>
           <input
             id="cf-subject"
+            name="subject"
             type="text"
             required
             value={form.subject}
             onChange={set("subject")}
-            placeholder="How can we help?"
-            className={inputCls}
+            placeholder="LED sign, acrylic letters..."
+            className={fieldClass}
+            disabled={isSubmitting}
           />
         </div>
       </div>
 
-      {/* Message */}
       <div>
-        <label htmlFor="cf-message" className={labelCls}>Message *</label>
+        <label htmlFor="cf-message" className={labelClass}>
+          Message *
+        </label>
         <textarea
           id="cf-message"
+          name="message"
           required
-          rows={5}
+          rows={6}
           value={form.message}
           onChange={set("message")}
-          placeholder="Tell us about your signage project — type, size, quantity, timeline..."
-          className={`${inputCls} resize-none`}
+          placeholder="Tell us about your signage project - type, size, location, quantity, timeline, and any reference details."
+          className={`${fieldClass} resize-none leading-6`}
+          disabled={isSubmitting}
         />
+        <p className="mt-2 text-sm leading-6 text-[#667085]">
+          Helpful details: sign type, approximate size, installation location,
+          and deadline.
+        </p>
       </div>
 
       <button
         type="submit"
-        disabled={status === "loading"}
-        className="w-full inline-flex items-center justify-center gap-2 bg-brand-gold hover:bg-brand-gold/90 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-sa-sm hover:shadow-sa-md active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
+        disabled={isSubmitting}
+        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#D9A514] px-6 py-4 text-base font-semibold text-[#121426] shadow-sm transition-colors duration-200 hover:bg-[#D9A514]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 motion-reduce:transition-none"
       >
-        {status === "loading" ? (
+        {isSubmitting ? (
           <>
-            <svg
-              className="w-4 h-4 animate-spin"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2.5}
-              aria-hidden="true"
-            >
-              <path d="M12 2a10 10 0 1 0 10 10" />
-            </svg>
-            Sending…
+            <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+            Sending message...
           </>
         ) : (
           <>
             Send Message
-            <Send className="w-4 h-4" aria-hidden="true" />
+            <Send className="h-4 w-4" aria-hidden="true" />
           </>
         )}
       </button>

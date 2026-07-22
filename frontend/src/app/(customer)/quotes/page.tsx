@@ -57,7 +57,7 @@ export default function CustomerQuotesPage() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-brand-navy">My Quotes</h1>
         <Link
-          href="/quotes/new"
+          href="/quote"
           className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-brand-gold text-white font-semibold text-sm hover:bg-brand-gold/90 transition-colors"
         >
           <span className="text-base leading-none">+</span>
@@ -73,7 +73,7 @@ export default function CustomerQuotesPage() {
             Submit a quote request and we&apos;ll prepare a detailed proposal for your signage project.
           </p>
           <Link
-            href="/quotes/new"
+            href="/quote"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-gold text-white font-semibold text-sm hover:bg-brand-gold/90 transition-colors"
           >
             Request your first quote

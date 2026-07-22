@@ -8,6 +8,9 @@ export type { } from "./spinner";
 export { Button, buttonVariants } from "./button";
 export type { ButtonProps } from "./button";
 
+export { GlassPanel } from "./glass-panel";
+export type { GlassPanelProps } from "./glass-panel";
+
 export { Label } from "./label";
 
 export { Separator } from "./separator";
@@ -48,6 +51,9 @@ export {
   CardFooter,
 } from "./card";
 export type { CardProps } from "./card";
+
+export { SectionHeading } from "./section-heading";
+export type { SectionHeadingProps } from "./section-heading";
 
 export {
   Modal,

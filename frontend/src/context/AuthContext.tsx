@@ -15,37 +15,96 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
+function clearStoredAuth() {
+  localStorage.removeItem("sa_token");
+  localStorage.removeItem("sa_user");
+  document.cookie = "sa_auth=; path=/; max-age=0; SameSite=Strict";
+  document.cookie = "sa_role=; path=/; max-age=0; SameSite=Strict";
+}
+
+function getTokenExpirationSeconds(token: string) {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+
+    const normalized = payload.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = normalized.padEnd(
+      normalized.length + ((4 - (normalized.length % 4)) % 4),
+      "="
+    );
+    const decoded = JSON.parse(atob(padded)) as { exp?: unknown };
+    return typeof decoded.exp === "number" ? decoded.exp : null;
+  } catch {
+    return null;
+  }
+}
+
+function isValidStoredUser(value: unknown): value is AuthUser {
+  if (!value || typeof value !== "object") return false;
+  const user = value as Partial<AuthUser>;
+  return (
+    typeof user.id === "number" &&
+    typeof user.email === "string" &&
+    typeof user.firstName === "string" &&
+    typeof user.lastName === "string" &&
+    (user.role === "ROLE_ADMIN" || user.role === "ROLE_CUSTOMER")
+  );
+}
+
+function isUsableToken(token: string | null) {
+  if (!token) return false;
+  const exp = getTokenExpirationSeconds(token);
+  return exp !== null && exp * 1000 > Date.now();
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const token = localStorage.getItem("sa_token");
     const stored = localStorage.getItem("sa_user");
-    if (stored) {
-      try {
-        setUser(JSON.parse(stored) as AuthUser);
-      } catch {
-        localStorage.removeItem("sa_user");
-        localStorage.removeItem("sa_token");
-        document.cookie = "sa_auth=; path=/; max-age=0; SameSite=Strict";
+
+    if (!stored || !isUsableToken(token)) {
+      clearStoredAuth();
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(stored) as unknown;
+      if (!isValidStoredUser(parsed)) {
+        clearStoredAuth();
+      } else {
+        setUser(parsed);
       }
+    } catch {
+      clearStoredAuth();
     }
     setLoading(false);
   }, []);
 
   function login(token: string, userData: AuthUser) {
+    if (!token || !isUsableToken(token) || !isValidStoredUser(userData)) {
+      clearStoredAuth();
+      setUser(null);
+      return;
+    }
+
+    const exp = getTokenExpirationSeconds(token);
+    const maxAge = exp
+      ? Math.max(0, Math.floor(exp - Date.now() / 1000))
+      : 86400;
+
     localStorage.setItem("sa_token", token);
     localStorage.setItem("sa_user", JSON.stringify(userData));
-    document.cookie = `sa_auth=1; path=/; max-age=86400; SameSite=Strict`;
-    document.cookie = `sa_role=${userData.role}; path=/; max-age=86400; SameSite=Strict`;
+    document.cookie = `sa_auth=1; path=/; max-age=${maxAge}; SameSite=Strict`;
+    document.cookie = `sa_role=${userData.role}; path=/; max-age=${maxAge}; SameSite=Strict`;
     setUser(userData);
   }
 
   function logout() {
-    localStorage.removeItem("sa_token");
-    localStorage.removeItem("sa_user");
-    document.cookie = "sa_auth=; path=/; max-age=0; SameSite=Strict";
-    document.cookie = "sa_role=; path=/; max-age=0; SameSite=Strict";
+    clearStoredAuth();
     setUser(null);
   }
 
@@ -58,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         logout,
         isAdmin: user?.role === "ROLE_ADMIN",
         isCustomer: user?.role === "ROLE_CUSTOMER",
-        isAuthenticated: user !== null,
+        isAuthenticated: Boolean(user),
       }}
     >
       {children}

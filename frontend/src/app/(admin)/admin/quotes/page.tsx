@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { adminApi } from "@/lib/api";
 import type { Quote, QuoteStatus } from "@/types";
 
@@ -34,15 +34,64 @@ const STATUS_LABELS: Record<string, string> = {
 export default function AdminQuotesPage() {
   const [quotes, setQuotes] = useState<Quote[]>([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState("");
   const [updating, setUpdating] = useState<number | null>(null);
   const [expanded, setExpanded] = useState<number | null>(null);
+  const [lastUpdatedAt, setLastUpdatedAt] = useState<Date | null>(null);
+
+  const fetchQuotes = useCallback(async ({ showSpinner = false } = {}) => {
+    if (showSpinner) setRefreshing(true);
+    setError("");
+
+    try {
+      const res = await adminApi.getQuotes();
+      if (res.success) {
+        const liveQuotes = ((res.data as Quote[]) ?? []).sort((a, b) => {
+          const aTime = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+          const bTime = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+          return bTime - aTime;
+        });
+        setQuotes(liveQuotes);
+        setLastUpdatedAt(new Date());
+      } else {
+        setQuotes([]);
+        setError(res.message || "Failed to load quotes.");
+      }
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "";
+      setError(
+        message === "NETWORK_ERROR"
+          ? "Cannot reach the server. Please check the backend and try again."
+          : "Failed to load quotes. Please refresh and try again."
+      );
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  }, []);
 
   useEffect(() => {
-    adminApi
-      .getQuotes()
-      .then((res) => setQuotes((res.data as Quote[]) ?? []))
-      .finally(() => setLoading(false));
-  }, []);
+    void fetchQuotes();
+  }, [fetchQuotes]);
+
+  useEffect(() => {
+    function refetchWhenVisible() {
+      if (!document.hidden) {
+        void fetchQuotes();
+      }
+    }
+
+    window.addEventListener("focus", refetchWhenVisible);
+    window.addEventListener("pageshow", refetchWhenVisible);
+    document.addEventListener("visibilitychange", refetchWhenVisible);
+
+    return () => {
+      window.removeEventListener("focus", refetchWhenVisible);
+      window.removeEventListener("pageshow", refetchWhenVisible);
+      document.removeEventListener("visibilitychange", refetchWhenVisible);
+    };
+  }, [fetchQuotes]);
 
   async function updateStatus(id: number, status: string) {
     setUpdating(id);
@@ -64,10 +113,35 @@ export default function AdminQuotesPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Quote Management</h1>
-        <span className="text-sm text-gray-400">{quotes.length} total</span>
+        <div className="flex items-center gap-3">
+          {lastUpdatedAt && (
+            <span className="hidden sm:inline text-xs text-gray-400">
+              Updated{" "}
+              {lastUpdatedAt.toLocaleTimeString("en-IN", {
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </span>
+          )}
+          <span className="text-sm text-gray-400">{quotes.length} total</span>
+          <button
+            type="button"
+            onClick={() => fetchQuotes({ showSpinner: true })}
+            disabled={loading || refreshing}
+            className="rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-sm font-medium text-gray-600 shadow-sm transition-colors hover:border-brand-gold hover:text-brand-navy disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {refreshing ? "Refreshing..." : "Refresh"}
+          </button>
+        </div>
       </div>
+
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-100 bg-red-50 px-4 py-3 text-sm text-brand-red">
+          {error}
+        </div>
+      )}
 
       {loading ? (
         <div className="space-y-3">
@@ -114,9 +188,8 @@ export default function AdminQuotesPage() {
                   ""
                 );
                 return (
-                  <>
+                  <Fragment key={q.id}>
                     <tr
-                      key={q.id}
                       className="border-b border-gray-50 hover:bg-gray-50/60 transition-colors"
                     >
                       {/* Expand toggle */}
@@ -208,7 +281,6 @@ export default function AdminQuotesPage() {
                     {/* Expanded detail row */}
                     {isExpanded && (
                       <tr
-                        key={`${q.id}-detail`}
                         className="bg-blue-50/40 border-b border-blue-100"
                       >
                         <td />
@@ -250,6 +322,24 @@ export default function AdminQuotesPage() {
                                 mono
                               />
                               <InfoRow
+                                label="Submitted"
+                                value={
+                                  q.createdAt
+                                    ? new Date(q.createdAt).toLocaleString("en-IN", {
+                                        day: "numeric",
+                                        month: "short",
+                                        year: "numeric",
+                                        hour: "2-digit",
+                                        minute: "2-digit",
+                                      })
+                                    : undefined
+                                }
+                              />
+                              <InfoRow
+                                label="Status"
+                                value={STATUS_LABELS[q.status] ?? q.status}
+                              />
+                              <InfoRow
                                 label="Amount"
                                 value={
                                   q.totalAmount != null
@@ -262,7 +352,7 @@ export default function AdminQuotesPage() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </Fragment>
                 );
               })}
             </tbody>

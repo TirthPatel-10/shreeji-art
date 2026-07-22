@@ -79,9 +79,6 @@ export default function NewQuotePage() {
       } else {
         setErrorMsg("An unexpected error occurred. Please try again.");
       }
-      if (process.env.NODE_ENV === "development") {
-        console.error("[NewQuotePage] submission error:", err);
-      }
     }
   }
 
@@ -93,7 +90,7 @@ export default function NewQuotePage() {
           Quote Request Submitted!
         </h2>
         <p className="text-gray-500 text-sm mb-1">
-          We&apos;ll prepare your quote within 24 hours.
+          We&apos;ll review your request and follow up with the next steps.
         </p>
         <p className="text-gray-400 text-xs">Redirecting to My Quotes…</p>
       </div>
@@ -118,8 +115,7 @@ export default function NewQuotePage() {
         Request a Quote
       </h1>
       <p className="text-gray-500 text-sm mb-6">
-        Describe your requirements and we&apos;ll prepare a detailed proposal
-        within 24 hours.
+        Describe your requirements and we&apos;ll review your project details.
       </p>
 
       {/* Submitting as */}
@@ -197,7 +193,7 @@ export default function NewQuotePage() {
           {status === "loading" ? "Submitting…" : "Submit Quote Request"}
         </button>
         <p className="text-xs text-gray-400 text-center">
-          We respond within 24 hours on business days.
+          We&apos;ll review your request and follow up with the next steps.
         </p>
       </form>
     </div>

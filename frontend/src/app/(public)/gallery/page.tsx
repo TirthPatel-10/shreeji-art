@@ -1,61 +1,61 @@
 import type { Metadata } from "next";
 import { publicApi } from "@/lib/api";
 import type { GalleryItem } from "@/types";
-import { GALLERY_DATA, GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
+import { GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
-import GalleryClient from "./GalleryClient";
+import GalleryClient, { type GalleryStatus } from "./GalleryClient";
 
 export const metadata: Metadata = {
-  title: "Gallery | Shreeji Art — Signage & Branding Work",
+  title: "Our Work | Shreeji Art Gallery",
   description:
-    "Browse Shreeji Art's project gallery — stainless steel signs, acrylic lettering, ACP cladding, LED channel letters, 3D dimensional letters, retail branding, office signage, wayfinding systems, and custom fabrication in Ahmedabad.",
+    "Explore Shreeji Art's gallery of premium signage projects, including LED sign boards, acrylic signs, 3D letters, ACP signage, retail branding, and industrial signage.",
   openGraph: {
-    title: "Gallery | Shreeji Art — Premium Signage & Branding",
+    title: "Our Work | Shreeji Art Gallery",
     description:
-      "Explore signage examples across 12 categories, including commercial, retail, corporate, and industrial signage work in Gujarat.",
+      "Browse real signage and branding projects crafted by Shreeji Art for commercial, retail, corporate, and industrial spaces.",
     type: "website",
   },
 };
 
+type GalleryApiItem = GalleryItem & {
+  projectName?: string;
+  location?: string;
+  city?: string;
+  description?: string;
+};
+
+function mapGalleryItem(item: GalleryApiItem): DisplayGalleryItem {
+  const title = item.projectName || item.title || "Gallery item";
+  const location = item.location || item.city;
+
+  return {
+    id: String(item.id),
+    title,
+    category: item.category || "Signage",
+    image: item.imageUrl || GALLERY_FALLBACK_IMAGE,
+    alt: `${title} signage project${location ? ` in ${location}` : ""}`,
+    description: item.description,
+    location,
+    placeholder: false,
+  };
+}
+
 export default async function GalleryPage() {
   let items: DisplayGalleryItem[] = [];
-  let isLiveData = false;
+  let status: GalleryStatus = "empty";
 
   try {
     const res = await publicApi.getGallery();
-    const apiItems = res.success && Array.isArray(res.data)
-      ? (res.data as GalleryItem[])
-      : [];
+    const apiItems =
+      res.success && Array.isArray(res.data)
+        ? (res.data as GalleryApiItem[])
+        : [];
 
-    if (apiItems.length > 0) {
-      items = apiItems.map((item) => ({
-        id: String(item.id),
-        title: item.title || "Gallery item",
-        category: item.category || "Signage",
-        image: item.imageUrl || GALLERY_FALLBACK_IMAGE,
-        alt: item.title
-          ? `${item.title} signage project`
-          : "Signage gallery item",
-        placeholder: false,
-      }));
-      isLiveData = true;
-    }
+    items = apiItems.map(mapGalleryItem);
+    status = items.length > 0 ? "ready" : "empty";
   } catch {
-    // fall through to local data
+    status = "error";
   }
 
-  if (!isLiveData) {
-    items = GALLERY_DATA.map((item) => ({
-      id: item.id,
-      title: item.title,
-      category: item.category,
-      categorySlug: item.categorySlug,
-      image: item.image,
-      alt: item.alt,
-      description: item.description,
-      placeholder: item.placeholder,
-    }));
-  }
-
-  return <GalleryClient items={items} />;
+  return <GalleryClient items={items} status={status} />;
 }

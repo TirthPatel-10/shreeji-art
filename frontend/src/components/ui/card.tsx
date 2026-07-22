@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
-const cardVariants = cva("rounded-xl transition-all duration-200", {
+const cardVariants = cva("rounded-xl transition-all duration-200 ease-smooth motion-reduce:transition-none", {
   variants: {
     variant: {
       default:     "bg-white border border-gray-100 shadow-sa-sm",
@@ -11,11 +11,14 @@ const cardVariants = cva("rounded-xl transition-all duration-200", {
       bordered:    "bg-white border border-gray-200",
       ghost:       "bg-gray-50/80",
       glass:       "glass border border-white/20 shadow-sa-md",
+      premium:     "bg-white/[0.92] border border-white/70 shadow-sa-premium backdrop-blur-xl rounded-3xl",
+      soft:        "bg-sa-off-white border border-sa-border shadow-sa-xs",
+      "glass-dark":"glass-dark border border-white/15 shadow-sa-glass",
       navy:        "bg-brand-navy border border-white/10 text-white",
       gold:        "bg-gradient-to-br from-brand-gold to-brand-gold-dark text-white shadow-sa-md",
     },
     interactive: {
-      true:  "cursor-pointer hover:shadow-sa-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sa-sm",
+      true:  "cursor-pointer hover:shadow-sa-md hover:-translate-y-0.5 active:translate-y-0 active:shadow-sa-sm motion-reduce:transform-none",
       false: "",
     },
     padding: {

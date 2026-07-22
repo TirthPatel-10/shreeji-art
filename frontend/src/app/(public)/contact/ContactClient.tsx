@@ -1,276 +1,254 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Clock,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+} from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
+import { SITE_CONTACT } from "@/lib/contact";
 import ContactForm from "./ContactForm";
-import { MapPin, Phone, Mail, Clock, ArrowRight, MessageCircle } from "lucide-react";
 
-// ─── Contact info data ────────────────────────────────────────────────────────
-
-const INFO_ITEMS = [
+const CONTACT_ITEMS = [
   {
-    icon: MapPin,
-    label: "Our Location",
-    value: "Ahmedabad, Gujarat — 380001, India",
-    href: "https://maps.google.com/?q=Ahmedabad+Gujarat+India",
+    icon: MessageCircle,
+    label: "WhatsApp",
+    value: SITE_CONTACT.phone,
+    href: SITE_CONTACT.whatsappHref,
     external: true,
   },
   {
     icon: Phone,
-    label: "Call Us",
-    value: "+91 99999 99999",
-    href: "tel:+919999999999",
+    label: "Phone",
+    value: SITE_CONTACT.phone,
+    href: SITE_CONTACT.phoneHref,
     external: false,
-  },
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: "+91 99999 99999",
-    href: "https://wa.me/919999999999",
-    external: true,
   },
   {
     icon: Mail,
-    label: "Email Us",
-    value: "info@shreejiart.in",
-    href: "mailto:info@shreejiart.in",
+    label: "Email",
+    value: SITE_CONTACT.email,
+    href: SITE_CONTACT.emailHref,
     external: false,
+  },
+  {
+    icon: MapPin,
+    label: "Address",
+    value: SITE_CONTACT.address,
+    href: SITE_CONTACT.mapsHref,
+    external: true,
   },
   {
     icon: Clock,
     label: "Business Hours",
-    value: "Monday – Saturday: 9:00 AM – 7:00 PM",
-    subValue: "Sunday: Closed",
+    value: SITE_CONTACT.businessHours,
   },
 ] as const;
-
-// ─── ContactClient ────────────────────────────────────────────────────────────
 
 export default function ContactClient() {
   return (
     <>
       <Navbar />
 
-      {/* ── Hero ─────────────────────────────────────────────────────────────── */}
-      {/*
-        TODO: Replace the gradient hero with a real photo of a premium signage
-        installation (English only — e.g. an LED storefront, acrylic office sign,
-        or 3D letter installation). Place the image in /public/images/contact-hero.jpg
-        and swap the <div> below for:
-          <div className="relative h-[480px] ...">
-            <Image src="/images/contact-hero.jpg" alt="..." fill className="object-cover" />
-            <div className="absolute inset-0 bg-brand-navy/70" />
-            ... content ...
-          </div>
-      */}
-      <section className="relative overflow-hidden bg-brand-navy py-28 md:py-36">
-        {/* Background decoration */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden"
-        >
-          <div className="absolute -top-32 right-0 w-[600px] h-[600px] rounded-full bg-brand-gold/5 blur-3xl" />
-          <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-brand-gold/4 blur-3xl" />
-          {/* Dot grid */}
-          <svg
-            className="absolute inset-0 w-full h-full opacity-[0.03]"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <pattern
-                id="contact-hero-dots"
-                width="32"
-                height="32"
-                patternUnits="userSpaceOnUse"
-              >
-                <circle cx="1" cy="1" r="1" fill="#D4A017" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#contact-hero-dots)" />
-          </svg>
-          {/* Logo watermark — right side, desktop only */}
-          <div className="absolute right-[6%] top-1/2 -translate-y-1/2 hidden xl:block opacity-[0.12] pointer-events-none select-none">
+      <main className="bg-[#FAF8F2] text-[#121426]">
+        <section className="relative isolate min-h-[360px] overflow-hidden bg-[#121426] pt-24 text-white sm:min-h-[390px] lg:min-h-[420px]">
+          <div
+            className="absolute inset-0 -z-10 bg-[linear-gradient(115deg,#121426_0%,#121426_48%,#181B31_100%)]"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,rgba(217,165,20,0.12)_0_1px,transparent_1px_100%),linear-gradient(0deg,rgba(255,255,255,0.04)_0_1px,transparent_1px_100%)] bg-[size:96px_96px] opacity-20"
+            aria-hidden="true"
+          />
+
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden w-[46%] overflow-hidden md:block">
+            <div
+              className="absolute right-[-14%] top-1/2 h-72 w-72 -translate-y-1/2 rounded-full bg-[#D9A514]/20 blur-3xl lg:h-96 lg:w-96"
+              aria-hidden="true"
+            />
             <Image
               src="/shreeji-final-logo.png"
               alt=""
-              width={180}
-              height={180}
+              width={520}
+              height={520}
+              className="absolute right-[-16%] top-1/2 h-72 w-72 -translate-y-1/2 select-none rounded-full object-cover opacity-[0.14] lg:h-[30rem] lg:w-[30rem]"
               aria-hidden="true"
-              className="rounded-full object-cover"
             />
           </div>
-        </div>
 
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <AnimateIn from="bottom" duration={600}>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-sm font-medium tracking-wide mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-gold animate-pulse-subtle" />
-              Get In Touch
-            </span>
-          </AnimateIn>
-
-          <AnimateIn from="bottom" delay={80} duration={650}>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Contact{" "}
-              <span className="text-brand-gold">Shreeji Art</span>
-            </h1>
-          </AnimateIn>
-
-          <AnimateIn from="bottom" delay={160} duration={650}>
-            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-              Let&apos;s create premium signage that helps your business stand out.
-            </p>
-          </AnimateIn>
-        </div>
-      </section>
-
-      {/* ── Main: Info + Form ─────────────────────────────────────────────────── */}
-      <section className="bg-[#f7f8fb] py-16 md:py-24">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 xl:gap-12 items-start">
-
-            {/* Left — dark navy info card */}
-            <AnimateIn from="bottom" duration={600}>
-              <div className="bg-brand-navy rounded-3xl p-8 md:p-10 h-full">
-                <h2 className="font-display text-2xl font-bold text-white mb-2">
-                  Let&apos;s work together
-                </h2>
-                <p className="text-gray-400 text-sm leading-relaxed mb-8 max-w-sm">
-                  Have a project in mind? Reach out through any of the channels
-                  below — we respond within 24 hours on working days.
+          <div className="relative z-10 mx-auto grid min-h-[336px] max-w-7xl items-center px-4 py-12 sm:min-h-[366px] sm:px-6 md:grid-cols-[0.56fr_0.44fr] lg:min-h-[396px] lg:px-8">
+            <AnimateIn from="bottom" duration={550}>
+              <div className="max-w-2xl">
+                <span className="inline-flex rounded-full border border-[#D9A514]/35 bg-[#D9A514]/12 px-4 py-2 text-sm font-semibold text-[#D9A514]">
+                  Contact Shreeji Art
+                </span>
+                <h1 className="mt-5 font-display text-4xl font-semibold leading-tight tracking-tight text-white sm:text-5xl lg:text-6xl">
+                  Let&apos;s Discuss Your Signage Project.
+                </h1>
+                <p className="mt-5 max-w-2xl text-base leading-7 text-white/78 sm:text-lg">
+                  Tell us what you need, and our team will help with materials,
+                  lighting, fabrication, installation, and timelines.
                 </p>
-
-                {/* Info items */}
-                <ul className="space-y-6">
-                  {INFO_ITEMS.map((item) => {
-                    const Icon = item.icon;
-                    const inner = (
-                      <div className="flex items-start gap-4">
-                        <div className="w-10 h-10 rounded-xl bg-brand-gold/10 border border-brand-gold/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                          <Icon className="w-5 h-5 text-brand-gold" aria-hidden="true" />
-                        </div>
-                        <div>
-                          <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-widest mb-1">
-                            {item.label}
-                          </p>
-                          <p className="text-sm font-medium text-white leading-snug">
-                            {item.value}
-                          </p>
-                          {"subValue" in item && item.subValue && (
-                            <p className="text-sm text-gray-400 mt-0.5">
-                              {item.subValue}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    );
-
-                    if ("href" in item && item.href) {
-                      return (
-                        <li key={item.label}>
-                          <a
-                            href={item.href}
-                            target={item.external ? "_blank" : undefined}
-                            rel={item.external ? "noopener noreferrer" : undefined}
-                            className="block hover:opacity-75 transition-opacity duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold rounded-xl"
-                          >
-                            {inner}
-                          </a>
-                        </li>
-                      );
-                    }
-                    return <li key={item.label}>{inner}</li>;
-                  })}
-                </ul>
-
-                {/* Quick-action buttons */}
-                <div className="mt-10 pt-8 border-t border-white/10 flex flex-col sm:flex-row gap-3">
+                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                  <Link
+                    href="/quote"
+                    className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D9A514] px-6 py-3.5 text-base font-semibold text-[#121426] shadow-sm transition-colors duration-200 hover:bg-[#D9A514]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
+                  >
+                    Request a Free Quote
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
                   <a
-                    href="https://wa.me/919999999999"
+                    href={SITE_CONTACT.whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-[#25D366]/10 border border-[#25D366]/30 text-[#25D366] text-sm font-semibold hover:bg-[#25D366]/20 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] motion-reduce:transition-none"
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-white/24 bg-white/10 px-6 py-3.5 text-base font-semibold text-white transition-colors duration-200 hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
                   >
-                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
-                    Chat on WhatsApp
-                  </a>
-                  <a
-                    href="mailto:info@shreejiart.in"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-brand-gold/10 border border-brand-gold/30 text-brand-gold text-sm font-semibold hover:bg-brand-gold/20 transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
-                  >
-                    <Mail className="w-4 h-4" aria-hidden="true" />
-                    Send Email
+                    <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                    WhatsApp Us
                   </a>
                 </div>
               </div>
             </AnimateIn>
+          </div>
+        </section>
 
-            {/* Right — white form card */}
-            <AnimateIn from="bottom" delay={100} duration={600}>
-              <div className="bg-white rounded-3xl shadow-sa-xl border border-gray-100 p-8 md:p-10">
-                <h2 className="font-display text-2xl font-bold text-brand-navy mb-1">
-                  Send us a message
+        <section className="px-4 py-14 sm:px-6 lg:px-8 lg:py-18">
+          <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[0.35fr_0.65fr] lg:items-start">
+            <AnimateIn from="bottom" duration={520}>
+              <aside className="rounded-[1.75rem] bg-[#181B31] p-6 text-white shadow-[0_20px_60px_-36px_rgba(18,20,38,0.55)] sm:p-8">
+                <h2 className="font-display text-3xl font-semibold">
+                  Contact Details
                 </h2>
-                <p className="text-gray-500 text-sm mb-8">
-                  Fill out the form and we&apos;ll get back to you within 24 hours.
-                </p>
-                <ContactForm />
-              </div>
+                <div className="mt-7 space-y-4">
+                  {CONTACT_ITEMS.map((item) => {
+                    const Icon = item.icon;
+                    const content = (
+                      <span className="flex gap-4">
+                        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#D9A514]/12 text-[#D9A514]">
+                          <Icon className="h-5 w-5" aria-hidden="true" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className="block text-sm font-semibold text-white">
+                            {item.label}
+                          </span>
+                          <span className="mt-1 block break-words text-base leading-6 text-white/76">
+                            {item.value}
+                          </span>
+                        </span>
+                      </span>
+                    );
+
+                    if ("href" in item && item.href) {
+                      return (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          target={item.external ? "_blank" : undefined}
+                          rel={item.external ? "noopener noreferrer" : undefined}
+                          className="block rounded-2xl p-2 -m-2 transition-colors duration-200 hover:bg-white/[0.04] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#181B31] motion-reduce:transition-none"
+                        >
+                          {content}
+                        </a>
+                      );
+                    }
+
+                    return <div key={item.label}>{content}</div>;
+                  })}
+                </div>
+              </aside>
             </AnimateIn>
 
+            <AnimateIn from="bottom" delay={80} duration={520}>
+              <section className="rounded-[1.75rem] border border-[#E5E7EB] bg-white p-6 shadow-[0_24px_70px_-46px_rgba(18,20,38,0.42)] sm:p-8 lg:p-10">
+                <div className="mb-8">
+                  <h2 className="font-display text-3xl font-semibold tracking-tight text-[#121426] sm:text-4xl">
+                    Tell Us About Your Project
+                  </h2>
+                  <p className="mt-3 max-w-2xl text-base leading-7 text-[#667085]">
+                    Share a few details and our team will get back to you.
+                  </p>
+                </div>
+                <ContactForm />
+              </section>
+            </AnimateIn>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── Google Map ───────────────────────────────────────────────────────── */}
-      {/*
-        Replace the embed src with your exact business address embed URL.
-        Get it from: Google Maps → search your address → Share → Embed a map → copy src.
-        Current placeholder shows Ahmedabad, Gujarat.
-      */}
-      <div className="w-full h-80 md:h-[420px] bg-gray-100">
-        <iframe
-          title="Shreeji Art — Ahmedabad, Gujarat"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d235013.9644009797!2d72.43773985!3d23.020673799999994!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x395e848aba5bd449%3A0x4fcedd11614f6516!2sAhmedabad%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1705000000000!5m2!1sen!2sin"
-          width="100%"
-          height="100%"
-          style={{ border: 0, display: "block" }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-        />
-      </div>
+        <section className="px-4 pb-14 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-7xl overflow-hidden rounded-[1.75rem] border border-[#E5E7EB] bg-white shadow-[0_18px_55px_-42px_rgba(18,20,38,0.5)]">
+            <div className="grid lg:grid-cols-[0.42fr_0.58fr]">
+              <div className="p-6 sm:p-8 lg:p-10">
+                <h2 className="font-display text-3xl font-semibold text-[#121426]">
+                  Based in Ahmedabad
+                </h2>
+                <p className="mt-3 text-base leading-7 text-[#667085]">
+                  We serve commercial signage, branding, fabrication, and
+                  installation projects across Ahmedabad and Gujarat.
+                </p>
+                <a
+                  href={SITE_CONTACT.mapsHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-5 py-3 text-base font-semibold text-[#121426] transition-colors duration-200 hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 motion-reduce:transition-none"
+                >
+                  Open in Google Maps
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </a>
+              </div>
+              <div className="h-72 bg-[#FAF8F2] lg:h-[340px]">
+                <iframe
+                  title="Shreeji Art - Ahmedabad, Gujarat"
+                  src={SITE_CONTACT.mapsEmbedSrc}
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, display: "block" }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────────────── */}
-      <section className="bg-brand-navy py-20 md:py-24">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <AnimateIn from="bottom" duration={600}>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-              Ready to transform your business signage?
-            </h2>
-          </AnimateIn>
-          <AnimateIn from="bottom" delay={80} duration={600}>
-            <p className="text-gray-300 text-lg mb-8 max-w-xl mx-auto leading-relaxed">
-              Get a detailed quote tailored to your project — expert advice and
-              transparent pricing, no obligation.
-            </p>
-          </AnimateIn>
-          <AnimateIn from="bottom" delay={160} duration={600}>
-            <Link
-              href="/quote"
-              className="inline-flex items-center justify-center gap-2 px-10 py-4 rounded-full bg-brand-gold text-white font-semibold text-base hover:bg-brand-gold/90 active:scale-[0.98] transition-all duration-200 shadow-lg shadow-brand-gold/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
-            >
-              Request a Free Quote
-              <ArrowRight className="w-4 h-4" aria-hidden="true" />
-            </Link>
-          </AnimateIn>
-        </div>
-      </section>
+        <section className="px-4 pb-14 sm:px-6 lg:px-8">
+          <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-6 rounded-[1.75rem] bg-[#121426] px-6 py-8 text-white sm:px-8 lg:flex-row lg:items-center lg:px-10">
+            <div className="max-w-2xl">
+              <h2 className="font-display text-3xl font-semibold tracking-tight sm:text-4xl">
+                Ready to Make Your Brand More Visible?
+              </h2>
+              <p className="mt-3 text-base leading-7 text-white/72">
+                Speak with our team about your signage requirements.
+              </p>
+            </div>
+            <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+              <Link
+                href="/quote"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D9A514] px-6 py-3.5 text-base font-semibold text-[#121426] transition-colors duration-200 hover:bg-[#D9A514]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
+              >
+                Get a Free Quote
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+              <a
+                href={SITE_CONTACT.phoneHref}
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3.5 text-base font-semibold text-white transition-colors duration-200 hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
+              >
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                Call Now
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
 
-      <Footer />
+      <Footer compact />
     </>
   );
 }

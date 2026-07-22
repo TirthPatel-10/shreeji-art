@@ -6,6 +6,34 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import { authApi } from "@/lib/api";
+import type { AuthResponse } from "@/types";
+
+function isValidAuthResponse(data: AuthResponse | null): data is AuthResponse {
+  return Boolean(
+    data?.token &&
+      data.user &&
+      (data.user.role === "ROLE_ADMIN" || data.user.role === "ROLE_CUSTOMER")
+  );
+}
+
+function getSafeCustomerRedirect(from: string | null) {
+  if (
+    from &&
+    ["/dashboard", "/quotes", "/projects", "/profile", "/quote"].some(
+      (path) => from === path || from.startsWith(`${path}/`)
+    )
+  ) {
+    return from;
+  }
+
+  return "/dashboard";
+}
+
+function getSafeAdminRedirect(from: string | null) {
+  return from && from.startsWith("/admin") && from !== "/admin/login"
+    ? from
+    : "/admin/dashboard";
+}
 
 export default function LoginForm() {
   const { login } = useAuth();
@@ -21,20 +49,20 @@ export default function LoginForm() {
     setLoading(true);
     try {
       const res = await authApi.login({ email, password });
-      if (res.success && res.data) {
+      if (res.success && isValidAuthResponse(res.data)) {
         login(res.data.token, res.data.user);
         const params = new URLSearchParams(window.location.search);
         const from = params.get("from");
         if (res.data.user.role === "ROLE_ADMIN") {
-          router.replace(from ?? "/admin/dashboard");
+          router.replace(getSafeAdminRedirect(from));
         } else {
-          router.replace(from ?? "/dashboard");
+          router.replace(getSafeCustomerRedirect(from));
         }
       } else {
-        setError(res.message || "Invalid email or password.");
+        setError(res.message || "Invalid login response. Please try again.");
       }
-    } catch {
-      setError("Connection error. Please try again.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Connection error. Please try again.");
     } finally {
       setLoading(false);
     }

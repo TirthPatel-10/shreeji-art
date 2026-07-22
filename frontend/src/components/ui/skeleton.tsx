@@ -15,7 +15,7 @@ export function Skeleton({ className, variant = "rect", lines, ...props }: Skele
           <div
             key={i}
             className={cn(
-              "h-4 rounded-md animate-shimmer",
+              "sa-skeleton h-4 rounded-md",
               i === lines - 1 ? "w-3/4" : "w-full",
               className
             )}
@@ -28,7 +28,7 @@ export function Skeleton({ className, variant = "rect", lines, ...props }: Skele
   return (
     <div
       className={cn(
-        "animate-shimmer",
+        "sa-skeleton",
         variant === "circle" && "rounded-full",
         variant === "text"   && "h-4 rounded-md",
         (variant === "rect" || variant === "avatar") && "rounded-xl",
@@ -43,7 +43,7 @@ export function Skeleton({ className, variant = "rect", lines, ...props }: Skele
 // Pre-built skeleton patterns
 export function SkeletonCard() {
   return (
-    <div className="bg-white rounded-xl border border-gray-100 shadow-sa-xs p-5 space-y-3">
+    <div className="space-y-3 rounded-2xl border border-sa-border bg-white p-5 shadow-sa-xs">
       <div className="flex items-center gap-3">
         <Skeleton variant="circle" className="h-10 w-10 shrink-0" />
         <div className="flex-1 space-y-2">

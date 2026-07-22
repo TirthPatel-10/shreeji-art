@@ -12,10 +12,10 @@ export const metadata: Metadata = {
 export default async function ServicesPage() {
   let services: Service[] = [];
   try {
-    const res = await publicApi.getServices();
-    services = (res.data as Service[]) ?? [];
+    const servicesRes = await publicApi.getServices();
+    services = (servicesRes.data as Service[]) ?? [];
   } catch {
-    /* ServicesClient uses rich static fallback */
+    /* ServicesClient uses static service details as a visual fallback */
   }
   return <ServicesClient services={services} />;
 }

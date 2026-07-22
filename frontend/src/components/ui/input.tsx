@@ -6,21 +6,21 @@ import { cva, type VariantProps } from "class-variance-authority";
 
 const inputVariants = cva(
   [
-    "flex w-full bg-white text-gray-900 placeholder:text-gray-400",
-    "border rounded-lg transition-all duration-150",
+    "flex w-full bg-white text-sa-text placeholder:text-sa-faint shadow-sa-xs",
+    "border rounded-xl transition-all duration-200 ease-smooth motion-reduce:transition-none",
     "focus:outline-none focus:ring-2 focus:ring-brand-gold/20 focus:border-brand-gold",
-    "disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-400 disabled:border-gray-100",
-    "read-only:bg-gray-50 read-only:cursor-default",
+    "disabled:cursor-not-allowed disabled:bg-sa-surface disabled:text-sa-muted disabled:border-sa-border",
+    "read-only:bg-sa-surface read-only:cursor-default",
   ].join(" "),
   {
     variants: {
       state: {
-        default: "border-gray-200 hover:border-gray-300",
+        default: "border-sa-border hover:border-sa-border-strong",
         error:   "border-red-300 bg-red-50/30 hover:border-red-400 focus:ring-red-100 focus:border-red-500",
         success: "border-green-300 hover:border-green-400 focus:ring-green-100 focus:border-green-500",
       },
       inputSize: {
-        sm: "h-8  px-3   py-1.5 text-xs rounded-md",
+        sm: "h-8  px-3   py-1.5 text-xs rounded-lg",
         md: "h-10 px-3.5 py-2.5 text-sm",
         lg: "h-11 px-4   py-3   text-base",
       },
@@ -75,7 +75,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className={cn("w-full", wrapperClassName)}>
         {label && (
-          <label htmlFor={inputId} className="block text-sm font-medium text-gray-700 mb-1.5">
+          <label htmlFor={inputId} className="mb-1.5 block text-sm font-medium text-sa-text">
             {label}
             {required && <span className="ml-0.5 text-brand-red">*</span>}
           </label>

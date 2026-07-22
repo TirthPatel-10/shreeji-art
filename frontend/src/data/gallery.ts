@@ -17,6 +17,7 @@ export interface DisplayGalleryItem {
   image: string;
   alt?: string;
   description?: string;
+  location?: string;
   placeholder?: boolean;
 }
 

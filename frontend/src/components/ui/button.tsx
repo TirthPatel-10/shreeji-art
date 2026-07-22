@@ -8,7 +8,7 @@ import { Spinner } from "./spinner";
 const buttonVariants = cva(
   [
     "inline-flex items-center justify-center gap-2 font-medium whitespace-nowrap select-none",
-    "transition-all duration-150 ease-quick",
+    "transition-all duration-200 ease-smooth motion-reduce:transition-none motion-reduce:transform-none",
     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2",
     "disabled:pointer-events-none disabled:opacity-40",
     "active:scale-[0.97]",
@@ -17,19 +17,23 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-brand-gold text-white shadow-sa-sm hover:bg-brand-gold-dark active:shadow-none",
+          "bg-brand-gold text-white shadow-sa-sm hover:-translate-y-0.5 hover:bg-brand-gold-dark hover:shadow-sa-gold active:translate-y-0 active:shadow-none",
         secondary:
-          "bg-white text-gray-800 border border-gray-200 shadow-sa-xs hover:bg-gray-50 hover:border-gray-300",
+          "bg-white text-sa-text border border-sa-border shadow-sa-xs hover:-translate-y-0.5 hover:bg-sa-surface hover:border-sa-border-strong hover:shadow-sa-sm active:translate-y-0",
         ghost:
-          "text-gray-500 hover:bg-gray-100 hover:text-gray-800",
+          "text-sa-muted hover:bg-sa-surface hover:text-sa-text",
         danger:
           "bg-red-500 text-white shadow-sa-sm hover:bg-red-600 active:shadow-none",
         outline:
-          "border border-brand-gold text-brand-gold bg-transparent hover:bg-brand-gold/5",
+          "border border-brand-gold/50 text-brand-gold bg-transparent hover:-translate-y-0.5 hover:border-brand-gold hover:bg-brand-gold/10 active:translate-y-0",
         navy:
-          "bg-brand-navy text-white shadow-sa-sm hover:bg-brand-navy-light active:shadow-none",
+          "bg-brand-navy text-white shadow-sa-sm hover:-translate-y-0.5 hover:bg-brand-navy-light hover:shadow-sa-md active:translate-y-0 active:shadow-none",
         subtle:
-          "bg-brand-gold/10 text-brand-gold-dark hover:bg-brand-gold/15",
+          "bg-brand-gold/10 text-brand-gold-dark hover:bg-brand-gold/15 hover:text-brand-gold-dark",
+        premium:
+          "bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold text-brand-navy shadow-sa-sm hover:-translate-y-0.5 hover:shadow-sa-gold active:translate-y-0 active:shadow-none",
+        glass:
+          "border border-white/20 bg-white/10 text-white shadow-sa-glass backdrop-blur-xl hover:-translate-y-0.5 hover:bg-white/15 active:translate-y-0",
         link:
           "text-brand-gold underline-offset-4 hover:underline p-0 h-auto shadow-none active:scale-100",
       },

@@ -1,62 +1,66 @@
 "use client";
 
-import React, {
-  useState,
-  useEffect,
+import {
   useCallback,
+  useEffect,
   useMemo,
   useRef,
+  useState,
+  type KeyboardEvent,
 } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Camera,
+  ImageOff,
+  MapPin,
+  Maximize2,
+  RefreshCw,
+  X,
+} from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
 import { GALLERY_CATEGORIES, GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
 
-// ─── Props ────────────────────────────────────────────────────────────────────
+export type GalleryStatus = "loading" | "ready" | "empty" | "error";
 
 interface Props {
   items: DisplayGalleryItem[];
+  status: GalleryStatus;
 }
 
-// ─── GalleryImage ─────────────────────────────────────────────────────────────
+interface GalleryImageProps {
+  src: string;
+  alt: string;
+  sizes: string;
+  priority?: boolean;
+  className?: string;
+}
 
 function GalleryImage({
   src,
   alt,
   sizes,
   priority,
-}: {
-  src: string;
-  alt: string;
-  sizes?: string;
-  priority?: boolean;
-}) {
-  const [currentSrc, setCurrentSrc] = useState(src);
-  const [errored, setErrored] = useState(false);
+  className = "",
+}: GalleryImageProps) {
+  const [currentSrc, setCurrentSrc] = useState(src || GALLERY_FALLBACK_IMAGE);
+  const [hasError, setHasError] = useState(false);
 
   useEffect(() => {
     setCurrentSrc(src || GALLERY_FALLBACK_IMAGE);
-    setErrored(false);
+    setHasError(false);
   }, [src]);
 
-  if (errored) {
+  if (hasError) {
     return (
-      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1c1c2e] to-[#2a2a3e]">
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 64 64"
-          className="w-12 h-12 text-[#4b5563]"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-        >
-          <rect x="8" y="16" width="48" height="36" rx="4" />
-          <circle cx="32" cy="34" r="10" />
-          <circle cx="32" cy="34" r="6" />
-          <rect x="22" y="10" width="20" height="8" rx="4" />
-        </svg>
+      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-brand-navy to-brand-deep">
+        <ImageOff className="h-10 w-10 text-white/35" aria-hidden="true" />
       </div>
     );
   }
@@ -66,86 +70,158 @@ function GalleryImage({
       src={currentSrc}
       alt={alt}
       fill
-      sizes={sizes ?? "(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"}
-      className="object-cover motion-reduce:transition-none motion-reduce:transform-none"
-      unoptimized={currentSrc.endsWith(".svg")}
+      sizes={sizes}
       priority={priority}
+      className={`object-cover ${className}`}
+      unoptimized={currentSrc.endsWith(".svg")}
       onError={() => {
         if (currentSrc !== GALLERY_FALLBACK_IMAGE) {
           setCurrentSrc(GALLERY_FALLBACK_IMAGE);
           return;
         }
-        setErrored(true);
+
+        setHasError(true);
       }}
     />
   );
 }
 
-// ─── Lightbox ─────────────────────────────────────────────────────────────────
+function GallerySkeletonGrid() {
+  return (
+    <div
+      className="columns-1 gap-5 sm:columns-2 lg:columns-3"
+      aria-label="Loading gallery items"
+    >
+      {Array.from({ length: 9 }, (_, index) => (
+        <div
+          key={index}
+          className={`mb-5 break-inside-avoid overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.06] ${
+            index % 3 === 1 ? "h-80" : index % 3 === 2 ? "h-64" : "h-96"
+          }`}
+        >
+          <div className="h-full w-full animate-pulse bg-gradient-to-br from-white/[0.10] via-white/[0.04] to-brand-gold/[0.08]" />
+        </div>
+      ))}
+    </div>
+  );
+}
 
-interface LightboxProps {
+function GalleryState({
+  type,
+  activeCategory,
+  onReset,
+  onRetry,
+}: {
+  type: "empty" | "filter-empty" | "error";
+  activeCategory?: string;
+  onReset?: () => void;
+  onRetry?: () => void;
+}) {
+  const copy = {
+    empty: {
+      title: "Gallery coming soon",
+      body: "Project photos will appear here once they are published from the gallery manager.",
+      icon: Camera,
+      action: "Contact us",
+    },
+    "filter-empty": {
+      title: `No work found${activeCategory ? ` in ${activeCategory}` : ""}`,
+      body: "Try another category or view the complete gallery.",
+      icon: ImageOff,
+      action: "View all work",
+    },
+    error: {
+      title: "Gallery could not load",
+      body: "The gallery API did not respond. Retry the request or check the server connection.",
+      icon: RefreshCw,
+      action: "Retry",
+    },
+  }[type];
+
+  const Icon = copy.icon;
+
+  return (
+    <div className="mx-auto flex max-w-xl flex-col items-center rounded-[2rem] border border-white/10 bg-white/[0.06] px-6 py-14 text-center shadow-sa-lg backdrop-blur-xl">
+      <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-brand-gold/25 bg-brand-gold/10 text-brand-gold">
+        <Icon className="h-7 w-7" aria-hidden="true" />
+      </span>
+      <h2 className="font-display text-2xl font-semibold text-white">
+        {copy.title}
+      </h2>
+      <p className="mt-3 max-w-md text-sm leading-6 text-white/65">
+        {copy.body}
+      </p>
+      {type === "empty" ? (
+        <Link
+          href="/contact"
+          className="mt-7 inline-flex items-center justify-center rounded-full bg-brand-gold px-6 py-3 text-sm font-semibold text-brand-navy shadow-sa-md transition-all duration-200 hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transition-none"
+        >
+          {copy.action}
+        </Link>
+      ) : (
+        <button
+          type="button"
+          onClick={type === "error" ? onRetry : onReset}
+          className="mt-7 inline-flex items-center justify-center rounded-full bg-brand-gold px-6 py-3 text-sm font-semibold text-brand-navy shadow-sa-md transition-all duration-200 hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transition-none"
+        >
+          {copy.action}
+        </button>
+      )}
+    </div>
+  );
+}
+
+function getItemMeta(item: DisplayGalleryItem) {
+  return [item.category, item.location].filter(Boolean).join(" • ");
+}
+
+function Lightbox({
+  items,
+  activeIndex,
+  onClose,
+  onNavigate,
+}: {
   items: DisplayGalleryItem[];
   activeIndex: number;
   onClose: () => void;
   onNavigate: (index: number) => void;
-}
-
-function Lightbox({ items, activeIndex, onClose, onNavigate }: LightboxProps) {
-  const closeBtnRef = useRef<HTMLButtonElement>(null);
+}) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const item = items[activeIndex];
   const total = items.length;
 
-  const prev = useCallback(
-    () => onNavigate((activeIndex - 1 + total) % total),
-    [activeIndex, total, onNavigate]
-  );
-  const next = useCallback(
-    () => onNavigate((activeIndex + 1) % total),
-    [activeIndex, total, onNavigate]
-  );
+  const previous = useCallback(() => {
+    onNavigate((activeIndex - 1 + total) % total);
+  }, [activeIndex, onNavigate, total]);
 
-  // Focus close button on open
+  const next = useCallback(() => {
+    onNavigate((activeIndex + 1) % total);
+  }, [activeIndex, onNavigate, total]);
+
   useEffect(() => {
-    closeBtnRef.current?.focus();
+    closeButtonRef.current?.focus();
   }, []);
 
-  // Lock body scroll
   useEffect(() => {
-    const prev = document.body.style.overflow;
+    const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = previousOverflow;
     };
   }, []);
 
-  // Keyboard navigation
   useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
-      if (e.key === "Tab") {
-        const focusable = panelRef.current?.querySelectorAll<HTMLElement>(
-          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-        );
-        if (!focusable || focusable.length === 0) return;
-
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-
-        if (e.shiftKey && document.activeElement === first) {
-          e.preventDefault();
-          last.focus();
-        } else if (!e.shiftKey && document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
-      }
+    function onKeyDown(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") onClose();
+      if (event.key === "ArrowLeft") previous();
+      if (event.key === "ArrowRight") next();
     }
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [onClose, prev, next]);
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [next, onClose, previous]);
 
   if (!item) return null;
 
@@ -154,188 +230,133 @@ function Lightbox({ items, activeIndex, onClose, onNavigate }: LightboxProps) {
       role="dialog"
       aria-modal="true"
       aria-labelledby="gallery-lightbox-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6"
     >
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/92 backdrop-blur-sm"
-        aria-hidden="true"
+      <button
+        type="button"
+        aria-label="Close gallery preview"
+        className="absolute inset-0 cursor-default bg-black/85 backdrop-blur-xl"
         onClick={onClose}
       />
 
-      {/* Content panel */}
-      <div ref={panelRef} className="relative z-10 w-full max-w-4xl flex flex-col items-center">
-        {/* Close */}
-        <button
-          ref={closeBtnRef}
-          type="button"
-          onClick={onClose}
-          aria-label="Close lightbox"
-          className="absolute -top-12 right-0 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-        >
-          <svg aria-hidden="true" viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2}>
-            <path d="M18 6 6 18M6 6l12 12"/>
-          </svg>
-        </button>
+      <div
+        ref={panelRef}
+        className="relative z-10 grid w-full max-w-6xl gap-4 outline-none"
+      >
+        <div className="flex items-center justify-between gap-3 text-white">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-gold">
+              {item.category}
+            </p>
+            <h2
+              id="gallery-lightbox-title"
+              className="mt-1 font-display text-2xl font-semibold"
+            >
+              {item.title}
+            </h2>
+          </div>
+          <button
+            ref={closeButtonRef}
+            type="button"
+            aria-label="Close gallery preview"
+            onClick={onClose}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        </div>
 
-        {/* Image container */}
-        <div className="relative w-full aspect-[4/3] max-h-[65vh] rounded-xl overflow-hidden bg-[#1c1c2e] shadow-2xl">
-          <GalleryImage
-            src={item.image}
-            alt={item.alt ?? item.title}
-            sizes="(max-width: 768px) 95vw, 900px"
-            priority={activeIndex === 0}
-          />
+        <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-brand-navy shadow-2xl">
+          <div className="relative h-[68vh] min-h-[340px] w-full">
+            <GalleryImage
+              src={item.image}
+              alt={item.alt ?? item.title}
+              sizes="(max-width: 768px) 95vw, 1100px"
+              priority
+            />
+          </div>
 
-          {/* Prev button */}
-          {total > 1 && (
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5 text-white sm:p-7">
+            {item.location ? (
+              <p className="mb-2 inline-flex items-center gap-2 text-sm text-white/75">
+                <MapPin className="h-4 w-4 text-brand-gold" aria-hidden="true" />
+                {item.location}
+              </p>
+            ) : null}
+            {item.description ? (
+              <p className="max-w-3xl text-sm leading-6 text-white/70">
+                {item.description}
+              </p>
+            ) : null}
+          </div>
+        </div>
+
+        {total > 1 ? (
+          <div className="flex items-center justify-between gap-3">
             <button
               type="button"
-              onClick={prev}
-              aria-label="Previous image"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+              onClick={previous}
+              aria-label="Previous gallery image"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
             >
-              <svg aria-hidden="true" viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                <path d="M15 18 9 12l6-6"/>
-              </svg>
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Previous
             </button>
-          )}
-
-          {/* Next button */}
-          {total > 1 && (
+            <p className="text-sm text-white/55">
+              {activeIndex + 1} / {total}
+            </p>
             <button
               type="button"
               onClick={next}
-              aria-label="Next image"
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/70 text-white flex items-center justify-center transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+              aria-label="Next gallery image"
+              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
             >
-              <svg aria-hidden="true" viewBox="0 0 24 24" className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                <path d="M9 18 15 12 9 6"/>
-              </svg>
+              Next
+              <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </button>
-          )}
-        </div>
-
-        {/* Caption */}
-        <div className="mt-4 text-center px-4">
-          <p id="gallery-lightbox-title" className="text-white font-semibold text-base">{item.title}</p>
-          {item.description && (
-            <p className="text-gray-400 text-sm mt-1 max-w-xl">{item.description}</p>
-          )}
-          <p className="text-brand-gold text-xs font-medium mt-1.5 uppercase tracking-widest">
-            {item.category}
-          </p>
-        </div>
-
-        {/* Dot indicators */}
-        {total > 1 && (
-          <div className="flex gap-1.5 mt-4" role="group" aria-label="Image navigation">
-            {items.map((navItem, i) => (
-              <button
-                key={navItem.id}
-                type="button"
-                aria-label={`Go to image ${i + 1}`}
-                aria-current={i === activeIndex ? "true" : undefined}
-                onClick={() => onNavigate(i)}
-                className={`h-6 rounded-full transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none ${
-                  i === activeIndex
-                    ? "bg-brand-gold w-8"
-                    : "bg-white/30 hover:bg-white/50 w-6"
-                }`}
-              />
-            ))}
           </div>
-        )}
-
-        {/* Counter */}
-        {total > 1 && (
-          <p className="text-gray-500 text-xs mt-2">
-            {activeIndex + 1} / {total}
-          </p>
-        )}
+        ) : null}
       </div>
     </div>
   );
 }
 
-// ─── Hero Stats ───────────────────────────────────────────────────────────────
-
-const HERO_STATS = [
-  { value: "12", label: "Signage Categories" },
-  { value: "24", label: "Sample Previews" },
-  { value: "API", label: "Live Gallery Ready" },
-];
-
-// ─── Empty State ──────────────────────────────────────────────────────────────
-
-function EmptyState({
-  category,
-  onReset,
-}: {
-  category: string;
-  onReset: () => void;
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center py-24 text-center">
-      <div className="w-16 h-16 rounded-full bg-sa-surface flex items-center justify-center mb-4">
-        <svg
-          aria-hidden="true"
-          viewBox="0 0 24 24"
-          className="w-7 h-7 text-sa-faint"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={1.5}
-        >
-          <rect x="3" y="3" width="18" height="18" rx="3"/>
-          <path d="M3 9h18M9 21V9"/>
-        </svg>
-      </div>
-      <h3 className="text-sa-text font-semibold text-lg mb-1">
-        No items in &ldquo;{category}&rdquo;
-      </h3>
-      <p className="text-sa-muted text-sm mb-6 max-w-xs">
-        {category
-          ? "This category has no gallery items yet. Browse all categories or check back soon."
-          : "No gallery items found."}
-      </p>
-      <button
-        type="button"
-        onClick={onReset}
-        className="px-5 py-2 rounded-full bg-brand-gold text-white text-sm font-medium hover:bg-brand-gold/90 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
-      >
-        View All
-      </button>
-    </div>
-  );
-}
-
-// ─── GalleryClient ────────────────────────────────────────────────────────────
-
-export default function GalleryClient({ items }: Props) {
+export default function GalleryClient({ items, status }: Props) {
+  const router = useRouter();
   const [activeCategory, setActiveCategory] = useState("");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const lastFocusedElementRef = useRef<HTMLElement | null>(null);
 
-  // Close lightbox when category changes
-  useEffect(() => {
-    setLightboxIndex(null);
-  }, [activeCategory]);
-
-  // Visible categories derived from actual items (preserving defined order)
   const visibleCategories = useMemo(() => {
-    const present = new Set(items.map((i) => i.category));
-    return GALLERY_CATEGORIES.filter(
-      (c) => c.value === "" || present.has(c.value)
+    const present = new Set(items.map((item) => item.category));
+    const preserved = GALLERY_CATEGORIES.filter(
+      (category) => category.value === "" || present.has(category.value)
     );
+    const knownValues = new Set<string>(
+      GALLERY_CATEGORIES.map((category) => category.value)
+    );
+    const liveOnlyCategories = Array.from(present)
+      .filter((category) => category && !knownValues.has(category))
+      .map((category) => ({ label: category, value: category }));
+
+    if (items.length === 0) {
+      return GALLERY_CATEGORIES;
+    }
+
+    return [...preserved, ...liveOnlyCategories];
   }, [items]);
 
   const filteredItems = useMemo(
     () =>
       activeCategory
-        ? items.filter((i) => i.category === activeCategory)
+        ? items.filter((item) => item.category === activeCategory)
         : items,
-    [items, activeCategory]
+    [activeCategory, items]
   );
+
+  useEffect(() => {
+    setLightboxIndex(null);
+  }, [activeCategory]);
 
   const openLightbox = useCallback((index: number) => {
     lastFocusedElementRef.current =
@@ -353,320 +374,186 @@ export default function GalleryClient({ items }: Props) {
     });
   }, []);
 
-  const navigateLightbox = useCallback((index: number) => {
-    setLightboxIndex(index);
-  }, []);
+  const onGridKeyDown = (
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number
+  ) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openLightbox(index);
+    }
+  };
 
   return (
     <>
       <Navbar />
-      <main>
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <section className="relative overflow-hidden bg-brand-navy py-24 md:py-32">
-        {/* Background decoration */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 overflow-hidden"
-        >
-          <div className="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-brand-gold/5 blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-80 h-80 rounded-full bg-brand-gold/4 blur-3xl" />
-          {/* Dot grid */}
-          <svg
-            className="absolute inset-0 w-full h-full opacity-[0.03]"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <defs>
-              <pattern id="g-dots" width="32" height="32" patternUnits="userSpaceOnUse">
-                <circle cx="1" cy="1" r="1" fill="#D4A017" />
-              </pattern>
-            </defs>
-            <rect width="100%" height="100%" fill="url(#g-dots)" />
-          </svg>
-        </div>
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-8 text-center">
-          <AnimateIn from="bottom" duration={600}>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-gold/10 border border-brand-gold/20 text-brand-gold text-sm font-medium tracking-wide mb-6">
-              <span className="w-1.5 h-1.5 rounded-full bg-brand-gold animate-pulse-subtle" />
-              Our Work
-            </span>
-          </AnimateIn>
-
-          <AnimateIn from="bottom" delay={80} duration={650}>
-            <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold text-white leading-tight mb-6">
-              Signage that{" "}
-              <span className="text-brand-gold">Speaks</span> for You
-            </h1>
-          </AnimateIn>
-
-          <AnimateIn from="bottom" delay={160} duration={650}>
-            <p className="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed mb-10">
-              Browse our project gallery - 12 categories of premium signage
-              crafted for businesses across Gujarat.
-            </p>
-          </AnimateIn>
-
-          {/* Stats */}
-          <AnimateIn from="bottom" delay={240} duration={650}>
-            <div className="flex flex-wrap justify-center gap-8 md:gap-16">
-              {HERO_STATS.map((s) => (
-                <div key={s.label} className="text-center">
-                  <p className="text-3xl font-display font-bold text-brand-gold">
-                    {s.value}
-                  </p>
-                  <p className="text-gray-400 text-sm mt-0.5">{s.label}</p>
-                </div>
-              ))}
-            </div>
-          </AnimateIn>
-        </div>
-      </section>
-
-      {/* ── Category Filters ─────────────────────────────────────────────────── */}
-      <section className="sticky top-16 z-20 bg-white/95 backdrop-blur-sm border-b border-gray-100 shadow-sa-xs">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-4">
-          {/* Horizontally scrollable on mobile, wrapping on desktop */}
-          <div className="overflow-x-auto pb-1 -mb-1 scrollbar-none">
-            <div className="flex gap-2 min-w-max md:min-w-0 md:flex-wrap md:justify-center">
-              {visibleCategories.map((cat) => (
-                <button
-                  key={cat.value}
-                  type="button"
-                  aria-pressed={activeCategory === cat.value}
-                  onClick={() => setActiveCategory(cat.value)}
-                  className={[
-                    "px-4 py-2.5 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-1 motion-reduce:transition-none",
-                    activeCategory === cat.value
-                      ? "bg-brand-gold text-white shadow-sa-sm"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-800",
-                  ].join(" ")}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Gallery Grid ──────────────────────────────────────────────────────── */}
-      <section className="max-w-7xl mx-auto px-6 lg:px-8 py-12 md:py-16">
-        {items.length === 0 ? (
-          // No items at all
-          <div className="flex flex-col items-center justify-center py-32 text-center">
-            <div className="w-20 h-20 rounded-full bg-sa-surface flex items-center justify-center mb-6">
-              <svg
-                aria-hidden="true"
-                viewBox="0 0 64 64"
-                className="w-10 h-10 text-sa-faint"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={1.5}
-              >
-                <rect x="8" y="16" width="48" height="36" rx="4" />
-                <circle cx="32" cy="34" r="10" />
-                <circle cx="32" cy="34" r="6" />
-                <rect x="22" y="10" width="20" height="8" rx="4" />
-              </svg>
-            </div>
-            <h2 className="text-sa-text font-display font-bold text-2xl mb-2">
-              Gallery Coming Soon
-            </h2>
-            <p className="text-sa-muted text-base max-w-sm">
-              We are uploading our project photos. Check back soon or contact us
-              to see our work.
-            </p>
-            <Link
-              href="/contact"
-              className="mt-6 px-6 py-2.5 rounded-full bg-brand-gold text-white text-sm font-semibold hover:bg-brand-gold/90 transition-colors"
-            >
-              Contact Us
-            </Link>
-          </div>
-        ) : filteredItems.length === 0 ? (
-          <EmptyState
-            category={activeCategory}
-            onReset={() => setActiveCategory("")}
+      <main className="overflow-hidden bg-brand-deep text-white">
+        <section className="relative isolate border-b border-white/10 pt-28">
+          <div
+            className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.18),transparent_34%),radial-gradient(circle_at_82%_0%,rgba(255,255,255,0.09),transparent_28%),linear-gradient(135deg,#070917_0%,#0B1024_52%,#050610_100%)]"
+            aria-hidden="true"
           />
-        ) : (
-          <>
-            {/* Results count */}
-            <p className="text-sa-muted text-sm mb-6">
-              Showing{" "}
-              <span className="text-sa-text font-medium">
-                {filteredItems.length}
-              </span>{" "}
-              {filteredItems.length === 1 ? "item" : "items"}
-              {activeCategory ? (
-                <>
-                  {" "}in{" "}
-                  <span className="text-brand-gold font-medium">
-                    {activeCategory}
-                  </span>
-                </>
-              ) : null}
-            </p>
+          <div
+            className="absolute inset-0 -z-10 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.55)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.55)_1px,transparent_1px)] [background-size:56px_56px]"
+            aria-hidden="true"
+          />
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-              {filteredItems.map((item, i) => (
-                <AnimateIn
-                  key={item.id}
-                  from="scale"
-                  delay={Math.min(i * 40, 320)}
-                  duration={500}
-                >
+          <div className="mx-auto max-w-7xl px-4 pb-12 pt-10 sm:px-6 lg:px-8 lg:pb-16">
+            <AnimateIn from="bottom" duration={600}>
+              <div className="max-w-3xl">
+                <span className="inline-flex items-center gap-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
+                  <span className="h-1.5 w-1.5 rounded-full bg-brand-gold shadow-[0_0_16px_rgba(212,160,23,0.85)]" />
+                  Project Gallery
+                </span>
+                <h1 className="mt-6 font-display text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
+                  Our Work
+                </h1>
+                <p className="mt-5 max-w-2xl text-base leading-7 text-white/68 sm:text-lg">
+                  A curated look at signage projects shaped for storefronts,
+                  offices, hospitals, hotels, restaurants, factories, and
+                  commercial spaces.
+                </p>
+              </div>
+            </AnimateIn>
+          </div>
+        </section>
+
+        <section className="sticky top-16 z-30 border-b border-white/10 bg-brand-deep/85 backdrop-blur-xl">
+          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+            <div
+              className="flex gap-2 overflow-x-auto pb-1 scrollbar-none"
+              aria-label="Gallery categories"
+            >
+              {visibleCategories.map((category) => {
+                const isActive = activeCategory === category.value;
+
+                return (
                   <button
+                    key={category.value}
                     type="button"
-                    onClick={() => openLightbox(i)}
-                    aria-label={`View ${item.title}`}
-                    className="group relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-sa-surface focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 shadow-sa-sm hover:shadow-sa-md transition-shadow duration-300 motion-reduce:transition-none"
+                    aria-pressed={isActive}
+                    onClick={() => setActiveCategory(category.value)}
+                    className={[
+                      "shrink-0 rounded-full border px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transition-none",
+                      isActive
+                        ? "border-brand-gold bg-brand-gold text-brand-navy shadow-[0_14px_32px_rgba(212,160,23,0.20)]"
+                        : "border-white/10 bg-white/[0.06] text-white/72 hover:border-brand-gold/45 hover:bg-white/[0.10] hover:text-white",
+                    ].join(" ")}
                   >
-                    {/* Image */}
-                    <GalleryImage
-                      src={item.image}
-                      alt={item.alt ?? item.title}
-                      priority={i < 8}
-                    />
-
-                    {/* Hover overlay */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0 bg-gradient-to-t from-brand-navy/80 via-brand-navy/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 motion-reduce:transition-none"
-                    />
-
-                    {/* Caption on hover */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-smooth motion-reduce:transition-none motion-reduce:transform-none"
-                    >
-                      <p className="text-white text-xs font-semibold leading-tight truncate">
-                        {item.title}
-                      </p>
-                      <p className="text-brand-gold text-[10px] mt-0.5 uppercase tracking-wider truncate">
-                        {item.category}
-                      </p>
-                    </div>
-
-                    {/* Sample badge */}
-                    {item.placeholder && (
-                      <div
-                        aria-hidden="true"
-                        className="absolute top-2 right-2 bg-brand-navy/70 backdrop-blur-sm border border-brand-gold/30 text-brand-gold text-[9px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded-full"
-                      >
-                        Sample
-                      </div>
-                    )}
-
-                    {/* Zoom icon on hover */}
-                    <div
-                      aria-hidden="true"
-                      className="absolute top-2 left-2 w-7 h-7 rounded-full bg-white/0 group-hover:bg-white/20 flex items-center justify-center transition-colors duration-200 motion-reduce:transition-none"
-                    >
-                      <svg
-                        aria-hidden="true"
-                        viewBox="0 0 24 24"
-                        className="w-3.5 h-3.5 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-200 motion-reduce:transition-none"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth={2}
-                      >
-                        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
-                      </svg>
-                    </div>
+                    {category.label}
                   </button>
-                </AnimateIn>
-              ))}
+                );
+              })}
             </div>
-          </>
-        )}
-      </section>
+          </div>
+        </section>
 
-      {/* ── Lightbox ──────────────────────────────────────────────────────────── */}
-      {lightboxIndex !== null && (
+        <section className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          {status === "loading" ? (
+            <GallerySkeletonGrid />
+          ) : status === "error" ? (
+            <GalleryState
+              type="error"
+              onRetry={() => router.refresh()}
+            />
+          ) : items.length === 0 ? (
+            <GalleryState type="empty" />
+          ) : filteredItems.length === 0 ? (
+            <GalleryState
+              type="filter-empty"
+              activeCategory={activeCategory}
+              onReset={() => setActiveCategory("")}
+            />
+          ) : (
+            <>
+              <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
+                    {activeCategory || "All projects"}
+                  </p>
+                  <p className="mt-2 text-sm text-white/55">
+                    Showing {filteredItems.length}{" "}
+                    {filteredItems.length === 1 ? "image" : "images"}
+                  </p>
+                </div>
+                <p className="max-w-md text-sm leading-6 text-white/50">
+                  Select any image to open a larger preview. Use Escape or the
+                  close button to return to the gallery.
+                </p>
+              </div>
+
+              <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
+                {filteredItems.map((item, index) => (
+                  <AnimateIn
+                    key={item.id}
+                    from="bottom"
+                    delay={Math.min(index * 35, 260)}
+                    duration={520}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => openLightbox(index)}
+                      onKeyDown={(event) => onGridKeyDown(event, index)}
+                      aria-label={`Open ${item.title} gallery image`}
+                      className="group mb-5 block w-full break-inside-avoid overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.06] text-left shadow-sa-md outline-none transition-all duration-300 hover:-translate-y-1 hover:border-brand-gold/55 hover:bg-white/[0.09] hover:shadow-sa-xl focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
+                    >
+                      <span className="relative block aspect-[4/3] overflow-hidden">
+                        <GalleryImage
+                          src={item.image}
+                          alt={item.alt ?? item.title}
+                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          priority={index < 3}
+                          className="transition-transform duration-700 ease-smooth group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
+                        />
+                        <span
+                          className="absolute inset-0 bg-gradient-to-t from-brand-deep/90 via-brand-deep/15 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-95 motion-reduce:transition-none"
+                          aria-hidden="true"
+                        />
+                        <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/25 text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:opacity-100 focus-visible:opacity-100 motion-reduce:transition-none">
+                          <Maximize2 className="h-4 w-4" aria-hidden="true" />
+                        </span>
+                        <span className="absolute bottom-4 left-4 right-4">
+                          <span className="inline-flex rounded-full border border-brand-gold/30 bg-brand-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-gold">
+                            {item.category}
+                          </span>
+                        </span>
+                      </span>
+
+                      <span className="block p-5">
+                        <span className="block font-display text-xl font-semibold leading-snug text-white">
+                          {item.title}
+                        </span>
+                        {getItemMeta(item) ? (
+                          <span className="mt-2 flex flex-wrap items-center gap-2 text-sm text-white/55">
+                            {item.location ? (
+                              <MapPin
+                                className="h-4 w-4 text-brand-gold"
+                                aria-hidden="true"
+                              />
+                            ) : null}
+                            {getItemMeta(item)}
+                          </span>
+                        ) : null}
+                      </span>
+                    </button>
+                  </AnimateIn>
+                ))}
+              </div>
+            </>
+          )}
+        </section>
+      </main>
+
+      {lightboxIndex !== null ? (
         <Lightbox
           items={filteredItems}
           activeIndex={lightboxIndex}
           onClose={closeLightbox}
-          onNavigate={navigateLightbox}
+          onNavigate={setLightboxIndex}
         />
-      )}
+      ) : null}
 
-      {/* ── CTA / Footer area ─────────────────────────────────────────────────── */}
-      <section className="bg-sa-surface border-t border-sa-border py-20">
-        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-          <AnimateIn from="bottom" duration={600}>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-sa-text mb-4">
-              Like What You See?
-            </h2>
-          </AnimateIn>
-          <AnimateIn from="bottom" delay={80} duration={600}>
-            <p className="text-sa-muted text-lg mb-8 max-w-xl mx-auto">
-              Get in touch for a consultation and quote. We bring the same
-              quality craftsmanship to every project - no matter the size.
-            </p>
-          </AnimateIn>
-          <AnimateIn from="bottom" delay={160} duration={600}>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/quote"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-brand-gold text-white font-semibold hover:bg-brand-gold/90 active:scale-[0.98] transition-all duration-200 shadow-sa-md hover:shadow-sa-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:transform-none"
-              >
-                Request a Quote
-                <svg aria-hidden="true" viewBox="0 0 24 24" className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2}>
-                  <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-              </Link>
-              <Link
-                href="/services"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-sa-border-strong text-sa-text font-semibold hover:bg-sa-raised transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
-              >
-                View Services
-              </Link>
-              <Link
-                href="/portfolio"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-sa-border-strong text-sa-text font-semibold hover:bg-sa-raised transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
-              >
-                View Portfolio
-              </Link>
-              <Link
-                href="/contact"
-                className="inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full border border-sa-border-strong text-sa-text font-semibold hover:bg-sa-raised transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
-              >
-                Contact Us
-              </Link>
-            </div>
-          </AnimateIn>
-
-          {/* Trust signals */}
-          <AnimateIn from="bottom" delay={240} duration={600}>
-            <div className="flex flex-wrap justify-center gap-6 mt-12 text-sa-muted text-sm">
-              {[
-                "Site Survey Planning",
-                "Timeline Coordination",
-                "Installation Support",
-                "Gujarat Project Coverage",
-              ].map((t) => (
-                <span key={t} className="flex items-center gap-1.5">
-                  <svg
-                    aria-hidden="true"
-                    viewBox="0 0 20 20"
-                    className="w-4 h-4 text-brand-gold flex-shrink-0"
-                    fill="currentColor"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      clipRule="evenodd"
-                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                    />
-                  </svg>
-                  {t}
-                </span>
-              ))}
-            </div>
-          </AnimateIn>
-        </div>
-      </section>
-    </main>
+      <Footer />
     </>
   );
 }

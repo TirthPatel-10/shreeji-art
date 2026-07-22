@@ -32,6 +32,7 @@
 
     /* Surfaces — RGB channels for alpha-value support */
     --sa-bg:             255 255 255;
+    --sa-off-white:      250 248 242;
     --sa-surface:        248 248 250;
     --sa-surface-2:      241 241 245;
     --sa-surface-raised: 255 255 255;
@@ -50,7 +51,10 @@
     --sa-gold:           212 160 23;
     --sa-gold-dark:      160 120 16;
     --sa-gold-light:     240 192 64;
+    --sa-gold-soft:      247 231 179;
     --sa-navy:           26 26 46;
+    --sa-navy-deep:      7 7 17;
+    --sa-navy-soft:      32 32 58;
     --sa-red:            233 69 96;
 
     /* Status */
@@ -105,7 +109,7 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -122,6 +126,159 @@
   /* Smooth scroll */
   :root {
     scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer components {
+  .sa-container {
+    @apply mx-auto w-full max-w-sa-full px-4 sm:px-6 lg:px-8;
+  }
+
+  .sa-container-wide {
+    @apply mx-auto w-full max-w-sa-wide px-4 sm:px-6 lg:px-8;
+  }
+
+  .sa-container-narrow {
+    @apply mx-auto w-full max-w-sa-narrow px-4 sm:px-6;
+  }
+
+  .sa-section {
+    @apply py-section-sm sm:py-section lg:py-section-lg;
+  }
+
+  .sa-section-compact {
+    @apply py-12 sm:py-16 lg:py-20;
+  }
+
+  .sa-eyebrow {
+    @apply text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold;
+  }
+
+  .sa-section-heading {
+    @apply font-display text-display-lg font-bold text-sa-text;
+  }
+
+  .sa-display-xl {
+    @apply font-display text-display-xl font-bold text-sa-text;
+  }
+
+  .sa-display-lg {
+    @apply font-display text-display-lg font-bold text-sa-text;
+  }
+
+  .sa-lede {
+    @apply text-base leading-8 text-sa-muted sm:text-lg;
+  }
+
+  .sa-card {
+    @apply rounded-3xl border border-sa-border bg-white p-6 shadow-sa-sm transition-all duration-200 ease-smooth;
+  }
+
+  .sa-card-premium {
+    @apply rounded-4xl border border-white/70 bg-white/90 p-6 shadow-sa-premium backdrop-blur-xl transition-all duration-200 ease-smooth;
+  }
+
+  .sa-glass-panel {
+    @apply rounded-4xl border border-white/15 bg-sa-navy/85 shadow-sa-glass backdrop-blur-2xl;
+  }
+
+  .sa-glass-panel-light {
+    @apply rounded-4xl border border-white/70 bg-white/[0.78] shadow-sa-premium backdrop-blur-2xl;
+  }
+
+  .sa-hover-lift {
+    @apply transition-all duration-200 ease-smooth hover:-translate-y-1 hover:shadow-sa-md active:translate-y-0 motion-reduce:transform-none motion-reduce:transition-none;
+  }
+
+  .sa-focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2;
+  }
+
+  .sa-btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-brand-gold px-5 py-3 text-sm font-semibold text-white shadow-sa-sm transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:bg-brand-gold-dark hover:shadow-sa-gold active:translate-y-0 active:shadow-none disabled:pointer-events-none disabled:opacity-50 motion-reduce:transform-none motion-reduce:transition-none;
+  }
+
+  .sa-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-sa-border bg-white px-5 py-3 text-sm font-semibold text-sa-text shadow-sa-xs transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:border-sa-border-strong hover:bg-sa-surface hover:shadow-sa-sm active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 motion-reduce:transform-none motion-reduce:transition-none;
+  }
+
+  .sa-btn-outline {
+    @apply inline-flex items-center justify-center rounded-xl border border-brand-gold/50 bg-transparent px-5 py-3 text-sm font-semibold text-brand-gold transition-all duration-200 ease-smooth hover:-translate-y-0.5 hover:border-brand-gold hover:bg-brand-gold/10 active:translate-y-0 disabled:pointer-events-none disabled:opacity-50 motion-reduce:transform-none motion-reduce:transition-none;
+  }
+
+  .sa-input {
+    @apply w-full rounded-xl border border-sa-border bg-white px-4 py-3 text-sm text-sa-text shadow-sa-xs transition-all duration-200 ease-smooth placeholder:text-sa-faint hover:border-sa-border-strong focus:border-brand-gold focus:outline-none focus:ring-2 focus:ring-brand-gold/20 disabled:cursor-not-allowed disabled:bg-sa-surface disabled:text-sa-muted motion-reduce:transition-none;
+  }
+
+  .sa-badge {
+    @apply inline-flex items-center gap-1 rounded-full border border-brand-gold/20 bg-brand-gold/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-brand-gold-dark;
+  }
+
+  .sa-skeleton {
+    @apply animate-shimmer rounded-xl bg-sa-surface;
+  }
+
+  .admin-surface h1 {
+    @apply font-display text-3xl font-semibold tracking-tight text-brand-navy;
+  }
+
+  .admin-surface table {
+    @apply min-w-[760px] border-separate border-spacing-0 text-sm;
+  }
+
+  .admin-surface div:has(> table) {
+    overflow-x: auto !important;
+  }
+
+  .admin-surface thead {
+    @apply bg-[#fbfaf6] text-[11px] uppercase tracking-[0.22em] text-gray-400;
+  }
+
+  .admin-surface th {
+    @apply border-b border-gray-100 px-5 py-4 font-semibold;
+  }
+
+  .admin-surface td {
+    @apply px-5 py-4 align-top;
+  }
+
+  .admin-surface tbody tr {
+    @apply transition-colors duration-200 hover:bg-brand-gold/[0.04] motion-reduce:transition-none;
+  }
+
+  .admin-surface input,
+  .admin-surface textarea,
+  .admin-surface select {
+    @apply rounded-xl border-gray-200 shadow-inner shadow-gray-900/[0.02] transition-all duration-200 focus:border-brand-gold focus:outline-none focus:ring-4 focus:ring-brand-gold/15 motion-reduce:transition-none;
+  }
+
+  .admin-surface select {
+    @apply cursor-pointer;
+  }
+
+  .admin-surface button,
+  .admin-surface a {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2;
+  }
+
+  .admin-surface table + div,
+  .admin-surface form {
+    @apply border-gray-100;
   }
 }
 

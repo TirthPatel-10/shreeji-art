@@ -4,12 +4,14 @@ import { cn } from "@/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 
 const badgeVariants = cva(
-  "inline-flex items-center gap-1 font-medium rounded-full transition-colors",
+  "inline-flex items-center gap-1 rounded-full font-semibold tracking-[0.01em] transition-colors duration-200",
   {
     variants: {
       variant: {
         gold:    "bg-brand-gold/10 text-brand-gold-dark border border-brand-gold/20",
         navy:    "bg-brand-navy/10 text-brand-navy border border-brand-navy/20",
+        premium: "bg-brand-gold/10 text-brand-gold-dark border border-brand-gold/20 uppercase tracking-[0.12em]",
+        deep:    "bg-brand-navy text-white border border-white/10",
         red:     "bg-brand-red/10 text-brand-red border border-brand-red/20",
         success: "bg-sa-success-bg text-green-700 border border-sa-success-border",
         warning: "bg-sa-warning-bg text-amber-700 border border-sa-warning-border",
@@ -39,6 +41,8 @@ const badgeVariants = cva(
 const dotColors: Record<string, string> = {
   gold:    "bg-brand-gold",
   navy:    "bg-brand-navy",
+  premium: "bg-brand-gold",
+  deep:    "bg-brand-gold",
   red:     "bg-brand-red",
   success: "bg-green-500",
   warning: "bg-amber-500",

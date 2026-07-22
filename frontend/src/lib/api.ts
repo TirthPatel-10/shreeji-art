@@ -5,7 +5,7 @@ import type {
   RegisterRequest,
 } from "@/types";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/+$/, "");
 
 if (!API_URL) {
   throw new Error("NEXT_PUBLIC_API_URL is required.");
@@ -17,10 +17,12 @@ async function request<T>(
 ): Promise<ApiResponse<T>> {
   const token =
     typeof window !== "undefined" ? localStorage.getItem("sa_token") : null;
+  const cleanToken =
+    token && token !== "undefined" && token !== "null" ? token : null;
 
   const headers: HeadersInit = {
     "Content-Type": "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
     ...options.headers,
   };
 
@@ -33,6 +35,9 @@ async function request<T>(
 
   try {
     const json = await res.json();
+    if (!res.ok && json && typeof json === "object") {
+      return json as ApiResponse<T>;
+    }
     return json as ApiResponse<T>;
   } catch {
     throw new Error(`HTTP_${res.status}`);
@@ -66,7 +71,7 @@ export const publicApi = {
   getPortfolioBySlug: (slug: string) => request(`/portfolio/${slug}`),
   getPortfolioItem: (id: number) => request(`/portfolio/${id}`),
   getGallery: (category?: string) =>
-    request(`/gallery${category ? `?category=${category}` : ""}`),
+    request(`/gallery${category ? `?category=${encodeURIComponent(category)}` : ""}`),
   getBlogs: () => request("/blogs"),
   getBlog: (slug: string) => request(`/blogs/${slug}`),
   getTestimonials: () => request("/testimonials"),
@@ -83,7 +88,7 @@ export const customerApi = {
   getProfile: () => request("/customers/profile"),
   updateProfile: (body: unknown) =>
     request("/customers/profile", { method: "PUT", body: JSON.stringify(body) }),
-  getMyQuotes: () => request("/quotes/my"),
+  getMyQuotes: () => request("/quotes/my", { cache: "no-store" }),
   getQuote: (id: number) => request(`/quotes/${id}`),
   submitQuoteRequest: (body: { serviceType: string; description: string; companyName?: string }) =>
     request("/quotes", { method: "POST", body: JSON.stringify(body) }),
@@ -107,7 +112,7 @@ export const adminApi = {
     }),
 
   // Quotes
-  getQuotes: () => request("/admin/quotes"),
+  getQuotes: () => request("/admin/quotes", { cache: "no-store" }),
   getQuote: (id: number) => request(`/admin/quotes/${id}`),
   updateQuoteStatus: (id: number, status: string) =>
     request(`/admin/quotes/${id}/status`, {
