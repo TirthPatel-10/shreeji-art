@@ -1,9 +1,16 @@
 import type { Metadata } from "next";
 import { publicApi } from "@/lib/api";
-import type { GalleryItem } from "@/types";
+import {
+  isPublishedProject,
+  projectLocationLabel,
+  projectSummary,
+} from "@/lib/public-projects";
+import type { GalleryItem, PortfolioItem } from "@/types";
 import { GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
 import GalleryClient, { type GalleryStatus } from "./GalleryClient";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Our Work | Shreeji Art Gallery",
@@ -24,19 +31,25 @@ type GalleryApiItem = GalleryItem & {
   description?: string;
 };
 
-function mapGalleryItem(item: GalleryApiItem): DisplayGalleryItem {
-  const title = item.projectName || item.title || "Gallery item";
-  const location = item.location || item.city;
+function mapGalleryItem(
+  item: GalleryApiItem,
+  projectMap: Map<number, PortfolioItem>
+): DisplayGalleryItem {
+  const project = item.projectId ? projectMap.get(item.projectId) : undefined;
+  const title = item.title || item.projectName || project?.title || "Gallery item";
+  const location = item.location || item.city || (project ? projectLocationLabel(project) : "");
 
   return {
     id: String(item.id),
     title,
     category: item.category || "Signage",
     image: item.imageUrl || GALLERY_FALLBACK_IMAGE,
-    alt: `${title} signage project${location ? ` in ${location}` : ""}`,
-    description: item.description,
+    alt: item.altText || `${title} signage project${location ? ` in ${location}` : ""}`,
+    description: item.caption || item.description || (project ? projectSummary(project) : undefined),
     location,
-    placeholder: false,
+    projectId: item.projectId,
+    projectTitle: project?.title,
+    projectSlug: project?.slug,
   };
 }
 
@@ -45,13 +58,27 @@ export default async function GalleryPage() {
   let status: GalleryStatus = "empty";
 
   try {
-    const res = await publicApi.getGallery();
-    const apiItems =
-      res.success && Array.isArray(res.data)
-        ? (res.data as GalleryApiItem[])
-        : [];
+    const [galleryResult, portfolioResult] = await Promise.allSettled([
+      publicApi.getGallery(),
+      publicApi.getPortfolio(),
+    ]);
 
-    items = apiItems.map(mapGalleryItem);
+    const galleryRes = galleryResult.status === "fulfilled" ? galleryResult.value : null;
+    const portfolioRes = portfolioResult.status === "fulfilled" ? portfolioResult.value : null;
+    if (!galleryRes?.success) {
+      status = "error";
+      return <GalleryClient items={items} status={status} />;
+    }
+
+    const apiItems = galleryRes?.success && Array.isArray(galleryRes.data)
+      ? (galleryRes.data as GalleryApiItem[]).filter((item) => item.published !== false)
+      : [];
+    const projects = portfolioRes?.success && Array.isArray(portfolioRes.data)
+      ? (portfolioRes.data as PortfolioItem[]).filter(isPublishedProject)
+      : [];
+    const projectMap = new Map(projects.map((project) => [project.id, project]));
+
+    items = apiItems.map((item) => mapGalleryItem(item, projectMap));
     status = items.length > 0 ? "ready" : "empty";
   } catch {
     status = "error";

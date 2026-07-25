@@ -24,7 +24,7 @@ import {
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
-import { GALLERY_CATEGORIES, GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
+import { GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
 
 export type GalleryStatus = "loading" | "ready" | "empty" | "error";
@@ -288,6 +288,14 @@ function Lightbox({
                 {item.description}
               </p>
             ) : null}
+            {item.projectSlug ? (
+              <Link
+                href={`/portfolio/${item.projectSlug}`}
+                className="mt-4 inline-flex rounded-full bg-brand-gold px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+              >
+                View connected project
+              </Link>
+            ) : null}
           </div>
         </div>
 
@@ -328,22 +336,11 @@ export default function GalleryClient({ items, status }: Props) {
   const lastFocusedElementRef = useRef<HTMLElement | null>(null);
 
   const visibleCategories = useMemo(() => {
-    const present = new Set(items.map((item) => item.category));
-    const preserved = GALLERY_CATEGORIES.filter(
-      (category) => category.value === "" || present.has(category.value)
-    );
-    const knownValues = new Set<string>(
-      GALLERY_CATEGORIES.map((category) => category.value)
-    );
-    const liveOnlyCategories = Array.from(present)
-      .filter((category) => category && !knownValues.has(category))
+    const liveCategories = Array.from(new Set(items.map((item) => item.category).filter(Boolean)))
+      .sort((a, b) => a.localeCompare(b))
       .map((category) => ({ label: category, value: category }));
 
-    if (items.length === 0) {
-      return GALLERY_CATEGORIES;
-    }
-
-    return [...preserved, ...liveOnlyCategories];
+    return [{ label: "All", value: "" }, ...liveCategories];
   }, [items]);
 
   const filteredItems = useMemo(

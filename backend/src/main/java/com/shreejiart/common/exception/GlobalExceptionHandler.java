@@ -1,6 +1,7 @@
 package com.shreejiart.common.exception;
 
 import com.shreejiart.common.response.ApiResponse;
+import com.shreejiart.media.MediaStorageException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +53,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.badRequest().body(ApiResponse.error(ex.getMessage()));
+    }
+
+    @ExceptionHandler(MediaStorageException.class)
+    public ResponseEntity<ApiResponse<Void>> handleMediaStorage(MediaStorageException ex) {
+        log.warn("Media storage operation failed: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY).body(ApiResponse.error(ex.getMessage()));
     }
 
     @ExceptionHandler(Exception.class)

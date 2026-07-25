@@ -9,4 +9,8 @@ public interface PortfolioItemRepository extends JpaRepository<PortfolioItem, Lo
     Optional<PortfolioItem> findBySlug(String slug);
     List<PortfolioItem> findAllByOrderByDisplayOrderAsc();
     List<PortfolioItem> findByIsFeaturedTrueOrderByDisplayOrderAsc();
+    List<PortfolioItem> findByPublishedTrueOrderByDisplayOrderAsc();
+    List<PortfolioItem> findByPublishedTrueAndIsFeaturedTrueOrderByDisplayOrderAsc();
+    boolean existsBySlug(String slug);
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

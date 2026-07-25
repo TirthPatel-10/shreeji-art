@@ -68,14 +68,36 @@ CREATE TABLE IF NOT EXISTS portfolio_items (
     title         VARCHAR(255) NOT NULL,
     slug          VARCHAR(255) NOT NULL UNIQUE,
     description   TEXT,
+    short_description TEXT,
+    full_description  TEXT,
     client_name   VARCHAR(255),
+    category      VARCHAR(100),
+    location      VARCHAR(255),
+    completion_year INT,
     service_id    BIGINT       REFERENCES services(id),
+    cover_image_url TEXT,
     images        TEXT[]       DEFAULT ARRAY[]::TEXT[],
     tags          TEXT[]       DEFAULT ARRAY[]::TEXT[],
     is_featured   BOOLEAN      NOT NULL DEFAULT false,
+    is_published  BOOLEAN      NOT NULL DEFAULT true,
     display_order INT          NOT NULL DEFAULT 0,
     created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
     updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+);
+
+-- Portfolio project images
+CREATE TABLE IF NOT EXISTS portfolio_project_images (
+    id             BIGSERIAL PRIMARY KEY,
+    project_id     BIGINT       NOT NULL REFERENCES portfolio_items(id) ON DELETE CASCADE,
+    image_url      TEXT         NOT NULL,
+    storage_path   TEXT         NOT NULL UNIQUE,
+    alt_text       VARCHAR(500),
+    caption        TEXT,
+    sort_order     INT          NOT NULL DEFAULT 0,
+    is_cover_image BOOLEAN      NOT NULL DEFAULT false,
+    is_published   BOOLEAN      NOT NULL DEFAULT true,
+    created_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at     TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- Gallery images
@@ -83,11 +105,18 @@ CREATE TABLE IF NOT EXISTS gallery_items (
     id            BIGSERIAL PRIMARY KEY,
     title         VARCHAR(255),
     image_url     TEXT         NOT NULL,
+    storage_path  TEXT,
+    alt_text      VARCHAR(500),
+    caption       TEXT,
     category      VARCHAR(100),
     service_id    BIGINT       REFERENCES services(id),
+    project_id    BIGINT       REFERENCES portfolio_items(id) ON DELETE SET NULL,
     is_featured   BOOLEAN      NOT NULL DEFAULT false,
+    is_published  BOOLEAN      NOT NULL DEFAULT true,
+    sort_order    INT          NOT NULL DEFAULT 0,
     display_order INT          NOT NULL DEFAULT 0,
-    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
+    created_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW(),
+    updated_at    TIMESTAMPTZ  NOT NULL DEFAULT NOW()
 );
 
 -- Quotes (formal quotations for customers)
@@ -197,7 +226,13 @@ CREATE INDEX IF NOT EXISTS idx_blog_posts_slug ON blog_posts(slug);
 CREATE INDEX IF NOT EXISTS idx_blog_posts_status ON blog_posts(status);
 CREATE INDEX IF NOT EXISTS idx_services_slug ON services(slug);
 CREATE INDEX IF NOT EXISTS idx_portfolio_items_slug ON portfolio_items(slug);
+CREATE INDEX IF NOT EXISTS idx_portfolio_items_published ON portfolio_items(is_published);
+CREATE INDEX IF NOT EXISTS idx_portfolio_project_images_project ON portfolio_project_images(project_id, sort_order);
+CREATE UNIQUE INDEX IF NOT EXISTS ux_portfolio_project_single_cover
+    ON portfolio_project_images(project_id)
+    WHERE is_cover_image = true;
 CREATE INDEX IF NOT EXISTS idx_gallery_items_category ON gallery_items(category);
+CREATE INDEX IF NOT EXISTS idx_gallery_items_published ON gallery_items(is_published);
 
 -- ── Seed: Default site settings ──────────────────────────────
 

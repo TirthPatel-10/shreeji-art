@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import HomeClient, { type PortfolioStatus, type ServicesStatus } from "./HomeClient";
 import { publicApi } from "@/lib/api";
+import { isPublishedProject, sortNewestProjects } from "@/lib/public-projects";
 import type { Service, PortfolioItem, Testimonial } from "@/types";
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Shreeji Art — Premium Signage & Branding, Ahmedabad",
@@ -51,9 +54,13 @@ async function fetchHomeData(): Promise<{
         ? "ready"
         : "empty",
       portfolio: portRes.status === "fulfilled" && portRes.value.data
-        ? [...(portRes.value.data as PortfolioItem[])].sort((a, b) => b.id - a.id).slice(0, 12)
+        ? sortNewestProjects(
+            (portRes.value.data as PortfolioItem[])
+              .filter(isPublishedProject)
+              .filter((project) => project.isFeatured)
+          ).slice(0, 12)
         : [] as PortfolioItem[],
-      portfolioStatus: portRes.status === "rejected"
+      portfolioStatus: portRes.status === "rejected" || !portRes.value.success
         ? "error"
         : portRes.value.data && (portRes.value.data as PortfolioItem[]).length > 0
         ? "ready"

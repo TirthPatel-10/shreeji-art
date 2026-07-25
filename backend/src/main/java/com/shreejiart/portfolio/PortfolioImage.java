@@ -1,5 +1,6 @@
-package com.shreejiart.gallery;
+package com.shreejiart.portfolio;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,25 +9,27 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.OffsetDateTime;
 
 @Entity
-@Table(name = "gallery_items")
+@Table(name = "portfolio_project_images")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class GalleryItem {
+public class PortfolioImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 255)
-    private String title;
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "project_id", nullable = false)
+    private PortfolioItem project;
 
     @Column(name = "image_url", nullable = false, columnDefinition = "TEXT")
     private String imageUrl;
 
-    @Column(name = "storage_path", columnDefinition = "TEXT")
+    @Column(name = "storage_path", nullable = false, unique = true, columnDefinition = "TEXT")
     private String storagePath;
 
     @Column(name = "alt_text", length = 500)
@@ -35,30 +38,17 @@ public class GalleryItem {
     @Column(columnDefinition = "TEXT")
     private String caption;
 
-    @Column(length = 100)
-    private String category;
-
-    @Column(name = "service_id")
-    private Long serviceId;
-
-    @Column(name = "project_id")
-    private Long projectId;
-
-    @Column(name = "is_featured")
+    @Column(name = "sort_order", nullable = false)
     @Builder.Default
-    private boolean isFeatured = false;
+    private int sortOrder = 0;
+
+    @Column(name = "is_cover_image", nullable = false)
+    @Builder.Default
+    private boolean coverImage = false;
 
     @Column(name = "is_published", nullable = false)
     @Builder.Default
     private boolean published = true;
-
-    @Column(name = "sort_order")
-    @Builder.Default
-    private int sortOrder = 0;
-
-    @Column(name = "display_order")
-    @Builder.Default
-    private int displayOrder = 0;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

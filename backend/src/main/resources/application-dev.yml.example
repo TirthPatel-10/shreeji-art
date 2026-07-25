@@ -22,6 +22,14 @@ jwt:
 app:
   allowed-origins: http://localhost:3000
 
+media:
+  storage:
+    supabase-url: https://<project-ref>.supabase.co
+    service-role-key: your-supabase-service-role-key
+    project-bucket: project-images
+    gallery-bucket: gallery-images
+    max-upload-bytes: 15728640
+
 logging:
   level:
     com.shreejiart: DEBUG

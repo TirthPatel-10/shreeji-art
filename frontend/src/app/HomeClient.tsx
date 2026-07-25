@@ -28,6 +28,13 @@ import Navbar from "@/components/layout/Navbar";
 import { AnimateIn } from "@/components/ui/animate-in";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SITE_CONTACT } from "@/lib/contact";
+import {
+  projectCategoryLabel,
+  projectCoverImage,
+  projectLocationLabel,
+  projectSummary,
+  sortNewestProjects,
+} from "@/lib/public-projects";
 import { cn } from "@/lib/utils";
 import type { PortfolioItem, Service, Testimonial } from "@/types";
 
@@ -48,37 +55,29 @@ interface IconCard {
   description: string;
 }
 
-const HOME_SERVICE_SLUGS = [
-  "led-sign-boards",
-  "acrylic-signs",
-  "3d-letter-signs",
-  "acp-signage",
-  "stainless-steel-signs",
-  "glow-sign-boards",
+const EXPERTISE_PILLARS = [
+  {
+    icon: Star,
+    title: "Illuminate",
+    services: ["LED Sign Boards", "Glow Sign Boards", "Acrylic Signs"],
+  },
+  {
+    icon: Layers3,
+    title: "Craft",
+    services: ["ACP Signage", "Stainless Steel Signs", "3D Letter Signs"],
+  },
+  {
+    icon: Briefcase,
+    title: "Brand",
+    services: ["Office Branding", "Retail Branding", "Industrial Signage", "Wayfinding"],
+  },
+  {
+    icon: Wrench,
+    title: "Install",
+    services: ["Custom Fabrication", "Installation"],
+  },
 ] as const;
 
-const HOME_SERVICE_API_ALIASES: Partial<Record<(typeof HOME_SERVICE_SLUGS)[number], string[]>> = {
-  "led-sign-boards": ["led-signs"],
-  "stainless-steel-signs": ["stainless-steel-signage"],
-};
-
-const SERVICE_CARD_IMAGES: Record<(typeof HOME_SERVICE_SLUGS)[number], string> = {
-  "led-sign-boards": "/gallery/led-sign/led-sign-01.svg",
-  "acrylic-signs": "/gallery/acrylic/acrylic-01.svg",
-  "3d-letter-signs": "/gallery/3d-letters/3d-letters-01.svg",
-  "acp-signage": "/gallery/acp/acp-01.svg",
-  "stainless-steel-signs": "/gallery/stainless-steel/stainless-steel-01.svg",
-  "glow-sign-boards": "/gallery/glow-sign/glow-sign-01.svg",
-};
-
-const SERVICE_DISPLAY_NAMES: Record<(typeof HOME_SERVICE_SLUGS)[number], string> = {
-  "led-sign-boards": "LED Sign Boards",
-  "acrylic-signs": "Acrylic Signs",
-  "3d-letter-signs": "3D Letter Signs",
-  "acp-signage": "ACP Signage",
-  "stainless-steel-signs": "Stainless Steel Signs",
-  "glow-sign-boards": "Glow Sign Boards",
-};
 
 const PORTFOLIO_FILTERS = [
   { label: "All", keys: [] },
@@ -89,15 +88,6 @@ const PORTFOLIO_FILTERS = [
   { label: "Restaurants", keys: ["restaurant", "cafe", "food"] },
   { label: "Industrial", keys: ["industrial", "factory", "warehouse", "plant"] },
 ] as const;
-
-const PORTFOLIO_FALLBACK_IMAGES = [
-  "/gallery/led-sign/led-sign-02.svg",
-  "/gallery/retail-branding/retail-branding-01.svg",
-  "/gallery/office-branding/office-branding-01.svg",
-  "/gallery/acp/acp-02.svg",
-  "/gallery/3d-letters/3d-letters-02.svg",
-  "/gallery/industrial-signage/industrial-signage-01.svg",
-];
 
 const DEFAULT_TESTIMONIALS: Testimonial[] = [
   {
@@ -194,7 +184,7 @@ const PREMIUM_TRANSITION =
   "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:transform-none";
 
 function firstImage(item: PortfolioItem) {
-  return item.images?.find(Boolean);
+  return projectCoverImage(item);
 }
 
 function initials(name: string) {
@@ -248,49 +238,13 @@ function SectionHeading({
   );
 }
 
-function getHomepageServices(services: Service[]) {
-  const servicesBySlug = new Map(services.map((service) => [service.slug, service]));
-
-  return HOME_SERVICE_SLUGS
-    .map((slug) => {
-      const liveService =
-        servicesBySlug.get(slug) ??
-        HOME_SERVICE_API_ALIASES[slug]?.map((alias) => servicesBySlug.get(alias)).find(Boolean);
-
-      return liveService ? { service: liveService, detailSlug: slug } : null;
-    })
-    .filter(
-      (item): item is { service: Service; detailSlug: (typeof HOME_SERVICE_SLUGS)[number] } =>
-        Boolean(item)
-    );
-}
-
-function ServicesSkeletonGrid() {
-  return (
-    <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {Array.from({ length: 6 }).map((_, index) => (
-        <div
-          key={index}
-          className="overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-sa-xs"
-        >
-          <Skeleton className="h-56 rounded-none" />
-          <div className="space-y-3 p-5">
-            <Skeleton variant="text" className="w-2/3" />
-            <Skeleton variant="text" className="w-full h-3" />
-            <Skeleton variant="text" className="w-3/4 h-3" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 function projectSearchText(project: PortfolioItem) {
   return [
     project.title,
-    project.description,
+    projectSummary(project),
     project.clientName ?? "",
-    project.service?.name ?? "",
+    projectCategoryLabel(project),
+    projectLocationLabel(project),
     ...(project.tags ?? []),
   ]
     .join(" ")
@@ -304,48 +258,16 @@ function matchesPortfolioFilter(project: PortfolioItem, filter: (typeof PORTFOLI
   return filter.keys.some((key) => searchText.includes(key));
 }
 
-function projectTimestamp(project: PortfolioItem) {
-  const dateFields = project as PortfolioItem & {
-    createdAt?: string;
-    updatedAt?: string;
-  };
-  const dateValue = dateFields.createdAt ?? dateFields.updatedAt;
-  const parsedDate = dateValue ? Date.parse(dateValue) : Number.NaN;
-
-  if (Number.isFinite(parsedDate)) return parsedDate;
-  return project.id;
-}
-
 function sortNewestPortfolio(projects: PortfolioItem[]) {
-  return [...projects].sort((a, b) => {
-    const newestDelta = projectTimestamp(b) - projectTimestamp(a);
-    if (newestDelta !== 0) return newestDelta;
-
-    return (b.displayOrder ?? 0) - (a.displayOrder ?? 0);
-  });
+  return sortNewestProjects(projects);
 }
 
 function projectCategory(project: PortfolioItem) {
-  const searchText = projectSearchText(project);
-  const matchedFilter = PORTFOLIO_FILTERS.find(
-    (filter) => filter.label !== "All" && filter.keys.some((key) => searchText.includes(key))
-  );
-
-  return matchedFilter?.label ?? project.service?.name ?? project.tags?.[0] ?? "Signage";
+  return projectCategoryLabel(project) || "Signage";
 }
 
 function projectCity(project: PortfolioItem) {
-  const locationSource = [
-    project.description,
-    project.clientName ?? "",
-    ...(project.tags ?? []),
-  ].join(" ");
-  const knownCities = ["Ahmedabad", "Gandhinagar", "Vadodara", "Surat", "Rajkot"];
-  const matchedCity = knownCities.find((city) =>
-    locationSource.toLowerCase().includes(city.toLowerCase())
-  );
-
-  return matchedCity ?? "Gujarat";
+  return projectLocationLabel(project) || "Gujarat";
 }
 
 function PortfolioSkeletonGrid() {
@@ -364,15 +286,10 @@ function PortfolioSkeletonGrid() {
 }
 
 export default function HomeClient({
-  services,
-  servicesStatus = "ready",
   portfolio,
   portfolioStatus = "ready",
   testimonials,
 }: HomeClientProps) {
-  const homepageServices = getHomepageServices(services);
-  const resolvedServicesStatus =
-    servicesStatus === "ready" && homepageServices.length === 0 ? "empty" : servicesStatus;
   const [activePortfolioFilter, setActivePortfolioFilter] = useState("All");
   const sortedPortfolio = useMemo(() => sortNewestPortfolio(portfolio), [portfolio]);
   const filteredPortfolio = useMemo(() => {
@@ -417,7 +334,7 @@ export default function HomeClient({
           />
 
           <div className="container-full relative z-10 flex min-h-[calc(100vh-4rem)] items-center py-24 sm:py-28 lg:py-32">
-            <div className="max-w-4xl text-center lg:text-left">
+            <div className="max-w-[64rem] text-center lg:text-left">
               <AnimateIn from="fade">
                 <div className="mb-7 inline-flex items-center gap-3 rounded-full border border-brand-gold/25 bg-brand-gold/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold backdrop-blur">
                   <span className="h-2 w-2 rounded-full bg-brand-gold shadow-[0_0_18px_rgba(212,160,23,.95)]" />
@@ -426,17 +343,17 @@ export default function HomeClient({
               </AnimateIn>
 
               <AnimateIn from="bottom" delay={80}>
-                <h1 className="font-display text-[clamp(3.35rem,8vw,7.25rem)] font-bold leading-[0.9] tracking-[-0.055em] text-white drop-shadow-[0_24px_60px_rgba(0,0,0,0.55)]">
+                <h1 className="max-w-[64rem] font-display text-[clamp(3.1rem,7.15vw,6.45rem)] font-bold leading-[1.1] tracking-[-0.05em] text-white drop-shadow-[0_24px_60px_rgba(0,0,0,0.55)]">
                   <span className="block">We Design.</span>
                   <span className="block">We Manufacture.</span>
-                  <span className="block bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold bg-clip-text text-transparent">
+                  <span className="block bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold bg-clip-text text-transparent lg:whitespace-nowrap">
                     We Make You Visible.
                   </span>
                 </h1>
               </AnimateIn>
 
               <AnimateIn from="bottom" delay={160}>
-                <p className="mx-auto mt-7 max-w-2xl text-base leading-8 text-white/72 sm:text-lg lg:mx-0">
+                <p className="mx-auto mt-11 max-w-[39rem] text-base leading-8 text-[#e7dfd1]/85 sm:text-lg lg:mx-0">
                   From concept to installation, we create high-quality signage that
                   builds your brand and attracts attention.
                 </p>
@@ -461,11 +378,11 @@ export default function HomeClient({
               </AnimateIn>
 
               <AnimateIn from="bottom" delay={320}>
-                <div className="mt-12 flex flex-wrap justify-center gap-3 lg:justify-start">
+                <div className="mt-12 grid grid-cols-2 justify-center gap-3 sm:inline-grid lg:flex lg:flex-nowrap lg:justify-start">
                   {HERO_TRUST_POINTS.map((point) => (
                     <span
                       key={point}
-                      className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.07] px-4 py-2 text-sm font-semibold text-white/78 backdrop-blur"
+                      className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.18] bg-white/[0.065] px-4 py-2.5 text-sm font-semibold text-[#f4efe4]/85 shadow-[0_10px_30px_rgba(0,0,0,0.12)] ${PREMIUM_TRANSITION} hover:-translate-y-0.5 hover:border-brand-gold/65 hover:bg-brand-gold/[0.11] hover:text-[#fff8ea] hover:shadow-[0_14px_34px_rgba(212,160,23,0.14)]`}
                     >
                       <BadgeCheck className="h-4 w-4 text-brand-gold" aria-hidden="true" />
                       {point}
@@ -477,7 +394,11 @@ export default function HomeClient({
           </div>
         </section>
 
-        <section id="services" className="relative overflow-hidden bg-[#f8f5ed] py-24 sm:py-28">
+        <section
+          id="services"
+          aria-labelledby="expertise-title"
+          className="relative overflow-hidden bg-[#f8f5ed] py-24 sm:py-28"
+        >
           <div
             className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold/30 to-transparent"
             aria-hidden="true"
@@ -486,27 +407,88 @@ export default function HomeClient({
             className="absolute -left-28 top-20 h-80 w-80 rounded-full bg-brand-gold/10 blur-[110px]"
             aria-hidden="true"
           />
+          <div
+            className="absolute inset-0 opacity-[0.055]"
+            style={{
+              backgroundImage:
+                "linear-gradient(rgba(18,20,38,.28) 1px,transparent 1px),linear-gradient(90deg,rgba(18,20,38,.28) 1px,transparent 1px)",
+              backgroundSize: "72px 72px",
+            }}
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute -right-16 top-12 hidden select-none font-display text-[9rem] font-bold leading-none tracking-[-0.08em] text-brand-navy/[0.035] lg:block xl:text-[11rem]"
+            aria-hidden="true"
+          >
+            SIGNAGE
+          </div>
           <div className="container-wide relative">
             <div className="mb-12 flex flex-col gap-6 lg:mb-16 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-3xl">
                 <AnimateIn from="bottom">
                   <p className="mb-3 text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
-                    Services We Offer
+                    OUR EXPERTISE
                   </p>
-                  <h2 className="font-display text-4xl font-bold leading-tight tracking-tight text-brand-navy sm:text-5xl">
-                    High-Quality Signage Solutions
+                  <h2
+                    id="expertise-title"
+                    className="font-display text-4xl font-bold leading-tight tracking-tight text-brand-navy sm:text-5xl"
+                  >
+                    Premium Signage Solutions
+                    <br className="hidden sm:block" />
+                    Crafted for Modern Brands
                   </h2>
                   <p className="mt-5 max-w-2xl text-base leading-8 text-gray-600">
-                    From illuminated storefronts to refined interior branding, our
-                    team builds signage with precise materials, premium finishing,
-                    and installation-ready detailing.
+                    Complete signage expertise from concept and material guidance
+                    to precision fabrication, branding, and installation.
                   </p>
                 </AnimateIn>
               </div>
-              <AnimateIn from="bottom" delay={120}>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {EXPERTISE_PILLARS.map((pillar, index) => {
+                const Icon = pillar.icon;
+
+                return (
+                  <AnimateIn key={pillar.title} from="bottom" delay={index * 70}>
+                    <article
+                      className={`group relative h-full overflow-hidden rounded-[1.5rem] border border-brand-navy/10 bg-white/75 p-6 shadow-sa-xs ${PREMIUM_TRANSITION} hover:-translate-y-1 hover:border-brand-gold/45 hover:bg-white hover:shadow-sa-md`}
+                    >
+                      <div
+                        className="absolute inset-x-6 top-0 h-px origin-left scale-x-0 bg-brand-gold transition-transform duration-300 group-hover:scale-x-100 motion-reduce:transition-none"
+                        aria-hidden="true"
+                      />
+                      <div className="mb-8 flex h-12 w-12 items-center justify-center rounded-2xl border border-brand-gold/20 bg-brand-gold/10 text-brand-gold transition duration-300 group-hover:-rotate-3 group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none">
+                        <Icon className="h-5 w-5" aria-hidden="true" />
+                      </div>
+                      <h3 className="font-display text-3xl font-bold leading-tight tracking-tight text-brand-navy">
+                        {pillar.title}
+                      </h3>
+                      <ul className="mt-6 space-y-3">
+                        {pillar.services.map((service) => (
+                          <li
+                            key={service}
+                            className="flex items-start gap-3 text-sm font-medium leading-6 text-gray-600"
+                          >
+                            <span
+                              className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand-gold"
+                              aria-hidden="true"
+                            />
+                            <span>{service}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
+                  </AnimateIn>
+                );
+              })}
+            </div>
+
+            <AnimateIn from="bottom" delay={140}>
+              <div className="mt-12 flex justify-center">
                 <Link
                   href="/services"
-                  className={`inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-gold/30 bg-brand-navy px-6 py-3 text-sm font-bold text-white shadow-sa-sm ${PREMIUM_TRANSITION} hover:-translate-y-0.5 hover:border-brand-gold hover:bg-brand-navy-light hover:shadow-sa-md active:translate-y-0`}
+                  className={`group inline-flex items-center justify-center gap-2 rounded-2xl border border-brand-gold/30 bg-brand-navy px-6 py-3 text-sm font-bold text-white shadow-sa-sm ${PREMIUM_TRANSITION} hover:-translate-y-0.5 hover:border-brand-gold hover:bg-brand-navy-light hover:shadow-sa-md active:translate-y-0`}
                 >
                   View All Services
                   <ArrowRight
@@ -514,101 +496,8 @@ export default function HomeClient({
                     aria-hidden="true"
                   />
                 </Link>
-              </AnimateIn>
-            </div>
-
-            {resolvedServicesStatus === "loading" ? (
-              <ServicesSkeletonGrid />
-            ) : resolvedServicesStatus === "error" ? (
-              <div
-                role="alert"
-                className="rounded-[1.75rem] border border-red-200 bg-white p-8 text-center shadow-sa-sm"
-              >
-                <p className="font-display text-2xl font-bold text-brand-navy">
-                  Services could not be loaded.
-                </p>
-                <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-gray-500">
-                  Please refresh the page or visit the full services page to explore
-                  Shreeji Art&apos;s signage capabilities.
-                </p>
-                <Link
-                  href="/services"
-                  className="mt-6 inline-flex items-center justify-center rounded-xl bg-brand-gold px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-gold-dark"
-                >
-                  Open Services
-                </Link>
               </div>
-            ) : resolvedServicesStatus === "empty" ? (
-              <div className="rounded-[1.75rem] border border-brand-gold/20 bg-white p-8 text-center shadow-sa-sm">
-                <p className="font-display text-2xl font-bold text-brand-navy">
-                  Services are being prepared.
-                </p>
-                <p className="mx-auto mt-3 max-w-xl text-sm leading-7 text-gray-500">
-                  No homepage services are available right now. You can still view
-                  the complete services page for the current offering.
-                </p>
-                <Link
-                  href="/services"
-                  className="mt-6 inline-flex items-center justify-center rounded-xl bg-brand-navy px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-brand-navy-light"
-                >
-                  View All Services
-                </Link>
-              </div>
-            ) : (
-              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {homepageServices.map(({ service, detailSlug }, index) => {
-                  const slug = detailSlug;
-                  const image = SERVICE_CARD_IMAGES[slug];
-                  const displayName = SERVICE_DISPLAY_NAMES[slug] ?? service.name;
-
-                  return (
-                    <AnimateIn key={service.id} from="bottom" delay={index * 65}>
-                      <Link
-                        href={`/services/${detailSlug}`}
-                        className={`group relative block min-h-[24rem] overflow-hidden rounded-[1.75rem] border border-white bg-brand-navy shadow-sa-sm ${PREMIUM_TRANSITION} hover:-translate-y-1.5 hover:border-brand-gold hover:shadow-sa-premium active:translate-y-0`}
-                      >
-                        <Image
-                          src={image}
-                          alt={`${displayName} by Shreeji Art`}
-                          fill
-                          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                          className="object-cover transition duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:transform-none"
-                        />
-                        <div
-                          className="absolute inset-0 bg-gradient-to-b from-brand-navy/20 via-brand-navy/48 to-brand-navy/95 transition-colors duration-500 group-hover:from-brand-navy/10 group-hover:via-brand-navy/36 group-hover:to-brand-navy"
-                          aria-hidden="true"
-                        />
-                        <div
-                          className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold/70 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-                          aria-hidden="true"
-                        />
-                        <div className="relative flex min-h-[24rem] flex-col justify-end p-6">
-                          <div className="mb-5 h-10 w-10 rounded-full border border-brand-gold/25 bg-brand-gold/10 backdrop-blur transition duration-300 group-hover:bg-brand-gold group-hover:text-brand-navy">
-                            <ArrowRight
-                              className="m-2.5 h-5 w-5 text-brand-gold transition duration-300 group-hover:translate-x-0.5 group-hover:text-brand-navy motion-reduce:transition-none motion-reduce:transform-none"
-                              aria-hidden="true"
-                            />
-                          </div>
-                          <h3 className="font-display text-2xl font-bold leading-tight text-white">
-                            {displayName}
-                          </h3>
-                          <p className="mt-3 line-clamp-2 text-sm leading-7 text-white/62">
-                            {service.shortDescription}
-                          </p>
-                          <span className="mt-5 inline-flex items-center gap-2 text-sm font-bold text-brand-gold">
-                            Learn More
-                            <ArrowRight
-                              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none"
-                              aria-hidden="true"
-                            />
-                          </span>
-                        </div>
-                      </Link>
-                    </AnimateIn>
-                  );
-                })}
-              </div>
-            )}
+            </AnimateIn>
           </div>
         </section>
 
@@ -734,10 +623,9 @@ export default function HomeClient({
             ) : (
               <div className="grid auto-rows-[18rem] gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {filteredPortfolio.slice(0, 9).map((project, index) => {
-                  const projectImage =
-                    firstImage(project) ??
-                    PORTFOLIO_FALLBACK_IMAGES[index % PORTFOLIO_FALLBACK_IMAGES.length];
+                  const projectImage = firstImage(project);
                   const isLarge = index === 0 || index === 5;
+                  const summary = projectSummary(project);
 
                   return (
                     <AnimateIn key={project.id} from="bottom" delay={index * 55}>
@@ -749,17 +637,20 @@ export default function HomeClient({
                         )}
                         aria-label={`View project: ${project.title}`}
                       >
-                        <Image
-                          src={projectImage}
-                          alt={`${project.title} signage project`}
-                          fill
-                          sizes={
-                            isLarge
-                              ? "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                              : "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                          }
-                          className="object-cover transition duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:transform-none"
-                        />
+                        {projectImage ? (
+                          <Image
+                            src={projectImage}
+                            alt={`${project.title} signage project`}
+                            fill
+                            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                            className="object-cover transition duration-700 ease-out group-hover:scale-110 motion-reduce:transition-none motion-reduce:transform-none"
+                          />
+                        ) : (
+                          <div
+                            className="absolute inset-0 bg-gradient-to-br from-brand-navy via-[#11162b] to-[#080814]"
+                            aria-hidden="true"
+                          />
+                        )}
                         <div
                           className="absolute inset-0 bg-gradient-to-b from-brand-navy/10 via-brand-navy/20 to-brand-navy/90 transition-colors duration-500 group-hover:from-brand-navy/15 group-hover:via-brand-navy/48 group-hover:to-brand-navy"
                           aria-hidden="true"
@@ -784,6 +675,11 @@ export default function HomeClient({
                             <h3 className="font-display text-2xl font-bold leading-tight text-white">
                               {project.title}
                             </h3>
+                            {summary ? (
+                              <p className="mt-3 line-clamp-2 text-sm leading-6 text-white/65">
+                                {summary}
+                              </p>
+                            ) : null}
                             <span className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-brand-gold">
                               View Project
                               <ArrowRight

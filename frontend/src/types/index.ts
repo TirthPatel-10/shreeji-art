@@ -142,13 +142,36 @@ export interface PortfolioItem {
   title: string;
   slug: string;
   description: string;
+  shortDescription?: string;
+  fullDescription?: string;
   clientName?: string;
+  category?: string;
+  location?: string;
+  completionYear?: number;
+  coverImageUrl?: string;
   serviceId?: number;
   service?: Service;
   images?: string[];
+  imageRecords?: PortfolioImage[];
   tags?: string[];
   isFeatured: boolean;
+  published?: boolean;
   displayOrder?: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PortfolioImage {
+  id: number;
+  imageUrl: string;
+  storagePath?: string;
+  altText?: string;
+  caption?: string;
+  sortOrder: number;
+  coverImage: boolean;
+  published: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ─── Gallery ──────────────────────────────────────────────────────────────────
@@ -157,9 +180,18 @@ export interface GalleryItem {
   id: number;
   title: string;
   imageUrl: string;
+  storagePath?: string;
   category: string;
+  projectId?: number;
+  altText?: string;
+  caption?: string;
   isFeatured: boolean;
+  featured?: boolean;
+  published?: boolean;
+  sortOrder?: number;
   displayOrder: number;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 // ─── Blog ─────────────────────────────────────────────────────────────────────

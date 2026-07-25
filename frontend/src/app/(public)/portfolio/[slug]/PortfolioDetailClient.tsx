@@ -6,7 +6,14 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
-import type { PortfolioItem } from "@/types";
+import {
+  projectCategoryLabel,
+  projectCoverImage,
+  projectFullDescription,
+  projectLocationLabel,
+  sortedProjectImages,
+} from "@/lib/public-projects";
+import type { PortfolioImage, PortfolioItem } from "@/types";
 import {
   ArrowLeft, ArrowRight, CheckCircle2, Star, Tag,
   User2, Building2, ChevronLeft, ChevronRight,
@@ -87,8 +94,14 @@ function DetailImage({
 
 // ─── Gallery ─────────────────────────────────────────────────────────────────
 
-function ImageGallery({ item }: { item: PortfolioItem }) {
-  const images = (item.images ?? []).filter(Boolean);
+function ImageGallery({
+  item,
+  images: suppliedImages,
+}: {
+  item: PortfolioItem;
+  images: PortfolioImage[];
+}) {
+  const images = suppliedImages.length > 0 ? suppliedImages : sortedProjectImages(item);
   const [active, setActive] = useState(0);
 
   if (images.length === 0) {
@@ -110,7 +123,13 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
     <div>
       {/* Main image */}
       <div className="relative rounded-2xl overflow-hidden h-64 sm:h-96 bg-gray-100 mb-3">
-        <DetailImage src={images[active]} alt={`${item.title} — image ${active + 1}`} fill item={item} priority={active === 0} />
+        <DetailImage
+          src={images[active].imageUrl}
+          alt={images[active].altText || `${item.title} image ${active + 1}`}
+          fill
+          item={item}
+          priority={active === 0}
+        />
         {images.length > 1 && (
           <>
             <button
@@ -146,14 +165,23 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
             </div>
           </>
         )}
+        <div className="absolute right-3 top-3 rounded-full bg-black/45 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
+          {active + 1} / {images.length}
+        </div>
       </div>
+
+      {images[active].caption ? (
+        <p className="mb-3 text-sm leading-6 text-gray-500">
+          {images[active].caption}
+        </p>
+      ) : null}
 
       {/* Thumbnails */}
       {images.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
-          {images.map((src, i) => (
+          {images.map((image, i) => (
             <button
-              key={i}
+              key={image.id}
               type="button"
               onClick={() => setActive(i)}
               className={[
@@ -163,7 +191,12 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
               aria-label={`Thumbnail ${i + 1}`}
               aria-current={i === active ? "true" : undefined}
             >
-              <DetailImage src={src} alt={`Thumbnail ${i + 1}`} fill item={item} />
+              <DetailImage
+                src={image.imageUrl}
+                alt={image.altText || `Thumbnail ${i + 1}`}
+                fill
+                item={item}
+              />
             </button>
           ))}
         </div>
@@ -176,7 +209,7 @@ function ImageGallery({ item }: { item: PortfolioItem }) {
 
 function RelatedCard({ item, index }: { item: PortfolioItem; index: number }) {
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const firstImage = item.images?.find(Boolean);
+  const firstImage = projectCoverImage(item);
   const Icon = SERVICE_ICONS[index % SERVICE_ICONS.length];
 
   return (
@@ -221,12 +254,16 @@ function RelatedCard({ item, index }: { item: PortfolioItem; index: number }) {
 
 interface PortfolioDetailClientProps {
   item: PortfolioItem;
+  images: PortfolioImage[];
   related: PortfolioItem[];
 }
 
 export default function PortfolioDetailClient({
-  item, related,
+  item, images, related,
 }: PortfolioDetailClientProps) {
+  const category = projectCategoryLabel(item);
+  const location = projectLocationLabel(item);
+  const description = projectFullDescription(item);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -271,10 +308,16 @@ export default function PortfolioDetailClient({
                   {item.clientName}
                 </span>
               )}
-              {item.service?.name && (
+              {category && (
                 <span className="flex items-center gap-1.5">
                   <Building2 className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
-                  {item.service.name}
+                  {category}
+                </span>
+              )}
+              {location && (
+                <span className="flex items-center gap-1.5">
+                  <Building2 className="h-3.5 w-3.5 text-gray-500" aria-hidden="true" />
+                  {location}
                 </span>
               )}
               {item.tags && item.tags.length > 0 && (
@@ -296,10 +339,10 @@ export default function PortfolioDetailClient({
             {/* Left: gallery + description */}
             <div className="lg:col-span-2 space-y-8">
               <AnimateIn from="bottom">
-                <ImageGallery item={item} />
+                <ImageGallery item={item} images={images} />
               </AnimateIn>
 
-              {item.description && (
+              {description && (
                 <AnimateIn from="bottom" delay={100}>
                   <div>
                     <h2 className="font-display font-bold text-brand-navy text-xl mb-4 flex items-center gap-2">
@@ -307,7 +350,7 @@ export default function PortfolioDetailClient({
                       Project Overview
                     </h2>
                     <p className="text-gray-600 text-[15px] leading-relaxed whitespace-pre-line">
-                      {item.description}
+                      {description}
                     </p>
                   </div>
                 </AnimateIn>
@@ -350,10 +393,22 @@ export default function PortfolioDetailClient({
                         <dd className="font-medium text-gray-800">{item.clientName}</dd>
                       </div>
                     )}
-                    {item.service?.name && (
+                    {category && (
                       <div>
                         <dt className="text-gray-400 text-xs mb-0.5">Service Type</dt>
-                        <dd className="font-medium text-gray-800">{item.service.name}</dd>
+                        <dd className="font-medium text-gray-800">{category}</dd>
+                      </div>
+                    )}
+                    {location && (
+                      <div>
+                        <dt className="text-gray-400 text-xs mb-0.5">Location</dt>
+                        <dd className="font-medium text-gray-800">{location}</dd>
+                      </div>
+                    )}
+                    {item.completionYear && (
+                      <div>
+                        <dt className="text-gray-400 text-xs mb-0.5">Completion Year</dt>
+                        <dd className="font-medium text-gray-800">{item.completionYear}</dd>
                       </div>
                     )}
                     {item.tags && item.tags.length > 0 && (
@@ -384,9 +439,9 @@ export default function PortfolioDetailClient({
                 </div>
 
                 {/* Image count indicator */}
-                {item.images && item.images.length > 0 && (
+                {images.length > 0 && (
                   <p className="text-xs text-gray-400 text-center">
-                    {item.images.length} image{item.images.length !== 1 ? "s" : ""} in this project
+                    {images.length} image{images.length !== 1 ? "s" : ""} in this project
                   </p>
                 )}
               </div>

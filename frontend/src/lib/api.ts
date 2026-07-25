@@ -20,8 +20,11 @@ async function request<T>(
   const cleanToken =
     token && token !== "undefined" && token !== "null" ? token : null;
 
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
+
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
     ...(cleanToken ? { Authorization: `Bearer ${cleanToken}` } : {}),
     ...options.headers,
   };
@@ -69,6 +72,7 @@ export const publicApi = {
   getServiceById: (id: number) => request(`/services/${id}`),
   getPortfolio: () => request("/portfolio"),
   getPortfolioBySlug: (slug: string) => request(`/portfolio/${slug}`),
+  getPortfolioImagesBySlug: (slug: string) => request(`/portfolio/${slug}/images`),
   getPortfolioItem: (id: number) => request(`/portfolio/${id}`),
   getGallery: (category?: string) =>
     request(`/gallery${category ? `?category=${encodeURIComponent(category)}` : ""}`),
@@ -143,13 +147,31 @@ export const adminApi = {
     request(`/admin/services/${id}`, { method: "DELETE" }),
 
   // Gallery
-  getGalleryItems: () => request("/admin/gallery"),
+  getGalleryItems: (category?: string) =>
+    request(`/admin/gallery${category ? `?category=${encodeURIComponent(category)}` : ""}`),
   createGalleryItem: (body: unknown) =>
     request("/admin/gallery", { method: "POST", body: JSON.stringify(body) }),
+  uploadGalleryItem: (body: FormData) =>
+    request("/admin/gallery", { method: "POST", body }),
   updateGalleryItem: (id: number, body: unknown) =>
     request(`/admin/gallery/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   deleteGalleryItem: (id: number) =>
     request(`/admin/gallery/${id}`, { method: "DELETE" }),
+  reorderGalleryItems: (items: { galleryItemId: number; sortOrder: number }[]) =>
+    request("/admin/gallery/reorder", {
+      method: "PATCH",
+      body: JSON.stringify({ items }),
+    }),
+  setGalleryPublished: (id: number, published: boolean) =>
+    request(`/admin/gallery/${id}/publish`, {
+      method: "PATCH",
+      body: JSON.stringify({ published }),
+    }),
+  setGalleryFeatured: (id: number, featured: boolean) =>
+    request(`/admin/gallery/${id}/featured`, {
+      method: "PATCH",
+      body: JSON.stringify({ featured }),
+    }),
 
   // Portfolio
   getPortfolioItems: () => request("/admin/portfolio"),
@@ -159,6 +181,39 @@ export const adminApi = {
     request(`/admin/portfolio/${id}`, { method: "PUT", body: JSON.stringify(body) }),
   deletePortfolioItem: (id: number) =>
     request(`/admin/portfolio/${id}`, { method: "DELETE" }),
+  setPortfolioPublished: (id: number, published: boolean) =>
+    request(`/admin/portfolio/${id}/publish`, {
+      method: "PATCH",
+      body: JSON.stringify({ published }),
+    }),
+  setPortfolioFeatured: (id: number, featured: boolean) =>
+    request(`/admin/portfolio/${id}/featured`, {
+      method: "PATCH",
+      body: JSON.stringify({ featured }),
+    }),
+  getPortfolioImages: (projectId: number) =>
+    request(`/admin/portfolio/${projectId}/images`),
+  uploadPortfolioImage: (projectId: number, body: FormData) =>
+    request(`/admin/portfolio/${projectId}/images`, { method: "POST", body }),
+  updatePortfolioImage: (projectId: number, imageId: number, body: unknown) =>
+    request(`/admin/portfolio/${projectId}/images/${imageId}`, {
+      method: "PUT",
+      body: JSON.stringify(body),
+    }),
+  deletePortfolioImage: (projectId: number, imageId: number) =>
+    request(`/admin/portfolio/${projectId}/images/${imageId}`, { method: "DELETE" }),
+  reorderPortfolioImages: (
+    projectId: number,
+    images: { imageId: number; sortOrder: number }[]
+  ) =>
+    request(`/admin/portfolio/${projectId}/images/reorder`, {
+      method: "PATCH",
+      body: JSON.stringify({ images }),
+    }),
+  setPortfolioCoverImage: (projectId: number, imageId: number) =>
+    request(`/admin/portfolio/${projectId}/images/${imageId}/cover`, {
+      method: "PATCH",
+    }),
 
   // Blog
   getBlogPosts: () => request("/admin/blogs"),

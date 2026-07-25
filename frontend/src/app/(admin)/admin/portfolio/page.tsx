@@ -1,202 +1,893 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import {
+  ArrowDown,
+  ArrowUp,
+  CheckCircle2,
+  Eye,
+  ImagePlus,
+  Loader2,
+  Plus,
+  RefreshCcw,
+  Search,
+  Star,
+  Trash2,
+  Upload,
+  X,
+} from "lucide-react";
 import { adminApi } from "@/lib/api";
-import type { PortfolioItem } from "@/types";
+import type { PortfolioImage, PortfolioItem } from "@/types";
 
 type Mode = "list" | "create" | "edit";
 
-const emptyForm = {
+type PortfolioForm = {
+  title: string;
+  slug: string;
+  clientName: string;
+  category: string;
+  shortDescription: string;
+  fullDescription: string;
+  description: string;
+  location: string;
+  completionYear: string;
+  isFeatured: boolean;
+  published: boolean;
+  displayOrder: number;
+};
+
+const emptyForm: PortfolioForm = {
   title: "",
   slug: "",
-  description: "",
   clientName: "",
+  category: "",
+  shortDescription: "",
+  fullDescription: "",
+  description: "",
+  location: "",
+  completionYear: "",
   isFeatured: false,
+  published: true,
   displayOrder: 0,
 };
 
+const inputClass =
+  "w-full rounded-2xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 outline-none transition focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/15";
+
 export default function AdminPortfolioPage() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
+  const [images, setImages] = useState<PortfolioImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imageLoading, setImageLoading] = useState(false);
   const [mode, setMode] = useState<Mode>("list");
   const [editing, setEditing] = useState<PortfolioItem | null>(null);
-  const [form, setForm] = useState(emptyForm);
+  const [form, setForm] = useState<PortfolioForm>(emptyForm);
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState("");
   const [error, setError] = useState("");
+  const [dirty, setDirty] = useState(false);
 
-  useEffect(() => { reload(); }, []);
+  useEffect(() => {
+    reload();
+  }, []);
 
-  function reload() {
+  useEffect(() => {
+    if (!dirty) return;
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [dirty]);
+
+  const filteredItems = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    return items.filter((item) => {
+      const searchable = [
+        item.title,
+        item.slug,
+        item.clientName,
+        item.category,
+        item.location,
+      ]
+        .filter(Boolean)
+        .join(" ")
+        .toLowerCase();
+      const matchesQuery = !normalizedQuery || searchable.includes(normalizedQuery);
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "published" && item.published !== false) ||
+        (statusFilter === "draft" && item.published === false) ||
+        (statusFilter === "featured" && item.isFeatured);
+
+      return matchesQuery && matchesStatus;
+    });
+  }, [items, query, statusFilter]);
+
+  async function reload() {
     setLoading(true);
-    adminApi.getPortfolioItems()
-      .then((res) => setItems((res.data as PortfolioItem[]) ?? []))
-      .finally(() => setLoading(false));
+    setError("");
+    try {
+      const res = await adminApi.getPortfolioItems();
+      if (!res.success) {
+        setError(res.message || "Could not load portfolio projects.");
+        setItems([]);
+        return;
+      }
+      setItems((res.data as PortfolioItem[]) ?? []);
+    } catch {
+      setError("Connection error while loading portfolio projects.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function loadImages(projectId: number) {
+    setImageLoading(true);
+    try {
+      const res = await adminApi.getPortfolioImages(projectId);
+      if (res.success) {
+        setImages(((res.data as PortfolioImage[]) ?? []).sort(sortImages));
+      }
+    } finally {
+      setImageLoading(false);
+    }
+  }
+
+  function updateField<K extends keyof PortfolioForm>(key: K, value: PortfolioForm[K]) {
+    setForm((previous) => ({ ...previous, [key]: value }));
+    setDirty(true);
   }
 
   function autoSlug(title: string) {
-    return title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+    return title
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
   }
 
   function openCreate() {
     setEditing(null);
+    setImages([]);
     setForm(emptyForm);
     setError("");
+    setDirty(false);
     setMode("create");
   }
 
-  function openEdit(p: PortfolioItem) {
-    setEditing(p);
+  function openEdit(project: PortfolioItem) {
+    setEditing(project);
     setForm({
-      title: p.title,
-      slug: p.slug,
-      description: p.description ?? "",
-      clientName: p.clientName ?? "",
-      isFeatured: p.isFeatured,
-      displayOrder: (p as unknown as Record<string, number>).displayOrder ?? 0,
+      title: project.title ?? "",
+      slug: project.slug ?? "",
+      clientName: project.clientName ?? "",
+      category: project.category ?? "",
+      shortDescription: project.shortDescription ?? "",
+      fullDescription: project.fullDescription ?? "",
+      description: project.description ?? "",
+      location: project.location ?? "",
+      completionYear: project.completionYear ? String(project.completionYear) : "",
+      isFeatured: Boolean(project.isFeatured),
+      published: project.published !== false,
+      displayOrder: project.displayOrder ?? 0,
     });
     setError("");
+    setDirty(false);
     setMode("edit");
+    loadImages(project.id);
   }
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  function backToList() {
+    if (dirty && !confirm("Discard unsaved portfolio changes?")) return;
+    setMode("list");
+    setEditing(null);
+    setImages([]);
+    setDirty(false);
+  }
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
     setSaving(true);
     setError("");
+
+    const payload = {
+      ...form,
+      description: form.description || form.shortDescription,
+      completionYear: form.completionYear ? Number(form.completionYear) : null,
+    };
+
     try {
-      if (mode === "create") {
-        const res = await adminApi.createPortfolioItem(form);
-        if (!res.success) { setError(res.message || "Failed to create."); return; }
-      } else if (editing) {
-        const res = await adminApi.updatePortfolioItem(editing.id, form);
-        if (!res.success) { setError(res.message || "Failed to update."); return; }
+      const res =
+        mode === "create"
+          ? await adminApi.createPortfolioItem(payload)
+          : editing
+            ? await adminApi.updatePortfolioItem(editing.id, payload)
+            : null;
+
+      if (!res?.success) {
+        setError(res?.message || "Could not save portfolio project.");
+        return;
       }
-      reload();
-      setMode("list");
-    } catch { setError("Connection error."); }
-    finally { setSaving(false); }
+
+      setDirty(false);
+      await reload();
+
+      const saved = res.data as PortfolioItem | null;
+      if (mode === "create" && saved?.id) {
+        openEdit(saved);
+      } else {
+        setMode("list");
+      }
+    } catch {
+      setError("Connection error while saving the portfolio project.");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  async function handleDelete(id: number) {
-    if (!confirm("Delete this portfolio item?")) return;
-    await adminApi.deletePortfolioItem(id);
-    reload();
+  async function togglePublished(project: PortfolioItem) {
+    const res = await adminApi.setPortfolioPublished(project.id, project.published === false);
+    if (res.success) reload();
+  }
+
+  async function toggleFeatured(project: PortfolioItem) {
+    const res = await adminApi.setPortfolioFeatured(project.id, !project.isFeatured);
+    if (res.success) reload();
+  }
+
+  async function handleDelete(project: PortfolioItem) {
+    if (
+      !confirm(
+        `Delete "${project.title}" and its managed project images? This cannot be undone.`
+      )
+    ) {
+      return;
+    }
+
+    const res = await adminApi.deletePortfolioItem(project.id);
+    if (res.success) reload();
+  }
+
+  async function uploadFiles(files: FileList | null, coverImage = false) {
+    if (!editing || !files?.length) return;
+    setUploading(true);
+    setUploadProgress("");
+    setError("");
+
+    try {
+      for (let index = 0; index < files.length; index += 1) {
+        const body = new FormData();
+        body.append("file", files[index]);
+        body.append("coverImage", String(coverImage || images.length === 0));
+        body.append("published", "true");
+        body.append("sortOrder", String(images.length + index));
+        setUploadProgress(`Uploading ${index + 1} of ${files.length}`);
+
+        const res = await adminApi.uploadPortfolioImage(editing.id, body);
+        if (!res.success) {
+          setError(res.message || `Could not upload ${files[index].name}.`);
+          break;
+        }
+      }
+
+      await loadImages(editing.id);
+      await reload();
+    } catch {
+      setError("Connection error while uploading project images.");
+    } finally {
+      setUploading(false);
+      setUploadProgress("");
+    }
+  }
+
+  async function updateImage(image: PortfolioImage, changes: Partial<PortfolioImage>) {
+    if (!editing) return;
+    const body = {
+      altText: changes.altText ?? image.altText ?? "",
+      caption: changes.caption ?? image.caption ?? "",
+      sortOrder: changes.sortOrder ?? image.sortOrder,
+      published: changes.published ?? image.published,
+    };
+    const res = await adminApi.updatePortfolioImage(editing.id, image.id, body);
+    if (res.success) loadImages(editing.id);
+  }
+
+  async function deleteImage(image: PortfolioImage) {
+    if (!editing || !confirm("Delete this project image?")) return;
+    const res = await adminApi.deletePortfolioImage(editing.id, image.id);
+    if (res.success) {
+      await loadImages(editing.id);
+      await reload();
+    }
+  }
+
+  async function setCover(image: PortfolioImage) {
+    if (!editing) return;
+    const res = await adminApi.setPortfolioCoverImage(editing.id, image.id);
+    if (res.success) {
+      await loadImages(editing.id);
+      await reload();
+    }
+  }
+
+  async function moveImage(index: number, direction: -1 | 1) {
+    if (!editing) return;
+    const nextIndex = index + direction;
+    if (nextIndex < 0 || nextIndex >= images.length) return;
+
+    const reordered = [...images];
+    [reordered[index], reordered[nextIndex]] = [reordered[nextIndex], reordered[index]];
+    const payload = reordered.map((image, sortOrder) => ({
+      imageId: image.id,
+      sortOrder,
+    }));
+
+    setImages(reordered.map((image, sortOrder) => ({ ...image, sortOrder })));
+    const res = await adminApi.reorderPortfolioImages(editing.id, payload);
+    if (res.success) loadImages(editing.id);
   }
 
   if (mode !== "list") {
     return (
-      <div className="max-w-2xl">
-        <button onClick={() => setMode("list")} className="text-brand-gold text-sm hover:underline mb-4 block">
-          ← Back to Portfolio
+      <div className="space-y-6">
+        <button
+          type="button"
+          onClick={backToList}
+          className="inline-flex items-center gap-2 text-sm font-semibold text-brand-gold hover:text-brand-gold-dark"
+        >
+          <X className="h-4 w-4" aria-hidden="true" />
+          Back to project list
         </button>
-        <h1 className="text-2xl font-bold text-gray-900 mb-6">
-          {mode === "create" ? "Add Portfolio Item" : "Edit Portfolio Item"}
-        </h1>
-        {error && (
-          <div className="mb-4 text-sm text-brand-red bg-red-50 border border-red-100 rounded-lg px-4 py-2">{error}</div>
-        )}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-100 p-6 space-y-4 shadow-sm">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Title *</label>
-            <input type="text" required value={form.title}
-              onChange={(e) => setForm((p) => ({ ...p, title: e.target.value, slug: mode === "create" ? autoSlug(e.target.value) : p.slug }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
-            <input type="text" required value={form.slug}
-              onChange={(e) => setForm((p) => ({ ...p, slug: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold font-mono" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Client Name</label>
-            <input type="text" value={form.clientName}
-              onChange={(e) => setForm((p) => ({ ...p, clientName: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold" />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-            <textarea rows={4} value={form.description}
-              onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold" />
-          </div>
-          <div className="flex items-center gap-6">
-            <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
-              <input type="checkbox" checked={form.isFeatured}
-                onChange={(e) => setForm((p) => ({ ...p, isFeatured: e.target.checked }))}
-                className="rounded border-gray-300" />
-              Featured
-            </label>
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Display Order</label>
-              <input type="number" value={form.displayOrder}
-                onChange={(e) => setForm((p) => ({ ...p, displayOrder: Number(e.target.value) }))}
-                className="w-20 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold" />
+
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_420px]">
+          <form
+            onSubmit={handleSubmit}
+            className="rounded-[2rem] border border-white bg-white p-5 shadow-sa-lg sm:p-7"
+          >
+            <div className="mb-6">
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">
+                {mode === "create" ? "New portfolio project" : "Edit portfolio project"}
+              </p>
+              <h2 className="mt-2 font-display text-3xl font-semibold text-brand-navy">
+                Project details
+              </h2>
+              <p className="mt-2 text-sm text-gray-500">
+                Manage the public portfolio project metadata without changing the public
+                route contract.
+              </p>
             </div>
-          </div>
-          <div className="flex gap-3 pt-2">
-            <button type="submit" disabled={saving}
-              className="bg-brand-gold text-white font-semibold px-6 py-2 rounded-lg hover:bg-brand-gold-dark transition-colors text-sm disabled:opacity-60">
-              {saving ? "Saving…" : mode === "create" ? "Add Item" : "Update Item"}
-            </button>
-            <button type="button" onClick={() => setMode("list")}
-              className="border border-gray-200 text-gray-600 px-6 py-2 rounded-lg text-sm hover:bg-gray-50 transition-colors">
-              Cancel
-            </button>
-          </div>
-        </form>
+
+            {error ? (
+              <div className="mb-5 rounded-2xl border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-600">
+                {error}
+              </div>
+            ) : null}
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <Field label="Project title" required>
+                <input
+                  required
+                  value={form.title}
+                  onChange={(event) => {
+                    const title = event.target.value;
+                    setForm((previous) => ({
+                      ...previous,
+                      title,
+                      slug: mode === "create" ? autoSlug(title) : previous.slug,
+                    }));
+                    setDirty(true);
+                  }}
+                  className={inputClass}
+                />
+              </Field>
+              <Field label="Slug" required>
+                <input
+                  required
+                  value={form.slug}
+                  onChange={(event) => updateField("slug", autoSlug(event.target.value))}
+                  className={`${inputClass} font-mono`}
+                />
+              </Field>
+              <Field label="Client name">
+                <input
+                  value={form.clientName}
+                  onChange={(event) => updateField("clientName", event.target.value)}
+                  className={inputClass}
+                />
+              </Field>
+              <Field label="Category">
+                <input
+                  value={form.category}
+                  onChange={(event) => updateField("category", event.target.value)}
+                  placeholder="Retail, Corporate, Industrial..."
+                  className={inputClass}
+                />
+              </Field>
+              <Field label="Location">
+                <input
+                  value={form.location}
+                  onChange={(event) => updateField("location", event.target.value)}
+                  placeholder="Ahmedabad"
+                  className={inputClass}
+                />
+              </Field>
+              <Field label="Completion year">
+                <input
+                  type="number"
+                  min="1990"
+                  max="2100"
+                  value={form.completionYear}
+                  onChange={(event) => updateField("completionYear", event.target.value)}
+                  className={inputClass}
+                />
+              </Field>
+              <Field label="Short description" className="md:col-span-2">
+                <textarea
+                  rows={3}
+                  value={form.shortDescription}
+                  onChange={(event) => updateField("shortDescription", event.target.value)}
+                  className={inputClass}
+                />
+              </Field>
+              <Field label="Full description" className="md:col-span-2">
+                <textarea
+                  rows={6}
+                  value={form.fullDescription}
+                  onChange={(event) => updateField("fullDescription", event.target.value)}
+                  className={inputClass}
+                />
+              </Field>
+            </div>
+
+            <div className="mt-5 flex flex-wrap items-center gap-4">
+              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={form.published}
+                  onChange={(event) => updateField("published", event.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-brand-gold focus:ring-brand-gold"
+                />
+                Published
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+                <input
+                  type="checkbox"
+                  checked={form.isFeatured}
+                  onChange={(event) => updateField("isFeatured", event.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-brand-gold focus:ring-brand-gold"
+                />
+                Featured
+              </label>
+              <label className="inline-flex items-center gap-2 text-sm font-semibold text-gray-700">
+                Display order
+                <input
+                  type="number"
+                  value={form.displayOrder}
+                  onChange={(event) => updateField("displayOrder", Number(event.target.value))}
+                  className="w-24 rounded-xl border border-gray-200 px-3 py-2 text-sm outline-none focus:border-brand-gold focus:ring-4 focus:ring-brand-gold/15"
+                />
+              </label>
+            </div>
+
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button
+                type="submit"
+                disabled={saving}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-6 py-3 text-sm font-bold text-brand-navy shadow-[0_18px_36px_rgba(217,165,20,0.24)] transition hover:-translate-y-0.5 hover:bg-brand-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
+                {saving ? "Saving..." : "Save project"}
+              </button>
+              <button
+                type="button"
+                onClick={backToList}
+                className="rounded-full border border-gray-200 px-6 py-3 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              {editing?.slug ? (
+                <Link
+                  href={`/portfolio/${editing.slug}`}
+                  className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-6 py-3 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
+                >
+                  <Eye className="h-4 w-4" aria-hidden="true" />
+                  Preview
+                </Link>
+              ) : null}
+            </div>
+          </form>
+
+          <ProjectImagesPanel
+            editing={editing}
+            images={images}
+            imageLoading={imageLoading}
+            uploading={uploading}
+            uploadProgress={uploadProgress}
+            onUpload={uploadFiles}
+            onUpdate={updateImage}
+            onDelete={deleteImage}
+            onCover={setCover}
+            onMove={moveImage}
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Portfolio</h1>
-        <button onClick={openCreate}
-          className="bg-brand-gold text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-gold-dark transition-colors">
-          + Add Item
+    <div className="space-y-6">
+      <div className="flex flex-col gap-4 rounded-[2rem] border border-white bg-white p-5 shadow-sa-lg sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">
+            Admin portfolio
+          </p>
+          <h2 className="mt-2 font-display text-3xl font-semibold text-brand-navy">
+            Manage Projects
+          </h2>
+          <p className="mt-2 text-sm text-gray-500">
+            Create portfolio projects, control publication, and manage project images.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={openCreate}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-navy px-5 py-3 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-navy-deep"
+        >
+          <Plus className="h-4 w-4" aria-hidden="true" />
+          New Project
         </button>
       </div>
+
+      <div className="grid gap-3 rounded-[1.5rem] border border-white bg-white/80 p-4 shadow-sm md:grid-cols-[1fr_220px_auto]">
+        <label className="relative">
+          <span className="sr-only">Search projects</span>
+          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search title, client, category, location..."
+            className={`${inputClass} pl-11`}
+          />
+        </label>
+        <select
+          value={statusFilter}
+          onChange={(event) => setStatusFilter(event.target.value)}
+          className={inputClass}
+          aria-label="Filter projects"
+        >
+          <option value="all">All projects</option>
+          <option value="published">Published</option>
+          <option value="draft">Drafts</option>
+          <option value="featured">Featured</option>
+        </select>
+        <button
+          type="button"
+          onClick={reload}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-gray-200 px-4 py-3 text-sm font-bold text-gray-600 transition hover:bg-gray-50"
+        >
+          <RefreshCcw className="h-4 w-4" aria-hidden="true" />
+          Refresh
+        </button>
+      </div>
+
+      {error ? (
+        <div className="rounded-2xl border border-red-100 bg-red-50 p-4 text-sm text-red-600">
+          {error}
+        </div>
+      ) : null}
+
       {loading ? (
-        <div className="space-y-3">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-white h-14 rounded-xl animate-pulse border border-gray-100" />
+        <div className="grid gap-4 lg:grid-cols-2">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <div key={index} className="h-48 animate-pulse rounded-[2rem] bg-white" />
           ))}
         </div>
-      ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center text-gray-400">
-          <p className="text-4xl mb-3">🖼️</p>
-          <p className="font-medium">No portfolio items yet</p>
+      ) : filteredItems.length === 0 ? (
+        <div className="rounded-[2rem] border border-dashed border-gray-200 bg-white p-10 text-center">
+          <ImagePlus className="mx-auto h-10 w-10 text-brand-gold" aria-hidden="true" />
+          <h3 className="mt-4 font-display text-2xl font-semibold text-brand-navy">
+            No portfolio projects found
+          </h3>
+          <p className="mt-2 text-sm text-gray-500">
+            Add a project or clear filters to see existing work.
+          </p>
         </div>
       ) : (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-xs uppercase text-gray-400 tracking-wide">
-              <tr>
-                <th className="px-4 py-3 text-left">Title</th>
-                <th className="px-4 py-3 text-left hidden md:table-cell">Client</th>
-                <th className="px-4 py-3 text-center hidden lg:table-cell">Featured</th>
-                <th className="px-4 py-3 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {items.map((p) => (
-                <tr key={p.id} className="hover:bg-gray-50 transition-colors">
-                  <td className="px-4 py-3 font-medium text-gray-800">{p.title}</td>
-                  <td className="px-4 py-3 text-gray-500 hidden md:table-cell">{p.clientName || "—"}</td>
-                  <td className="px-4 py-3 text-center hidden lg:table-cell">
-                    {p.isFeatured ? "⭐" : "—"}
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <button onClick={() => openEdit(p)} className="text-brand-gold text-xs hover:underline mr-3">Edit</button>
-                    <button onClick={() => handleDelete(p.id)} className="text-red-400 text-xs hover:underline">Delete</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid gap-4 lg:grid-cols-2">
+          {filteredItems.map((project) => (
+            <article
+              key={project.id}
+              className="overflow-hidden rounded-[2rem] border border-white bg-white shadow-sa-lg"
+            >
+              <div className="grid gap-0 sm:grid-cols-[190px_1fr]">
+                <ProjectThumb project={project} />
+                <div className="p-5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Badge tone={project.published === false ? "muted" : "success"}>
+                      {project.published === false ? "Draft" : "Published"}
+                    </Badge>
+                    {project.isFeatured ? <Badge tone="gold">Featured</Badge> : null}
+                    {project.category ? <Badge tone="muted">{project.category}</Badge> : null}
+                  </div>
+                  <h3 className="mt-3 font-display text-2xl font-semibold text-brand-navy">
+                    {project.title}
+                  </h3>
+                  <p className="mt-1 text-sm text-gray-500">
+                    {project.clientName || "No client"} {project.location ? `- ${project.location}` : ""}
+                  </p>
+                  <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600">
+                    {project.shortDescription || project.description || "No description added yet."}
+                  </p>
+                  <div className="mt-5 flex flex-wrap gap-2">
+                    <button
+                      onClick={() => openEdit(project)}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-brand-navy px-3 py-2 text-xs font-bold text-white transition hover:bg-brand-navy-deep"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => togglePublished(project)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-50"
+                    >
+                      {project.published === false ? "Publish" : "Unpublish"}
+                    </button>
+                    <button
+                      onClick={() => toggleFeatured(project)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-50"
+                    >
+                      <Star className="h-3.5 w-3.5" aria-hidden="true" />
+                      {project.isFeatured ? "Unfeature" : "Feature"}
+                    </button>
+                    <button
+                      onClick={() => handleDelete(project)}
+                      className="inline-flex items-center gap-1.5 rounded-full border border-red-100 px-3 py-2 text-xs font-bold text-red-500 transition hover:bg-red-50"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </article>
+          ))}
         </div>
       )}
     </div>
   );
+}
+
+function Field({
+  label,
+  required,
+  className = "",
+  children,
+}: {
+  label: string;
+  required?: boolean;
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <label className={`block ${className}`}>
+      <span className="mb-1.5 block text-sm font-semibold text-gray-700">
+        {label} {required ? <span className="text-red-500">*</span> : null}
+      </span>
+      {children}
+    </label>
+  );
+}
+
+function ProjectImagesPanel({
+  editing,
+  images,
+  imageLoading,
+  uploading,
+  uploadProgress,
+  onUpload,
+  onUpdate,
+  onDelete,
+  onCover,
+  onMove,
+}: {
+  editing: PortfolioItem | null;
+  images: PortfolioImage[];
+  imageLoading: boolean;
+  uploading: boolean;
+  uploadProgress: string;
+  onUpload: (files: FileList | null, coverImage?: boolean) => void;
+  onUpdate: (image: PortfolioImage, changes: Partial<PortfolioImage>) => void;
+  onDelete: (image: PortfolioImage) => void;
+  onCover: (image: PortfolioImage) => void;
+  onMove: (index: number, direction: -1 | 1) => void;
+}) {
+  if (!editing) {
+    return (
+      <aside className="rounded-[2rem] border border-dashed border-gray-200 bg-white p-6 text-center shadow-sm">
+        <Upload className="mx-auto h-9 w-9 text-brand-gold" aria-hidden="true" />
+        <h3 className="mt-4 font-display text-2xl font-semibold text-brand-navy">
+          Save first
+        </h3>
+        <p className="mt-2 text-sm leading-6 text-gray-500">
+          Create the portfolio project before uploading project images.
+        </p>
+      </aside>
+    );
+  }
+
+  return (
+    <aside className="space-y-4">
+      <div className="rounded-[2rem] border border-white bg-brand-navy p-5 text-white shadow-sa-lg">
+        <p className="text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">
+          Project images
+        </p>
+        <h3 className="mt-2 font-display text-2xl font-semibold">
+          Upload, cover, order
+        </h3>
+        <p className="mt-2 text-sm leading-6 text-white/62">
+          Images upload through the Spring Boot admin API and remain protected by the
+          existing admin token.
+        </p>
+        <label className="mt-5 flex cursor-pointer flex-col items-center justify-center rounded-3xl border border-dashed border-white/20 bg-white/[0.06] px-4 py-8 text-center transition hover:border-brand-gold/70 hover:bg-brand-gold/10">
+          <Upload className="h-8 w-8 text-brand-gold" aria-hidden="true" />
+          <span className="mt-3 text-sm font-bold" aria-live="polite">
+            {uploading ? uploadProgress || "Uploading..." : "Choose images"}
+          </span>
+          <span className="mt-1 text-xs text-white/45">PNG, JPG or WebP</span>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            disabled={uploading}
+            onChange={(event) => onUpload(event.target.files)}
+            className="sr-only"
+          />
+        </label>
+      </div>
+
+      <div className="space-y-3">
+        {imageLoading ? (
+          Array.from({ length: 3 }).map((_, index) => (
+            <div key={index} className="h-32 animate-pulse rounded-3xl bg-white" />
+          ))
+        ) : images.length === 0 ? (
+          <div className="rounded-3xl border border-dashed border-gray-200 bg-white p-6 text-center text-sm text-gray-500">
+            No images uploaded yet.
+          </div>
+        ) : (
+          images.map((image, index) => (
+            <div key={image.id} className="rounded-3xl border border-gray-100 bg-white p-3 shadow-sm">
+              <div className="flex gap-3">
+                <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
+                  <Image
+                    src={image.imageUrl}
+                    alt={image.altText || image.caption || "Portfolio project image"}
+                    fill
+                    sizes="112px"
+                    className="object-cover"
+                  />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap gap-2">
+                    {image.coverImage ? <Badge tone="gold">Cover</Badge> : null}
+                    <Badge tone={image.published ? "success" : "muted"}>
+                      {image.published ? "Visible" : "Hidden"}
+                    </Badge>
+                  </div>
+                  <input
+                    defaultValue={image.altText ?? ""}
+                    placeholder="Alt text"
+                    onBlur={(event) => onUpdate(image, { altText: event.target.value })}
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-xs outline-none focus:border-brand-gold"
+                  />
+                  <input
+                    defaultValue={image.caption ?? ""}
+                    placeholder="Caption"
+                    onBlur={(event) => onUpdate(image, { caption: event.target.value })}
+                    className="mt-2 w-full rounded-xl border border-gray-200 px-3 py-2 text-xs outline-none focus:border-brand-gold"
+                  />
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  onClick={() => onCover(image)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-50"
+                >
+                  Set cover
+                </button>
+                <button
+                  onClick={() => onUpdate(image, { published: !image.published })}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-gray-200 px-3 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-50"
+                >
+                  {image.published ? "Hide" : "Show"}
+                </button>
+                <button
+                  onClick={() => onMove(index, -1)}
+                  disabled={index === 0}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label="Move image up"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => onMove(index, 1)}
+                  disabled={index === images.length - 1}
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-gray-200 text-gray-500 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  aria-label="Move image down"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => onDelete(image)}
+                  className="ml-auto inline-flex items-center gap-1.5 rounded-full border border-red-100 px-3 py-2 text-xs font-bold text-red-500 transition hover:bg-red-50"
+                >
+                  <Trash2 className="h-3.5 w-3.5" />
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+    </aside>
+  );
+}
+
+function ProjectThumb({ project }: { project: PortfolioItem }) {
+  const imageUrl =
+    project.coverImageUrl ||
+    project.imageRecords?.find((image) => image.coverImage)?.imageUrl ||
+    project.imageRecords?.[0]?.imageUrl ||
+    project.images?.[0];
+
+  return (
+    <div className="relative min-h-48 overflow-hidden bg-brand-navy sm:min-h-full">
+      {imageUrl ? (
+        <Image
+          src={imageUrl}
+          alt={project.title}
+          fill
+          sizes="(min-width: 1024px) 190px, 100vw"
+          className="object-cover"
+        />
+      ) : (
+        <div className="flex h-full min-h-48 items-center justify-center text-brand-gold">
+          <ImagePlus className="h-10 w-10" aria-hidden="true" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Badge({
+  children,
+  tone,
+}: {
+  children: ReactNode;
+  tone: "gold" | "success" | "muted";
+}) {
+  const toneClass = {
+    gold: "border-brand-gold/30 bg-brand-gold/10 text-brand-gold-dark",
+    success: "border-emerald-200 bg-emerald-50 text-emerald-700",
+    muted: "border-gray-200 bg-gray-50 text-gray-500",
+  }[tone];
+
+  return (
+    <span className={`inline-flex items-center rounded-full border px-2.5 py-1 text-[11px] font-bold ${toneClass}`}>
+      {children}
+    </span>
+  );
+}
+
+function sortImages(a: PortfolioImage, b: PortfolioImage) {
+  return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
 }

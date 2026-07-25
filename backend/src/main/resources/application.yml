@@ -22,6 +22,10 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
+  servlet:
+    multipart:
+      max-file-size: ${MEDIA_MAX_UPLOAD_SIZE:15MB}
+      max-request-size: ${MEDIA_MAX_REQUEST_SIZE:20MB}
 
 server:
   servlet:
@@ -39,3 +43,22 @@ admin:
     enabled: ${ADMIN_BOOTSTRAP_ENABLED:false}
     email: ${ADMIN_EMAIL:}
     password: ${ADMIN_PASSWORD:}
+
+media:
+  storage:
+    supabase-url: ${SUPABASE_URL:}
+    service-role-key: ${SUPABASE_SERVICE_ROLE_KEY:}
+    project-bucket: ${SUPABASE_PROJECT_IMAGES_BUCKET:project-images}
+    gallery-bucket: ${SUPABASE_GALLERY_IMAGES_BUCKET:gallery-images}
+    max-upload-bytes: ${MEDIA_MAX_UPLOAD_BYTES:15728640}
+    allowed-mime-types:
+      - image/jpeg
+      - image/png
+      - image/webp
+      - image/avif
+    allowed-extensions:
+      - jpg
+      - jpeg
+      - png
+      - webp
+      - avif

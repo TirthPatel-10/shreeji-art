@@ -6,6 +6,14 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
+import {
+  isPublishedProject,
+  projectCategoryLabel,
+  projectCoverImage,
+  projectLocationLabel,
+  projectSummary,
+  sortNewestProjects,
+} from "@/lib/public-projects";
 import type { PortfolioItem } from "@/types";
 import {
   ArrowRight, Lightbulb, Square, Type, Building2, Shield,
@@ -17,34 +25,12 @@ import {
 
 // ─── Categories ──────────────────────────────────────────────────────────────
 
-interface Category {
-  id: string;
-  label: string;
-  keys: string[];
-}
+function buildCategories(items: PortfolioItem[]) {
+  const labels = Array.from(
+    new Set(items.map(projectCategoryLabel).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b));
 
-const CATEGORIES: Category[] = [
-  { id: "all",        label: "All Projects",    keys: [] },
-  { id: "led",        label: "LED Signs",        keys: ["led", "light"] },
-  { id: "acrylic",    label: "Acrylic Signs",    keys: ["acrylic"] },
-  { id: "3d",         label: "3D Letters",       keys: ["3d", "letter", "dimensional"] },
-  { id: "acp",        label: "ACP Signage",      keys: ["acp", "aluminium"] },
-  { id: "steel",      label: "SS Signs",         keys: ["steel", "stainless", "ss"] },
-  { id: "retail",     label: "Retail Branding",  keys: ["retail", "shop", "store"] },
-  { id: "office",     label: "Office Branding",  keys: ["office", "corporate"] },
-  { id: "glow",       label: "Glow Signs",       keys: ["glow", "backlit"] },
-  { id: "industrial", label: "Industrial",       keys: ["industrial", "factory", "warehouse"] },
-];
-
-function matchesCategory(item: PortfolioItem, cat: Category): boolean {
-  if (cat.id === "all") return true;
-  const searchIn = [
-    ...(item.tags ?? []),
-    item.service?.name ?? "",
-    item.title,
-    item.description,
-  ].join(" ").toLowerCase();
-  return cat.keys.some((k) => searchIn.includes(k));
+  return [{ id: "all", label: "All Projects" }, ...labels.map((label) => ({ id: label, label }))];
 }
 
 // ─── Visual helpers ──────────────────────────────────────────────────────────
@@ -141,7 +127,10 @@ function PortfolioCardImage({
 
 function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) {
   const gradient = CARD_GRADIENTS[index % CARD_GRADIENTS.length];
-  const firstImage = item.images?.find(Boolean);
+  const firstImage = projectCoverImage(item);
+  const category = projectCategoryLabel(item);
+  const location = projectLocationLabel(item);
+  const summary = projectSummary(item);
 
   return (
     <Link
@@ -166,9 +155,9 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
               Featured
             </span>
           )}
-          {item.service?.name && (
+          {category && (
             <span className="bg-brand-navy/80 backdrop-blur-sm text-white text-[10px] font-medium px-2 py-0.5 rounded-full">
-              {item.service.name}
+              {category}
             </span>
           )}
         </div>
@@ -189,9 +178,12 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
         {item.clientName && (
           <p className="text-xs text-gray-400 mb-2">{item.clientName}</p>
         )}
-        {item.description && (
+        {location ? (
+          <p className="text-xs text-gray-400 mb-2">{location}</p>
+        ) : null}
+        {summary && (
           <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">
-            {item.description}
+            {summary}
           </p>
         )}
         {item.tags && item.tags.length > 0 && (
@@ -215,18 +207,25 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
 
 interface PortfolioClientProps {
   items: PortfolioItem[];
+  status?: "ready" | "empty" | "error";
 }
 
-export default function PortfolioClient({ items }: PortfolioClientProps) {
+export default function PortfolioClient({ items, status = "ready" }: PortfolioClientProps) {
   const [activeCategory, setActiveCategory] = useState("all");
 
-  const featured = useMemo(() => items.filter((i) => i.isFeatured), [items]);
+  const publishedItems = useMemo(
+    () => sortNewestProjects(items.filter(isPublishedProject)),
+    [items]
+  );
+  const categories = useMemo(() => buildCategories(publishedItems), [publishedItems]);
+  const featured = useMemo(() => publishedItems.filter((i) => i.isFeatured), [publishedItems]);
+  const resolvedStatus =
+    status === "ready" && publishedItems.length === 0 ? "empty" : status;
 
   const filtered = useMemo(() => {
-    const cat = CATEGORIES.find((c) => c.id === activeCategory);
-    if (!cat) return items;
-    return items.filter((i) => matchesCategory(i, cat));
-  }, [items, activeCategory]);
+    if (activeCategory === "all") return publishedItems;
+    return publishedItems.filter((item) => projectCategoryLabel(item) === activeCategory);
+  }, [publishedItems, activeCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -302,10 +301,10 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
             </div>
 
             {/* Stats — only shown if there are real items */}
-            {items.length > 0 && (
+            {publishedItems.length > 0 && (
               <div className="flex flex-wrap justify-center gap-8 mt-12 pt-12 border-t border-white/8">
                 <div className="text-center">
-                  <p className="font-display font-bold text-3xl text-brand-gold">{items.length}+</p>
+                  <p className="font-display font-bold text-3xl text-brand-gold">{publishedItems.length}+</p>
                   <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Projects Shown</p>
                 </div>
                 {featured.length > 0 && (
@@ -315,7 +314,9 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                   </div>
                 )}
                 <div className="text-center">
-                  <p className="font-display font-bold text-3xl text-brand-gold">9+</p>
+                  <p className="font-display font-bold text-3xl text-brand-gold">
+                    {Math.max(categories.length - 1, 0)}
+                  </p>
                   <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Sign Categories</p>
                 </div>
                 <div className="text-center">
@@ -352,7 +353,8 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {featured.slice(0, 3).map((item, i) => {
                 const gradient = CARD_GRADIENTS[i % CARD_GRADIENTS.length];
-                const firstImage = item.images?.find(Boolean);
+                const firstImage = projectCoverImage(item);
+                const summary = projectSummary(item);
                 return (
                   <AnimateIn key={item.id} from="bottom" delay={i * 100}>
                     <Link
@@ -385,9 +387,9 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                         {item.clientName && (
                           <p className="text-xs text-gray-500 mb-2">{item.clientName}</p>
                         )}
-                        {item.description && (
+                        {summary && (
                           <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
-                            {item.description}
+                            {summary}
                           </p>
                         )}
                       </div>
@@ -407,7 +409,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
               <div>
                 <p className="text-caption text-brand-gold mb-1.5">
-                  {activeCategory === "all" ? "Complete Portfolio" : CATEGORIES.find((c) => c.id === activeCategory)?.label}
+                  {activeCategory === "all" ? "Complete Portfolio" : categories.find((c) => c.id === activeCategory)?.label}
                 </p>
                 <h2 className="font-display font-bold text-brand-navy text-2xl sm:text-3xl" aria-live="polite">
                   {filtered.length} Project{filtered.length !== 1 ? "s" : ""}
@@ -421,7 +423,7 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
               role="group"
               aria-label="Filter projects by category"
             >
-              {CATEGORIES.map((cat) => {
+              {categories.map((cat) => {
                 const isActive = activeCategory === cat.id;
                 return (
                   <button
@@ -444,7 +446,45 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
           </AnimateIn>
 
           {/* Grid */}
-          {filtered.length === 0 ? (
+          {resolvedStatus === "error" ? (
+            <AnimateIn from="bottom" className="py-20 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-50">
+                  <Search className="h-7 w-7 text-red-400" />
+                </div>
+                <h3 className="font-semibold text-gray-900 text-lg">Portfolio could not load</h3>
+                <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                  The portfolio API did not respond. Please retry the page.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="mt-2 inline-flex items-center gap-2 rounded-xl bg-brand-gold px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-colors"
+                >
+                  Retry <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+              </div>
+            </AnimateIn>
+          ) : resolvedStatus === "empty" ? (
+            <AnimateIn from="bottom" className="py-24 text-center">
+              <div className="flex flex-col items-center gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-50 border border-gray-100">
+                  <ImageIcon className="h-7 w-7 text-gray-400" />
+                </div>
+                <h3 className="font-semibold text-gray-900 text-lg">Portfolio Coming Soon</h3>
+                <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                  We are currently uploading our project showcase. Check back soon or
+                  contact us to discuss your signage requirements.
+                </p>
+                <Link
+                  href="/contact"
+                  className="mt-2 inline-flex items-center gap-2 rounded-xl bg-brand-gold px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-colors"
+                >
+                  Contact Us <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
+            </AnimateIn>
+          ) : filtered.length === 0 ? (
             <AnimateIn from="bottom" className="py-20 text-center">
               <div className="flex flex-col items-center gap-4">
                 <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
@@ -462,25 +502,6 @@ export default function PortfolioClient({ items }: PortfolioClientProps) {
                   </button>{" "}
                   to see our complete portfolio.
                 </p>
-              </div>
-            </AnimateIn>
-          ) : items.length === 0 ? (
-            <AnimateIn from="bottom" className="py-24 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-50 border border-gray-100">
-                  <ImageIcon className="h-7 w-7 text-gray-400" />
-                </div>
-                <h3 className="font-semibold text-gray-900 text-lg">Portfolio Coming Soon</h3>
-                <p className="text-gray-500 text-sm max-w-sm mx-auto">
-                  We are currently uploading our project showcase. Check back soon or
-                  contact us to discuss your signage requirements.
-                </p>
-                <Link
-                  href="/contact"
-                  className="mt-2 inline-flex items-center gap-2 rounded-xl bg-brand-gold px-5 py-2.5 text-sm font-semibold text-white hover:bg-brand-gold-dark transition-colors"
-                >
-                  Contact Us <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
               </div>
             </AnimateIn>
           ) : (
