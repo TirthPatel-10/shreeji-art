@@ -21,6 +21,7 @@ jwt:
 
 app:
   allowed-origins: http://localhost:3000
+  expose-error-details: true
 
 media:
   storage:
@@ -29,6 +30,7 @@ media:
     project-bucket: project-images
     gallery-bucket: gallery-images
     max-upload-bytes: 15728640
+    request-timeout-seconds: 20
 
 logging:
   level:

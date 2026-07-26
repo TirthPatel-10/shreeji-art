@@ -8,4 +8,6 @@ import java.util.Optional;
 public interface BlogPostRepository extends JpaRepository<BlogPost, Long> {
     List<BlogPost> findByStatusOrderByPublishedAtDesc(BlogStatus status);
     Optional<BlogPost> findBySlug(String slug);
+    boolean existsBySlug(String slug);
+    boolean existsBySlugAndIdNot(String slug, Long id);
 }

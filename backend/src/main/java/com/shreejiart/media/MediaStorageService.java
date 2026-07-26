@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -50,9 +51,10 @@ public class MediaStorageService {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + properties.getServiceRoleKey())
                 .header("apikey", properties.getServiceRoleKey())
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                .timeout(Duration.ofSeconds(properties.getRequestTimeoutSeconds()))
                 .method("DELETE", HttpRequest.BodyPublishers.ofString(body))
                 .build();
-        sendStorageRequest(request, "delete storage object");
+        sendStorageRequest(request, "delete storage object", bucket);
     }
 
     public void deleteProjectImage(String storagePath) {
@@ -122,20 +124,26 @@ public class MediaStorageService {
                     .header("apikey", properties.getServiceRoleKey())
                     .header(HttpHeaders.CONTENT_TYPE, file.getContentType())
                     .header("x-upsert", "false")
+                    .timeout(Duration.ofSeconds(properties.getRequestTimeoutSeconds()))
                     .POST(HttpRequest.BodyPublishers.ofByteArray(file.getBytes()))
                     .build();
-            sendStorageRequest(request, "upload storage object");
+            sendStorageRequest(request, "upload storage object", bucket);
             return new StoredMedia(bucket, storagePath, publicUrl(bucket, storagePath), file.getContentType(), file.getSize());
         } catch (IOException ex) {
             throw new MediaStorageException("Could not read uploaded image.", ex);
         }
     }
 
-    private void sendStorageRequest(HttpRequest request, String action) {
+    private void sendStorageRequest(HttpRequest request, String action, String bucket) {
         try {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() < 200 || response.statusCode() >= 300) {
-                throw new MediaStorageException("Supabase Storage failed to " + action + ".");
+                if (isBucketNotFound(response)) {
+                    throw new MediaStorageConfigurationException(
+                            "Supabase Storage bucket not found: " + bucket + ". Create the bucket in Supabase Storage."
+                    );
+                }
+                throw new MediaStorageException(storageFailureMessage(action, response));
             }
         } catch (IOException ex) {
             throw new MediaStorageException("Supabase Storage request failed.", ex);
@@ -146,8 +154,11 @@ public class MediaStorageService {
     }
 
     private void ensureConfigured() {
-        if (!StringUtils.hasText(properties.getSupabaseUrl()) || !StringUtils.hasText(properties.getServiceRoleKey())) {
-            throw new MediaStorageException("Supabase Storage is not configured.");
+        if (!StringUtils.hasText(properties.getSupabaseUrl())) {
+            throw new MediaStorageConfigurationException("Supabase Storage is not configured. Missing property: media.storage.supabase-url / SUPABASE_URL.");
+        }
+        if (!StringUtils.hasText(properties.getServiceRoleKey())) {
+            throw new MediaStorageConfigurationException("Supabase Storage is not configured. Missing property: media.storage.service-role-key / SUPABASE_SERVICE_ROLE_KEY.");
         }
     }
 
@@ -245,5 +256,27 @@ public class MediaStorageService {
 
     private String escapeJson(String value) {
         return value.replace("\\", "\\\\").replace("\"", "\\\"");
+    }
+
+    private String storageFailureMessage(String action, HttpResponse<String> response) {
+        String body = response.body();
+        if (!StringUtils.hasText(body)) {
+            return "Supabase Storage failed to " + action + " (HTTP " + response.statusCode() + ").";
+        }
+        return "Supabase Storage failed to " + action + " (HTTP " + response.statusCode() + "): " + sanitizeStorageBody(body);
+    }
+
+    private String sanitizeStorageBody(String body) {
+        String sanitized = body
+                .replaceAll("(?i)(authorization|apikey|service[_-]?role|bearer)\\s*[:=]\\s*[^,}\\s]+", "$1=[redacted]")
+                .replaceAll("(?i)(\"(?:authorization|apikey|service[_-]?role)\"\\s*:\\s*\")[^\"]+\"", "$1[redacted]\"");
+        return sanitized.length() > 500 ? sanitized.substring(0, 500) + "..." : sanitized;
+    }
+
+    private boolean isBucketNotFound(HttpResponse<String> response) {
+        String body = response.body();
+        return (response.statusCode() == 400 || response.statusCode() == 404)
+                && StringUtils.hasText(body)
+                && body.toLowerCase(Locale.ROOT).contains("bucket not found");
     }
 }

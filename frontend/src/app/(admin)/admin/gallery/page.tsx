@@ -16,7 +16,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { adminApi } from "@/lib/api";
+import { adminApi, apiErrorMessage, caughtApiErrorMessage } from "@/lib/api";
 import type { GalleryItem, PortfolioItem } from "@/types";
 
 type GalleryForm = {
@@ -94,7 +94,7 @@ export default function AdminGalleryPage() {
       ]);
 
       if (!galleryRes.success) {
-        setError(galleryRes.message || "Could not load gallery images.");
+        setError(apiErrorMessage(galleryRes, "Could not load gallery images."));
         setItems([]);
       } else {
         setItems((((galleryRes.data as GalleryItem[]) ?? [])).sort(sortGallery));
@@ -103,8 +103,8 @@ export default function AdminGalleryPage() {
       if (portfolioRes.success) {
         setProjects((portfolioRes.data as PortfolioItem[]) ?? []);
       }
-    } catch {
-      setError("Connection error while loading gallery management.");
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while loading gallery management."));
     } finally {
       setLoading(false);
     }
@@ -154,15 +154,15 @@ export default function AdminGalleryPage() {
         setUploadProgress(`Uploading ${index + 1} of ${files.length}`);
         const res = await adminApi.uploadGalleryItem(body);
         if (!res.success) {
-          setError(res.message || `Could not upload ${file.name}.`);
+          setError(apiErrorMessage(res, `Could not upload ${file.name}.`));
           break;
         }
       }
 
       closeEdit();
       await reload();
-    } catch {
-      setError("Connection error while uploading gallery images.");
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while uploading gallery images."));
     } finally {
       setUploading(false);
       setUploadProgress("");
@@ -192,13 +192,13 @@ export default function AdminGalleryPage() {
     try {
       const res = await adminApi.updateGalleryItem(editing.id, body);
       if (!res.success) {
-        setError(res.message || "Could not update gallery image.");
+        setError(apiErrorMessage(res, "Could not update gallery image."));
         return;
       }
       closeEdit();
       await reload();
-    } catch {
-      setError("Connection error while updating gallery image.");
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while updating gallery image."));
     } finally {
       setSaving(false);
     }
@@ -206,13 +206,21 @@ export default function AdminGalleryPage() {
 
   async function togglePublished(item: GalleryItem) {
     const res = await adminApi.setGalleryPublished(item.id, item.published === false);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not update gallery publish state."));
+      return;
+    }
+    reload();
   }
 
   async function toggleFeatured(item: GalleryItem) {
     const current = item.featured ?? item.isFeatured ?? false;
     const res = await adminApi.setGalleryFeatured(item.id, !current);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not update gallery featured state."));
+      return;
+    }
+    reload();
   }
 
   async function deleteItem(item: GalleryItem) {
@@ -220,7 +228,11 @@ export default function AdminGalleryPage() {
       return;
     }
     const res = await adminApi.deleteGalleryItem(item.id);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not delete gallery image."));
+      return;
+    }
+    reload();
   }
 
   async function moveItem(index: number, direction: -1 | 1) {
@@ -253,7 +265,11 @@ export default function AdminGalleryPage() {
     );
 
     const res = await adminApi.reorderGalleryItems(payload);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not reorder gallery images."));
+      return;
+    }
+    reload();
   }
 
   return (

@@ -3,7 +3,9 @@ package com.shreejiart.blogs;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.type.SqlTypes;
 
 import java.time.OffsetDateTime;
 
@@ -37,6 +39,10 @@ public class BlogPost {
 
     @Column(name = "featured_image", columnDefinition = "TEXT")
     private String featuredImage;
+
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    @Column(name = "tags", columnDefinition = "TEXT[]")
+    private String[] tags;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)

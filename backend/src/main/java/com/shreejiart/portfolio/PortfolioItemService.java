@@ -26,8 +26,22 @@ public class PortfolioItemService {
         return repository.findAllByOrderByDisplayOrderAsc();
     }
 
+    @Transactional(readOnly = true)
+    public List<PortfolioItemResponse> findAllResponses() {
+        return findAll().stream()
+                .map(this::toSummaryResponse)
+                .toList();
+    }
+
     public List<PortfolioItem> findPublished() {
         return repository.findByPublishedTrueOrderByDisplayOrderAsc();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PortfolioItemResponse> findPublishedResponses() {
+        return findPublished().stream()
+                .map(this::toSummaryResponse)
+                .toList();
     }
 
     public PortfolioItem findBySlug(String slug) {
@@ -44,12 +58,25 @@ public class PortfolioItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Portfolio item", id));
     }
 
+    @Transactional(readOnly = true)
+    public PortfolioItemResponse findResponseBySlug(String slug) {
+        PortfolioItem item = findBySlug(slug);
+        List<PortfolioImage> images = imageRepository.findByProjectIdAndPublishedTrueOrderBySortOrderAscIdAsc(item.getId());
+        return PortfolioItemResponse.fromDetail(item, images);
+    }
+
     @Transactional
     public PortfolioItem create(PortfolioItem item) {
         item.setId(null);
         validateSlug(item.getSlug(), null);
         normalizeDescriptions(item);
         return repository.save(item);
+    }
+
+    @Transactional
+    public PortfolioItemResponse createResponse(PortfolioItem item) {
+        PortfolioItem saved = create(item);
+        return PortfolioItemResponse.fromDetail(saved, List.of());
     }
 
     @Transactional
@@ -77,6 +104,13 @@ public class PortfolioItemService {
     }
 
     @Transactional
+    public PortfolioItemResponse updateResponse(Long id, PortfolioItem updates) {
+        PortfolioItem saved = update(id, updates);
+        List<PortfolioImage> images = imageRepository.findByProjectIdOrderBySortOrderAscIdAsc(saved.getId());
+        return PortfolioItemResponse.fromDetail(saved, images);
+    }
+
+    @Transactional
     public PortfolioItem setPublished(Long id, boolean published) {
         PortfolioItem project = findById(id);
         project.setPublished(published);
@@ -88,6 +122,16 @@ public class PortfolioItemService {
         PortfolioItem project = findById(id);
         project.setFeatured(featured);
         return repository.save(project);
+    }
+
+    @Transactional
+    public PortfolioItemResponse setPublishedResponse(Long id, boolean published) {
+        return toSummaryResponse(setPublished(id, published));
+    }
+
+    @Transactional
+    public PortfolioItemResponse setFeaturedResponse(Long id, boolean featured) {
+        return toSummaryResponse(setFeatured(id, featured));
     }
 
     @Transactional
@@ -116,9 +160,23 @@ public class PortfolioItemService {
                 : imageRepository.findByProjectIdOrderBySortOrderAscIdAsc(projectId);
     }
 
+    @Transactional(readOnly = true)
+    public List<PortfolioImageResponse> findImageResponses(Long projectId, boolean publicOnly) {
+        return findImages(projectId, publicOnly).stream()
+                .map(PortfolioImageResponse::from)
+                .toList();
+    }
+
     public List<PortfolioImage> findPublishedImagesBySlug(String slug) {
         PortfolioItem project = findBySlug(slug);
         return imageRepository.findByProjectIdAndPublishedTrueOrderBySortOrderAscIdAsc(project.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public List<PortfolioImageResponse> findPublishedImageResponsesBySlug(String slug) {
+        return findPublishedImagesBySlug(slug).stream()
+                .map(PortfolioImageResponse::from)
+                .toList();
     }
 
     @Transactional
@@ -156,6 +214,19 @@ public class PortfolioItemService {
     }
 
     @Transactional
+    public PortfolioImageResponse uploadImageResponse(
+            Long projectId,
+            MultipartFile file,
+            boolean coverImage,
+            String altText,
+            String caption,
+            Integer sortOrder,
+            boolean published
+    ) {
+        return PortfolioImageResponse.from(uploadImage(projectId, file, coverImage, altText, caption, sortOrder, published));
+    }
+
+    @Transactional
     public PortfolioImage updateImage(
             Long projectId,
             Long imageId,
@@ -172,6 +243,18 @@ public class PortfolioItemService {
         PortfolioImage saved = imageRepository.save(image);
         syncLegacyImageFields(projectId);
         return saved;
+    }
+
+    @Transactional
+    public PortfolioImageResponse updateImageResponse(
+            Long projectId,
+            Long imageId,
+            String altText,
+            String caption,
+            Integer sortOrder,
+            Boolean published
+    ) {
+        return PortfolioImageResponse.from(updateImage(projectId, imageId, altText, caption, sortOrder, published));
     }
 
     @Transactional
@@ -205,6 +288,13 @@ public class PortfolioItemService {
     }
 
     @Transactional
+    public List<PortfolioImageResponse> reorderImageResponses(Long projectId, List<ImageOrder> imageOrders) {
+        return reorderImages(projectId, imageOrders).stream()
+                .map(PortfolioImageResponse::from)
+                .toList();
+    }
+
+    @Transactional
     public PortfolioImage setCoverImage(Long projectId, Long imageId) {
         PortfolioImage image = findImageForProject(projectId, imageId);
         clearCover(projectId);
@@ -212,6 +302,11 @@ public class PortfolioItemService {
         PortfolioImage saved = imageRepository.save(image);
         syncLegacyImageFields(projectId);
         return saved;
+    }
+
+    @Transactional
+    public PortfolioImageResponse setCoverImageResponse(Long projectId, Long imageId) {
+        return PortfolioImageResponse.from(setCoverImage(projectId, imageId));
     }
 
     private PortfolioImage findImageForProject(Long projectId, Long imageId) {
@@ -278,6 +373,12 @@ public class PortfolioItemService {
                 .map(PortfolioImage::getImageUrl)
                 .orElse(null));
         repository.save(project);
+    }
+
+    private PortfolioItemResponse toSummaryResponse(PortfolioItem item) {
+        String[] legacyImages = item.getImages();
+        int imageCount = legacyImages == null ? 0 : legacyImages.length;
+        return PortfolioItemResponse.fromSummary(item, imageCount);
     }
 
     public record ImageOrder(Long imageId, int sortOrder) {}

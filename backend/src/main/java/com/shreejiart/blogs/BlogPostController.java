@@ -1,7 +1,9 @@
 package com.shreejiart.blogs;
 
 import com.shreejiart.common.response.ApiResponse;
+import com.shreejiart.users.User;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,10 @@ public class BlogPostController {
     }
 
     @PostMapping("/api/v1/admin/blogs")
-    public ResponseEntity<ApiResponse<BlogPost>> create(@RequestBody BlogPost post) {
+    public ResponseEntity<ApiResponse<BlogPost>> create(
+            @RequestBody BlogPost post,
+            @AuthenticationPrincipal User user) {
+        post.setAuthorId(user.getId());
         return ResponseEntity.status(201).body(ApiResponse.success("Blog post created", service.create(post)));
     }
 

@@ -1,6 +1,8 @@
 spring:
   application:
     name: shreeji-art-backend
+  config:
+    import: optional:file:.env[.properties],optional:file:backend/.env[.properties]
   profiles:
     active: ${SPRING_PROFILES_ACTIVE:dev}
   datasource:
@@ -37,6 +39,7 @@ jwt:
 
 app:
   allowed-origins: ${ALLOWED_ORIGINS}
+  expose-error-details: ${EXPOSE_ERROR_DETAILS:false}
 
 admin:
   bootstrap:
@@ -51,6 +54,7 @@ media:
     project-bucket: ${SUPABASE_PROJECT_IMAGES_BUCKET:project-images}
     gallery-bucket: ${SUPABASE_GALLERY_IMAGES_BUCKET:gallery-images}
     max-upload-bytes: ${MEDIA_MAX_UPLOAD_BYTES:15728640}
+    request-timeout-seconds: ${MEDIA_STORAGE_REQUEST_TIMEOUT_SECONDS:20}
     allowed-mime-types:
       - image/jpeg
       - image/png

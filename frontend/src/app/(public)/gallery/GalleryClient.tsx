@@ -7,16 +7,15 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type TouchEvent,
 } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
   Camera,
   ImageOff,
-  MapPin,
   Maximize2,
   RefreshCw,
   X,
@@ -86,17 +85,27 @@ function GalleryImage({
   );
 }
 
+function galleryAlt(item: DisplayGalleryItem, index?: number) {
+  return item.alt || item.title || `Shreeji Art gallery image${index !== undefined ? ` ${index + 1}` : ""}`;
+}
+
 function GallerySkeletonGrid() {
   return (
     <div
-      className="columns-1 gap-5 sm:columns-2 lg:columns-3"
-      aria-label="Loading gallery items"
+      className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4"
+      aria-label="Loading gallery images"
     >
-      {Array.from({ length: 9 }, (_, index) => (
+      {Array.from({ length: 12 }, (_, index) => (
         <div
           key={index}
-          className={`mb-5 break-inside-avoid overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.06] ${
-            index % 3 === 1 ? "h-80" : index % 3 === 2 ? "h-64" : "h-96"
+          className={`mb-4 break-inside-avoid overflow-hidden rounded-[1.35rem] bg-white/[0.06] shadow-sa-md ${
+            index % 4 === 1
+              ? "h-80"
+              : index % 4 === 2
+                ? "h-64"
+                : index % 4 === 3
+                  ? "h-[28rem]"
+                  : "h-96"
           }`}
         >
           <div className="h-full w-full animate-pulse bg-gradient-to-br from-white/[0.10] via-white/[0.04] to-brand-gold/[0.08]" />
@@ -120,15 +129,17 @@ function GalleryState({
   const copy = {
     empty: {
       title: "Gallery coming soon",
-      body: "Project photos will appear here once they are published from the gallery manager.",
+      body: "Published project images will appear here.",
       icon: Camera,
       action: "Contact us",
     },
     "filter-empty": {
-      title: `No work found${activeCategory ? ` in ${activeCategory}` : ""}`,
-      body: "Try another category or view the complete gallery.",
+      title: "No images found",
+      body: activeCategory
+        ? `There are no published images in ${activeCategory} yet.`
+        : "Try another gallery filter.",
       icon: ImageOff,
-      action: "View all work",
+      action: "View all images",
     },
     error: {
       title: "Gallery could not load",
@@ -151,14 +162,7 @@ function GalleryState({
       <p className="mt-3 max-w-md text-sm leading-6 text-white/65">
         {copy.body}
       </p>
-      {type === "empty" ? (
-        <Link
-          href="/contact"
-          className="mt-7 inline-flex items-center justify-center rounded-full bg-brand-gold px-6 py-3 text-sm font-semibold text-brand-navy shadow-sa-md transition-all duration-200 hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transition-none"
-        >
-          {copy.action}
-        </Link>
-      ) : (
+      {type === "empty" ? null : (
         <button
           type="button"
           onClick={type === "error" ? onRetry : onReset}
@@ -169,10 +173,6 @@ function GalleryState({
       )}
     </div>
   );
-}
-
-function getItemMeta(item: DisplayGalleryItem) {
-  return [item.category, item.location].filter(Boolean).join(" • ");
 }
 
 function Lightbox({
@@ -187,7 +187,7 @@ function Lightbox({
   onNavigate: (index: number) => void;
 }) {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLDivElement>(null);
+  const touchStartXRef = useRef<number | null>(null);
   const item = items[activeIndex];
   const total = items.length;
 
@@ -198,6 +198,21 @@ function Lightbox({
   const next = useCallback(() => {
     onNavigate((activeIndex + 1) % total);
   }, [activeIndex, onNavigate, total]);
+
+  const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    touchStartXRef.current = event.changedTouches[0]?.clientX ?? null;
+  };
+
+  const onTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    if (touchStartXRef.current === null || total < 2) return;
+
+    const delta = event.changedTouches[0].clientX - touchStartXRef.current;
+    touchStartXRef.current = null;
+
+    if (Math.abs(delta) < 48) return;
+    if (delta > 0) previous();
+    else next();
+  };
 
   useEffect(() => {
     closeButtonRef.current?.focus();
@@ -229,32 +244,25 @@ function Lightbox({
     <div
       role="dialog"
       aria-modal="true"
-      aria-labelledby="gallery-lightbox-title"
-      className="fixed inset-0 z-[100] flex items-center justify-center px-4 py-6"
+      aria-label="Gallery image preview"
+      className="fixed inset-0 z-[100] flex items-center justify-center px-3 py-5 sm:px-5"
     >
       <button
         type="button"
         aria-label="Close gallery preview"
-        className="absolute inset-0 cursor-default bg-black/85 backdrop-blur-xl"
+        className="absolute inset-0 cursor-default bg-black/90 backdrop-blur-xl"
         onClick={onClose}
       />
 
       <div
-        ref={panelRef}
-        className="relative z-10 grid w-full max-w-6xl gap-4 outline-none"
+        className="relative z-10 flex h-full w-full max-w-7xl flex-col justify-center gap-4 outline-none"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
-        <div className="flex items-center justify-between gap-3 text-white">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.35em] text-brand-gold">
-              {item.category}
-            </p>
-            <h2
-              id="gallery-lightbox-title"
-              className="mt-1 font-display text-2xl font-semibold"
-            >
-              {item.title}
-            </h2>
-          </div>
+        <div className="flex items-center justify-between gap-3">
+          <p className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white/70 backdrop-blur-md">
+            {activeIndex + 1} / {total}
+          </p>
           <button
             ref={closeButtonRef}
             type="button"
@@ -266,61 +274,56 @@ function Lightbox({
           </button>
         </div>
 
-        <div className="relative overflow-hidden rounded-[2rem] border border-white/15 bg-brand-navy shadow-2xl">
-          <div className="relative h-[68vh] min-h-[340px] w-full">
+        <div className="relative flex min-h-0 flex-1 items-center justify-center">
+          <div className="relative h-full max-h-[78vh] min-h-[320px] w-full overflow-hidden rounded-[1.6rem] bg-brand-navy shadow-2xl sm:rounded-[2rem]">
             <GalleryImage
               src={item.image}
-              alt={item.alt ?? item.title}
-              sizes="(max-width: 768px) 95vw, 1100px"
+              alt={galleryAlt(item, activeIndex)}
+              sizes="100vw"
               priority
+              className="object-contain"
             />
           </div>
 
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-5 text-white sm:p-7">
-            {item.location ? (
-              <p className="mb-2 inline-flex items-center gap-2 text-sm text-white/75">
-                <MapPin className="h-4 w-4 text-brand-gold" aria-hidden="true" />
-                {item.location}
-              </p>
-            ) : null}
-            {item.description ? (
-              <p className="max-w-3xl text-sm leading-6 text-white/70">
-                {item.description}
-              </p>
-            ) : null}
-            {item.projectSlug ? (
-              <Link
-                href={`/portfolio/${item.projectSlug}`}
-                className="mt-4 inline-flex rounded-full bg-brand-gold px-4 py-2 text-sm font-semibold text-brand-navy transition-colors hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+          {total > 1 ? (
+            <>
+              <button
+                type="button"
+                onClick={previous}
+                aria-label="Previous gallery image"
+                className="absolute left-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur-md transition-all hover:bg-black/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none sm:flex lg:-left-6"
               >
-                View connected project
-              </Link>
-            ) : null}
-          </div>
+                <ArrowLeft className="h-5 w-5" aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={next}
+                aria-label="Next gallery image"
+                className="absolute right-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur-md transition-all hover:bg-black/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none sm:flex lg:-right-6"
+              >
+                <ArrowRight className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </>
+          ) : null}
         </div>
 
         {total > 1 ? (
-          <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center justify-center gap-3 sm:hidden">
             <button
               type="button"
               onClick={previous}
               aria-label="Previous gallery image"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
             >
-              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
-              Previous
+              <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </button>
-            <p className="text-sm text-white/55">
-              {activeIndex + 1} / {total}
-            </p>
             <button
               type="button"
               onClick={next}
               aria-label="Next gallery image"
-              className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
             >
-              Next
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
         ) : null}
@@ -336,7 +339,9 @@ export default function GalleryClient({ items, status }: Props) {
   const lastFocusedElementRef = useRef<HTMLElement | null>(null);
 
   const visibleCategories = useMemo(() => {
-    const liveCategories = Array.from(new Set(items.map((item) => item.category).filter(Boolean)))
+    const liveCategories = Array.from(
+      new Set(items.map((item) => item.category).filter(Boolean))
+    )
       .sort((a, b) => a.localeCompare(b))
       .map((category) => ({ label: category, value: category }));
 
@@ -387,11 +392,11 @@ export default function GalleryClient({ items, status }: Props) {
       <main className="overflow-hidden bg-brand-deep text-white">
         <section className="relative isolate border-b border-white/10 pt-28">
           <div
-            className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.18),transparent_34%),radial-gradient(circle_at_82%_0%,rgba(255,255,255,0.09),transparent_28%),linear-gradient(135deg,#070917_0%,#0B1024_52%,#050610_100%)]"
+            className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.16),transparent_34%),radial-gradient(circle_at_82%_0%,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,#070917_0%,#0B1024_52%,#050610_100%)]"
             aria-hidden="true"
           />
           <div
-            className="absolute inset-0 -z-10 opacity-[0.08] [background-image:linear-gradient(rgba(255,255,255,0.55)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.55)_1px,transparent_1px)] [background-size:56px_56px]"
+            className="absolute inset-0 -z-10 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.55)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.55)_1px,transparent_1px)] [background-size:56px_56px]"
             aria-hidden="true"
           />
 
@@ -406,9 +411,8 @@ export default function GalleryClient({ items, status }: Props) {
                   Our Work
                 </h1>
                 <p className="mt-5 max-w-2xl text-base leading-7 text-white/68 sm:text-lg">
-                  A curated look at signage projects shaped for storefronts,
-                  offices, hospitals, hotels, restaurants, factories, and
-                  commercial spaces.
+                  A clean visual archive of Shreeji Art signage, fabrication,
+                  branding, and installation work.
                 </p>
               </div>
             </AnimateIn>
@@ -445,14 +449,11 @@ export default function GalleryClient({ items, status }: Props) {
           </div>
         </section>
 
-        <section className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+        <section className="relative mx-auto max-w-[90rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
           {status === "loading" ? (
             <GallerySkeletonGrid />
           ) : status === "error" ? (
-            <GalleryState
-              type="error"
-              onRetry={() => router.refresh()}
-            />
+            <GalleryState type="error" onRetry={() => router.refresh()} />
           ) : items.length === 0 ? (
             <GalleryState type="empty" />
           ) : filteredItems.length === 0 ? (
@@ -462,81 +463,52 @@ export default function GalleryClient({ items, status }: Props) {
               onReset={() => setActiveCategory("")}
             />
           ) : (
-            <>
-              <div className="mb-7 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
-                    {activeCategory || "All projects"}
-                  </p>
-                  <p className="mt-2 text-sm text-white/55">
-                    Showing {filteredItems.length}{" "}
-                    {filteredItems.length === 1 ? "image" : "images"}
-                  </p>
-                </div>
-                <p className="max-w-md text-sm leading-6 text-white/50">
-                  Select any image to open a larger preview. Use Escape or the
-                  close button to return to the gallery.
-                </p>
-              </div>
-
-              <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
-                {filteredItems.map((item, index) => (
-                  <AnimateIn
-                    key={item.id}
-                    from="bottom"
-                    delay={Math.min(index * 35, 260)}
-                    duration={520}
+            <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
+              {filteredItems.map((item, index) => (
+                <AnimateIn
+                  key={item.id}
+                  from="bottom"
+                  delay={Math.min(index * 28, 220)}
+                  duration={500}
+                >
+                  <button
+                    type="button"
+                    onClick={() => openLightbox(index)}
+                    onKeyDown={(event) => onGridKeyDown(event, index)}
+                    aria-label={`Open gallery image ${index + 1}`}
+                    className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-[1.35rem] bg-white/[0.04] text-left shadow-[0_18px_60px_rgba(0,0,0,0.22)] outline-none ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(0,0,0,0.34)] hover:ring-brand-gold/45 focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
                   >
-                    <button
-                      type="button"
-                      onClick={() => openLightbox(index)}
-                      onKeyDown={(event) => onGridKeyDown(event, index)}
-                      aria-label={`Open ${item.title} gallery image`}
-                      className="group mb-5 block w-full break-inside-avoid overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.06] text-left shadow-sa-md outline-none transition-all duration-300 hover:-translate-y-1 hover:border-brand-gold/55 hover:bg-white/[0.09] hover:shadow-sa-xl focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
+                    <span
+                      className={[
+                        "relative block overflow-hidden",
+                        index % 7 === 1
+                          ? "aspect-[3/4]"
+                          : index % 7 === 3
+                            ? "aspect-[5/6]"
+                            : index % 7 === 5
+                              ? "aspect-[16/10]"
+                              : "aspect-[4/3]",
+                      ].join(" ")}
                     >
-                      <span className="relative block aspect-[4/3] overflow-hidden">
-                        <GalleryImage
-                          src={item.image}
-                          alt={item.alt ?? item.title}
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                          priority={index < 3}
-                          className="transition-transform duration-700 ease-smooth group-hover:scale-105 motion-reduce:transition-none motion-reduce:transform-none"
-                        />
-                        <span
-                          className="absolute inset-0 bg-gradient-to-t from-brand-deep/90 via-brand-deep/15 to-transparent opacity-80 transition-opacity duration-300 group-hover:opacity-95 motion-reduce:transition-none"
-                          aria-hidden="true"
-                        />
-                        <span className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/25 text-white opacity-0 backdrop-blur-md transition-all duration-300 group-hover:opacity-100 focus-visible:opacity-100 motion-reduce:transition-none">
-                          <Maximize2 className="h-4 w-4" aria-hidden="true" />
-                        </span>
-                        <span className="absolute bottom-4 left-4 right-4">
-                          <span className="inline-flex rounded-full border border-brand-gold/30 bg-brand-gold/15 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-gold">
-                            {item.category}
-                          </span>
-                        </span>
+                      <GalleryImage
+                        src={item.image}
+                        alt={galleryAlt(item, index)}
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+                        priority={index < 4}
+                        className="transition-transform duration-700 ease-smooth group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:transform-none"
+                      />
+                      <span
+                        className="absolute inset-0 bg-brand-deep/0 transition-colors duration-300 group-hover:bg-brand-deep/24 motion-reduce:transition-none"
+                        aria-hidden="true"
+                      />
+                      <span className="absolute right-3 top-3 flex h-10 w-10 translate-y-1 items-center justify-center rounded-full border border-white/15 bg-black/25 text-white opacity-0 shadow-sa-sm backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transform-none motion-reduce:transition-none">
+                        <Maximize2 className="h-4 w-4" aria-hidden="true" />
                       </span>
-
-                      <span className="block p-5">
-                        <span className="block font-display text-xl font-semibold leading-snug text-white">
-                          {item.title}
-                        </span>
-                        {getItemMeta(item) ? (
-                          <span className="mt-2 flex flex-wrap items-center gap-2 text-sm text-white/55">
-                            {item.location ? (
-                              <MapPin
-                                className="h-4 w-4 text-brand-gold"
-                                aria-hidden="true"
-                              />
-                            ) : null}
-                            {getItemMeta(item)}
-                          </span>
-                        ) : null}
-                      </span>
-                    </button>
-                  </AnimateIn>
-                ))}
-              </div>
-            </>
+                    </span>
+                  </button>
+                </AnimateIn>
+              ))}
+            </div>
           )}
         </section>
       </main>

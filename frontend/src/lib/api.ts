@@ -49,6 +49,34 @@ async function request<T>(
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────
 
+export function apiErrorMessage(
+  response: ApiResponse<unknown> | null | undefined,
+  fallback = "Request failed."
+) {
+  const message = response?.message?.trim();
+  const fieldErrors = response?.errors
+    ? Object.entries(response.errors)
+        .map(([field, error]) => `${field}: ${error}`)
+        .join(" ")
+    : "";
+
+  return [message, fieldErrors].filter(Boolean).join(" ") || fallback;
+}
+
+export function caughtApiErrorMessage(error: unknown, fallback: string) {
+  if (error instanceof Error) {
+    if (error.message === "NETWORK_ERROR") {
+      return "Cannot reach the server. Please check your connection and try again.";
+    }
+    if (error.message.startsWith("HTTP_")) {
+      return `${fallback} (${error.message})`;
+    }
+    return error.message;
+  }
+
+  return fallback;
+}
+
 export const authApi = {
   login: (body: LoginRequest) =>
     request<AuthResponse>("/auth/login", {

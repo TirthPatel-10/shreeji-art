@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { adminApi } from "@/lib/api";
+import { adminApi, apiErrorMessage, caughtApiErrorMessage } from "@/lib/api";
 import type { BlogPost, BlogStatus } from "@/types";
 
 type Mode = "list" | "create" | "edit";
@@ -29,7 +29,15 @@ export default function AdminBlogPage() {
   function reload() {
     setLoading(true);
     adminApi.getBlogPosts()
-      .then((res) => setPosts((res.data as BlogPost[]) ?? []))
+      .then((res) => {
+        if (!res.success) {
+          setError(apiErrorMessage(res, "Failed to load blog posts."));
+          setPosts([]);
+          return;
+        }
+        setPosts((res.data as BlogPost[]) ?? []);
+      })
+      .catch((error) => setError(caughtApiErrorMessage(error, "Connection error while loading blog posts.")))
       .finally(() => setLoading(false));
   }
 
@@ -63,20 +71,24 @@ export default function AdminBlogPage() {
     try {
       if (mode === "create") {
         const res = await adminApi.createBlogPost(form);
-        if (!res.success) { setError(res.message || "Failed to create."); return; }
+        if (!res.success) { setError(apiErrorMessage(res, "Failed to create.")); return; }
       } else if (editing) {
         const res = await adminApi.updateBlogPost(editing.id, form);
-        if (!res.success) { setError(res.message || "Failed to update."); return; }
+        if (!res.success) { setError(apiErrorMessage(res, "Failed to update.")); return; }
       }
       reload();
       setMode("list");
-    } catch { setError("Connection error."); }
+    } catch (error) { setError(caughtApiErrorMessage(error, "Connection error.")); }
     finally { setSaving(false); }
   }
 
   async function handleDelete(id: number) {
     if (!confirm("Delete this post?")) return;
-    await adminApi.deleteBlogPost(id);
+    const res = await adminApi.deleteBlogPost(id);
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Failed to delete blog post."));
+      return;
+    }
     reload();
   }
 

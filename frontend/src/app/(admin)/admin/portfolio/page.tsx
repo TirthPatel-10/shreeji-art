@@ -18,7 +18,7 @@ import {
   Upload,
   X,
 } from "lucide-react";
-import { adminApi } from "@/lib/api";
+import { adminApi, apiErrorMessage, caughtApiErrorMessage } from "@/lib/api";
 import type { PortfolioImage, PortfolioItem } from "@/types";
 
 type Mode = "list" | "create" | "edit";
@@ -119,13 +119,13 @@ export default function AdminPortfolioPage() {
     try {
       const res = await adminApi.getPortfolioItems();
       if (!res.success) {
-        setError(res.message || "Could not load portfolio projects.");
+        setError(apiErrorMessage(res, "Could not load portfolio projects."));
         setItems([]);
         return;
       }
       setItems((res.data as PortfolioItem[]) ?? []);
-    } catch {
-      setError("Connection error while loading portfolio projects.");
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while loading portfolio projects."));
     } finally {
       setLoading(false);
     }
@@ -137,7 +137,11 @@ export default function AdminPortfolioPage() {
       const res = await adminApi.getPortfolioImages(projectId);
       if (res.success) {
         setImages(((res.data as PortfolioImage[]) ?? []).sort(sortImages));
+      } else {
+        setError(apiErrorMessage(res, "Could not load project images."));
       }
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while loading project images."));
     } finally {
       setImageLoading(false);
     }
@@ -215,7 +219,7 @@ export default function AdminPortfolioPage() {
             : null;
 
       if (!res?.success) {
-        setError(res?.message || "Could not save portfolio project.");
+        setError(apiErrorMessage(res, "Could not save portfolio project."));
         return;
       }
 
@@ -228,8 +232,8 @@ export default function AdminPortfolioPage() {
       } else {
         setMode("list");
       }
-    } catch {
-      setError("Connection error while saving the portfolio project.");
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while saving the portfolio project."));
     } finally {
       setSaving(false);
     }
@@ -237,12 +241,20 @@ export default function AdminPortfolioPage() {
 
   async function togglePublished(project: PortfolioItem) {
     const res = await adminApi.setPortfolioPublished(project.id, project.published === false);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not update portfolio publish state."));
+      return;
+    }
+    reload();
   }
 
   async function toggleFeatured(project: PortfolioItem) {
     const res = await adminApi.setPortfolioFeatured(project.id, !project.isFeatured);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not update portfolio featured state."));
+      return;
+    }
+    reload();
   }
 
   async function handleDelete(project: PortfolioItem) {
@@ -255,7 +267,11 @@ export default function AdminPortfolioPage() {
     }
 
     const res = await adminApi.deletePortfolioItem(project.id);
-    if (res.success) reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not delete portfolio project."));
+      return;
+    }
+    reload();
   }
 
   async function uploadFiles(files: FileList | null, coverImage = false) {
@@ -275,15 +291,15 @@ export default function AdminPortfolioPage() {
 
         const res = await adminApi.uploadPortfolioImage(editing.id, body);
         if (!res.success) {
-          setError(res.message || `Could not upload ${files[index].name}.`);
+          setError(apiErrorMessage(res, `Could not upload ${files[index].name}.`));
           break;
         }
       }
 
       await loadImages(editing.id);
       await reload();
-    } catch {
-      setError("Connection error while uploading project images.");
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while uploading project images."));
     } finally {
       setUploading(false);
       setUploadProgress("");
@@ -299,25 +315,33 @@ export default function AdminPortfolioPage() {
       published: changes.published ?? image.published,
     };
     const res = await adminApi.updatePortfolioImage(editing.id, image.id, body);
-    if (res.success) loadImages(editing.id);
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not update project image."));
+      return;
+    }
+    loadImages(editing.id);
   }
 
   async function deleteImage(image: PortfolioImage) {
     if (!editing || !confirm("Delete this project image?")) return;
     const res = await adminApi.deletePortfolioImage(editing.id, image.id);
-    if (res.success) {
-      await loadImages(editing.id);
-      await reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not delete project image."));
+      return;
     }
+    await loadImages(editing.id);
+    await reload();
   }
 
   async function setCover(image: PortfolioImage) {
     if (!editing) return;
     const res = await adminApi.setPortfolioCoverImage(editing.id, image.id);
-    if (res.success) {
-      await loadImages(editing.id);
-      await reload();
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not set cover image."));
+      return;
     }
+    await loadImages(editing.id);
+    await reload();
   }
 
   async function moveImage(index: number, direction: -1 | 1) {
@@ -334,7 +358,11 @@ export default function AdminPortfolioPage() {
 
     setImages(reordered.map((image, sortOrder) => ({ ...image, sortOrder })));
     const res = await adminApi.reorderPortfolioImages(editing.id, payload);
-    if (res.success) loadImages(editing.id);
+    if (!res.success) {
+      setError(apiErrorMessage(res, "Could not reorder project images."));
+      return;
+    }
+    loadImages(editing.id);
   }
 
   if (mode !== "list") {

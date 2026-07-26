@@ -17,6 +17,7 @@ public class MediaStorageProperties {
     private String projectBucket = "project-images";
     private String galleryBucket = "gallery-images";
     private long maxUploadBytes = 15L * 1024L * 1024L;
+    private long requestTimeoutSeconds = 20L;
     private List<String> allowedMimeTypes = List.of(
             "image/jpeg",
             "image/png",
