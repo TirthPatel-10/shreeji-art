@@ -75,6 +75,21 @@ const FAQ_ITEMS = [
   },
 ];
 
+const SERVICE_METADATA: Partial<Record<ServiceDetail["slug"], string>> = {
+  "led-sign-boards": "Indoor & Outdoor",
+  "acrylic-signs": "Premium Finish",
+  "3d-letter-signs": "Architectural Depth",
+  "acp-signage": "Weather Resistant",
+  "stainless-steel-signs": "Premium Metal",
+  "glow-sign-boards": "High Visibility",
+  "office-branding": "Corporate",
+  "retail-branding": "Retail",
+  "industrial-signage": "Industrial",
+  wayfinding: "Navigation",
+  "custom-fabrication": "Custom Built",
+  installation: "Site Ready",
+};
+
 function findLiveService(detail: ServiceDetail, services: Service[]) {
   return services.find((service) => {
     const slug = service.slug?.toLowerCase();
@@ -101,10 +116,21 @@ function ServiceCard({
 }) {
   const title = getServiceTitle(detail, services);
   const description = getServiceDescription(detail, services);
+  const isFeatured = index === 0 || index === 4;
+  const hasAccentBorder = (index + 1) % 4 === 0;
+  const metadata = SERVICE_METADATA[detail.slug] || detail.category;
 
   return (
     <AnimateIn from="bottom" delay={(index % 3) * 70}>
-      <article className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-sa-xs transition-all duration-300 hover:-translate-y-1.5 hover:border-brand-gold/60 hover:shadow-sa-premium">
+      <article
+        className={cn(
+          "group flex h-full flex-col overflow-hidden rounded-[1.75rem] border bg-white shadow-sa-xs transition-all duration-[250ms] ease-out hover:-translate-y-1 hover:shadow-sa-premium motion-reduce:transform-none",
+          hasAccentBorder
+            ? "border-brand-gold/30 shadow-[0_18px_55px_rgba(18,20,38,0.08)]"
+            : "border-brand-navy/10",
+          isFeatured && "lg:-translate-y-2 lg:shadow-[0_22px_70px_rgba(18,20,38,0.10)]"
+        )}
+      >
         <Link
           href={`/services/${detail.slug}`}
           className="relative block aspect-[4/3] overflow-hidden bg-brand-deep"
@@ -118,31 +144,43 @@ function ServiceCard({
             className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
             unoptimized={detail.image.endsWith(".svg")}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/80 via-brand-navy/12 to-transparent" />
-          <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-white/90 px-3 py-1 text-xs font-semibold text-brand-navy shadow-sm">
-            {detail.category}
-          </span>
+          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/82 via-brand-navy/16 to-transparent" />
+          <div className="absolute inset-x-5 bottom-0 h-px bg-gradient-to-r from-transparent via-brand-gold/65 to-transparent opacity-0 transition-opacity duration-[250ms] group-hover:opacity-100" />
+          <div className="absolute left-4 top-4 flex flex-wrap gap-2">
+            <span className="rounded-full border border-white/15 bg-white/90 px-3 py-1 text-xs font-semibold text-brand-navy shadow-sm">
+              {detail.category}
+            </span>
+            <span className="rounded-full border border-brand-gold/30 bg-brand-navy/70 px-3 py-1 text-xs font-semibold text-white/85 backdrop-blur-sm">
+              {metadata}
+            </span>
+          </div>
+          {isFeatured ? (
+            <span className="absolute right-4 top-4 rounded-full border border-brand-gold/40 bg-brand-gold px-3 py-1 text-xs font-semibold text-brand-navy shadow-sa-gold">
+              {index === 0 ? "Recommended" : "Most Popular"}
+            </span>
+          ) : null}
         </Link>
 
-        <div className="flex flex-1 flex-col p-6">
+        <div className="flex flex-1 flex-col p-6 sm:p-7">
+          <div className="mb-5 h-px w-12 bg-brand-gold/55 transition-all duration-[250ms] group-hover:w-16 group-hover:bg-brand-gold" />
           <h2 className="font-display text-2xl font-semibold leading-tight text-brand-navy">
             {title}
           </h2>
-          <p className="mt-3 line-clamp-3 text-sm leading-6 text-gray-600">{description}</p>
+          <p className="mt-3 line-clamp-3 text-[15px] leading-7 text-gray-600">{description}</p>
 
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+          <div className="mt-auto flex flex-col gap-3 pt-7 sm:flex-row">
             <Link
               href={`/services/${detail.slug}`}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-3 text-sm font-semibold text-brand-navy transition-colors hover:border-brand-gold hover:text-brand-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-navy transition-all duration-[250ms] hover:border-brand-gold hover:text-brand-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
             >
               Learn More
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </Link>
             <Link
               href={`/quote?service=${encodeURIComponent(title)}`}
-              className="inline-flex flex-1 items-center justify-center rounded-full bg-brand-gold px-4 py-3 text-sm font-semibold text-brand-navy shadow-sa-gold transition-colors hover:bg-brand-gold-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+              className="inline-flex flex-1 items-center justify-center rounded-full bg-brand-gold px-4 py-3 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-[250ms] hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_16px_34px_rgba(217,165,20,0.24)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
             >
-              Get Quote
+              Request a Quote
             </Link>
           </div>
         </div>
@@ -153,42 +191,40 @@ function ServiceCard({
 
 function ProcessTimeline() {
   return (
-    <section className="bg-white py-20 sm:py-24" aria-labelledby="process-title">
+    <section className="bg-[#F8F6F2] py-24 sm:py-28 lg:py-32" aria-labelledby="process-title">
       <div className="sa-container">
         <AnimateIn from="bottom" className="mx-auto max-w-3xl text-center">
           <p className="text-caption text-brand-gold">Manufacturing Process</p>
           <h2
             id="process-title"
-            className="mt-4 font-display text-4xl font-semibold tracking-tight text-brand-navy sm:text-5xl"
+            className="mt-4 font-display text-[clamp(2.4rem,4vw,3.45rem)] font-semibold leading-[1.05] tracking-tight text-brand-navy"
           >
             A clear path from idea to installation.
           </h2>
-          <p className="mt-4 text-base leading-7 text-gray-600">
+          <p className="mt-5 text-base leading-8 text-gray-600 sm:text-lg">
             Every project moves through a simple, controlled workflow so the final sign looks right,
             installs cleanly, and lasts.
           </p>
         </AnimateIn>
 
-        <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+        <div className="relative mt-16 grid gap-5 md:grid-cols-2 lg:grid-cols-5">
+          <div
+            className="absolute left-[10%] right-[10%] top-[2.2rem] hidden h-px bg-gradient-to-r from-transparent via-brand-gold/50 to-transparent lg:block"
+            aria-hidden="true"
+          />
           {PROCESS_STEPS.map((step, index) => {
             const Icon = step.icon;
             return (
               <AnimateIn key={step.title} from="bottom" delay={index * 60}>
-                <div className="relative h-full rounded-[1.5rem] border border-gray-200 bg-[#FAF8F2] p-6 transition-all duration-300 hover:-translate-y-1 hover:border-brand-gold/50">
-                  {index < PROCESS_STEPS.length - 1 ? (
-                    <div
-                      className="absolute left-[calc(100%-0.5rem)] top-10 hidden h-px w-5 bg-brand-gold/35 lg:block"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  <div className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-navy text-brand-gold">
+                <div className="relative h-full rounded-[1.6rem] border border-brand-navy/10 bg-white/75 p-6 shadow-sa-xs transition-all duration-[250ms] ease-out hover:-translate-y-1 hover:border-brand-gold/45 hover:bg-white motion-reduce:transform-none">
+                  <div className="relative z-10 flex h-12 w-12 items-center justify-center rounded-full border border-brand-gold/35 bg-brand-navy text-brand-gold shadow-[0_12px_30px_rgba(18,20,38,0.18)]">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
-                  <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-brand-gold">
+                  <p className="mt-5 text-xs font-semibold uppercase tracking-[0.22em] text-brand-gold/90">
                     Step {index + 1}
                   </p>
                   <h3 className="mt-2 text-lg font-semibold text-brand-navy">{step.title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-gray-600">{step.text}</p>
+                  <p className="mt-3 text-sm leading-7 text-gray-600">{step.text}</p>
                 </div>
               </AnimateIn>
             );
@@ -203,42 +239,50 @@ function FaqSection() {
   const [openIndex, setOpenIndex] = useState(0);
 
   return (
-    <section className="bg-[#FAF8F2] py-20 sm:py-24" aria-labelledby="services-faq-title">
+    <section className="bg-[#F2EEE6] py-24 sm:py-28 lg:py-32" aria-labelledby="services-faq-title">
       <div className="sa-container grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start">
         <AnimateIn from="left">
           <p className="text-caption text-brand-gold">FAQ</p>
           <h2
             id="services-faq-title"
-            className="mt-4 font-display text-4xl font-semibold tracking-tight text-brand-navy sm:text-5xl"
+            className="mt-4 font-display text-[clamp(2.35rem,4vw,3.35rem)] font-semibold leading-[1.05] tracking-tight text-brand-navy"
           >
             Questions before you start?
           </h2>
-          <p className="mt-4 max-w-md text-base leading-7 text-gray-600">
+          <p className="mt-5 max-w-md text-base leading-8 text-gray-600">
             A quick guide to timelines, materials, and how we approach signage projects.
           </p>
         </AnimateIn>
 
         <AnimateIn from="right">
-          <div className="overflow-hidden rounded-[1.75rem] border border-gray-200 bg-white shadow-sa-xs">
+          <div className="overflow-hidden rounded-[1.75rem] border border-brand-navy/10 bg-white shadow-[0_24px_70px_rgba(18,20,38,0.08)]">
             {FAQ_ITEMS.map((item, index) => {
               const isOpen = openIndex === index;
               return (
-                <div key={item.q} className="border-b border-gray-100 last:border-b-0">
+                <div key={item.q} className="border-b border-brand-navy/10 last:border-b-0">
                   <button
                     type="button"
                     onClick={() => setOpenIndex(isOpen ? -1 : index)}
-                    className="flex w-full items-center justify-between gap-5 px-6 py-5 text-left font-semibold text-brand-navy transition-colors hover:bg-[#FAF8F2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-brand-gold"
+                    className="group flex w-full items-center justify-between gap-5 px-6 py-5 text-left font-semibold text-brand-navy transition-colors duration-[250ms] hover:bg-[#F8F6F2] focus-visible:outline focus-visible:outline-2 focus-visible:outline-inset focus-visible:outline-brand-gold sm:px-7 sm:py-6"
                     aria-expanded={isOpen}
                   >
                     <span>{item.q}</span>
                     <ChevronDown
-                      className={cn("h-5 w-5 shrink-0 text-brand-gold transition-transform", isOpen && "rotate-180")}
+                      className={cn(
+                        "h-5 w-5 shrink-0 text-brand-gold transition-all duration-[250ms] group-hover:brightness-110",
+                        isOpen && "rotate-180"
+                      )}
                       aria-hidden="true"
                     />
                   </button>
-                  <div className={cn("grid transition-all duration-300", isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]")}>
+                  <div
+                    className={cn(
+                      "grid transition-all duration-[250ms] ease-out",
+                      isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"
+                    )}
+                  >
                     <div className="overflow-hidden">
-                      <p className="px-6 pb-5 text-sm leading-7 text-gray-600">{item.a}</p>
+                      <p className="px-6 pb-6 text-sm leading-7 text-gray-600 sm:px-7">{item.a}</p>
                     </div>
                   </div>
                 </div>
@@ -255,7 +299,7 @@ export default function ServicesClient({ services }: ServicesClientProps) {
   const serviceCards = useMemo(() => SERVICE_DETAILS, []);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#F8F6F2]">
       <Navbar />
 
       <main>
@@ -270,57 +314,86 @@ export default function ServicesClient({ services }: ServicesClientProps) {
               className="object-cover opacity-45"
               unoptimized
             />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,#080916_0%,rgba(18,20,38,0.96)_44%,rgba(18,20,38,0.74)_100%)]" />
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,#0B0B14_0%,rgba(18,20,38,0.96)_44%,rgba(18,20,38,0.76)_100%)]" />
+            <div
+              className="absolute inset-0 opacity-[0.035]"
+              style={{
+                backgroundImage:
+                  "linear-gradient(rgba(217,165,20,0.38) 1px, transparent 1px), linear-gradient(90deg, rgba(217,165,20,0.32) 1px, transparent 1px)",
+                backgroundSize: "76px 76px",
+              }}
+              aria-hidden="true"
+            />
+            <div
+              className="absolute right-[-8rem] top-16 h-72 w-72 rounded-[2rem] border border-brand-gold/40 opacity-[0.045] rotate-12 sm:h-96 sm:w-96"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute right-[8%] top-[22%] h-px w-64 bg-gradient-to-r from-transparent via-brand-gold/60 to-transparent opacity-[0.045]"
+              aria-hidden="true"
+            />
+            <div
+              className="absolute left-[8%] top-[34%] h-44 w-44 rounded-full bg-brand-gold/15 blur-3xl opacity-25"
+              aria-hidden="true"
+            />
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-brand-deep to-transparent" />
           </div>
 
-          <div className="sa-container py-16 sm:py-20">
+          <div className="sa-container py-20 sm:py-24 lg:py-28">
             <AnimateIn from="bottom" className="max-w-3xl">
               <span className="inline-flex rounded-full border border-brand-gold/30 bg-brand-gold/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.24em] text-brand-gold">
                 Signage Services
               </span>
-              <h1 className="mt-6 font-display text-5xl font-semibold leading-[0.95] tracking-tight sm:text-6xl lg:text-7xl">
+              <h1 className="mt-7 font-display text-5xl font-semibold leading-[0.96] tracking-tight sm:text-6xl lg:text-7xl">
                 Premium signage solutions for visible brands.
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-8 text-white/72 sm:text-lg">
                 Explore Shreeji Art&apos;s core capabilities across illuminated signage, fabrication,
                 branding, wayfinding, and professional installation.
               </p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-10 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="#services-grid"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-colors hover:bg-brand-gold-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-[250ms] hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_18px_40px_rgba(217,165,20,0.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
                 >
                   View Services
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
                 <Link
                   href="/quote"
-                  className="inline-flex items-center justify-center rounded-full border border-white/20 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white transition-colors hover:border-brand-gold/50 hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+                  className="inline-flex items-center justify-center rounded-full border border-white/22 bg-white/10 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-[250ms] hover:-translate-y-0.5 hover:border-brand-gold/55 hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
                 >
-                  Get Quote
+                  Request a Quote
                 </Link>
               </div>
             </AnimateIn>
           </div>
         </section>
 
-        <section id="services-grid" className="bg-[#FAF8F2] py-20 sm:py-24" aria-labelledby="services-grid-title">
+        <section
+          id="services-grid"
+          className="relative overflow-hidden bg-[#F2EEE6] py-24 sm:py-28 lg:py-32"
+          aria-labelledby="services-grid-title"
+        >
+          <div
+            className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold/30 to-transparent"
+            aria-hidden="true"
+          />
           <div className="sa-container">
             <AnimateIn from="bottom" className="mx-auto max-w-3xl text-center">
               <p className="text-caption text-brand-gold">What We Make</p>
               <h2
                 id="services-grid-title"
-                className="mt-4 font-display text-4xl font-semibold tracking-tight text-brand-navy sm:text-5xl"
+                className="mt-4 font-display text-[clamp(2.4rem,4vw,3.45rem)] font-semibold leading-[1.05] tracking-tight text-brand-navy"
               >
                 Cleanly organized, easy to choose.
               </h2>
-              <p className="mt-4 text-base leading-7 text-gray-600">
+              <p className="mt-5 text-base leading-8 text-gray-600 sm:text-lg">
                 Choose a service to see details, materials, applications, and the best way to start your project.
               </p>
             </AnimateIn>
 
-            <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
               {serviceCards.map((detail, index) => (
                 <ServiceCard key={detail.slug} detail={detail} index={index} services={services} />
               ))}
@@ -331,19 +404,22 @@ export default function ServicesClient({ services }: ServicesClientProps) {
         <ProcessTimeline />
         <FaqSection />
 
-        <section className="bg-white px-4 py-20 sm:py-24">
+        <section className="bg-[#F8F6F2] px-4 py-24 sm:py-28 lg:py-32">
           <AnimateIn from="bottom">
-            <div className="mx-auto max-w-6xl rounded-[2rem] bg-brand-navy px-6 py-14 text-center text-white shadow-sa-premium sm:px-10">
-              <CheckCircle2 className="mx-auto h-8 w-8 text-brand-gold" aria-hidden="true" />
-              <h2 className="mx-auto mt-5 max-w-3xl font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-brand-navy px-6 py-16 text-center text-white shadow-sa-premium sm:px-10 sm:py-18">
+              <div className="absolute left-1/2 top-0 h-56 w-56 -translate-x-1/2 rounded-full bg-brand-gold/15 blur-3xl" aria-hidden="true" />
+              <div className="relative">
+                <CheckCircle2 className="mx-auto h-8 w-8 text-brand-gold" aria-hidden="true" />
+              </div>
+              <h2 className="relative mx-auto mt-6 max-w-3xl font-display text-[clamp(2.25rem,4vw,3.4rem)] font-semibold leading-[1.05] tracking-tight">
                 Ready to create signage that gets noticed?
               </h2>
-              <div className="mt-8">
+              <div className="relative mt-9">
                 <Link
                   href="/quote"
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-8 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-colors hover:bg-brand-gold-light focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
+                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-8 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-[250ms] hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_18px_40px_rgba(217,165,20,0.28)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
                 >
-                  Request a Free Quote
+                  Request a Quote
                   <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>

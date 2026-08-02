@@ -1,7 +1,10 @@
 package com.shreejiart.portfolio;
 
 import com.shreejiart.common.response.ApiResponse;
+import com.shreejiart.gallery.GalleryItem;
+import com.shreejiart.gallery.GalleryItemService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -16,12 +19,26 @@ record FeaturedRequest(boolean featured) {}
 record PortfolioImageUpdateRequest(String altText, String caption, Integer sortOrder, Boolean published) {}
 record PortfolioImageOrderRequest(@NotNull Long imageId, int sortOrder) {}
 record PortfolioImageReorderRequest(@NotNull List<@Valid PortfolioImageOrderRequest> images) {}
+record PortfolioImagesToGalleryRequest(
+        @NotEmpty List<@NotNull Long> imageIds,
+        String title,
+        String category,
+        String altText,
+        String caption,
+        Boolean featured,
+        Boolean published
+) {}
+record PortfolioImagesToGalleryResponse(
+        List<GalleryItem> created,
+        List<Long> skippedDuplicateImageIds
+) {}
 
 @RestController
 @RequiredArgsConstructor
 public class PortfolioItemController {
 
     private final PortfolioItemService service;
+    private final GalleryItemService galleryItemService;
 
     @GetMapping("/api/v1/portfolio")
     public ResponseEntity<ApiResponse<List<PortfolioItemResponse>>> list() {
@@ -131,5 +148,28 @@ public class PortfolioItemController {
             @PathVariable Long projectId,
             @PathVariable Long imageId) {
         return ResponseEntity.ok(ApiResponse.success("Portfolio cover image updated", service.setCoverImageResponse(projectId, imageId)));
+    }
+
+    @PostMapping("/api/v1/admin/portfolio/{projectId}/images/gallery")
+    public ResponseEntity<ApiResponse<PortfolioImagesToGalleryResponse>> addImagesToGallery(
+            @PathVariable Long projectId,
+            @RequestBody @Valid PortfolioImagesToGalleryRequest request) {
+        GalleryItemService.CopyPortfolioImagesResult result = galleryItemService.copyPortfolioImages(
+                projectId,
+                request.imageIds(),
+                request.title(),
+                request.category(),
+                request.altText(),
+                request.caption(),
+                Boolean.TRUE.equals(request.featured()),
+                Boolean.TRUE.equals(request.published())
+        );
+        String message = result.created().isEmpty()
+                ? "Selected images are already in the gallery"
+                : "Selected portfolio images added to gallery";
+        return ResponseEntity.status(201).body(ApiResponse.success(
+                message,
+                new PortfolioImagesToGalleryResponse(result.created(), result.skippedDuplicateImageIds())
+        ));
     }
 }

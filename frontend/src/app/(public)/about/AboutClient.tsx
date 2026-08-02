@@ -16,12 +16,12 @@ import {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const SIGN_TYPES = [
-  { icon: Lightbulb, label: "LED Signs",    bg: "bg-amber-400/10",   color: "text-amber-400"   },
-  { icon: Square,    label: "Acrylic",      bg: "bg-sky-400/10",     color: "text-sky-400"     },
-  { icon: Type,      label: "3D Letters",   bg: "bg-violet-400/10",  color: "text-violet-400"  },
-  { icon: Building2, label: "ACP Signage",  bg: "bg-cyan-400/10",    color: "text-cyan-400"    },
-  { icon: Shield,    label: "SS Signs",     bg: "bg-zinc-300/10",    color: "text-zinc-300"    },
-  { icon: Sparkles,  label: "Glow Signs",   bg: "bg-fuchsia-400/10", color: "text-fuchsia-400" },
+  { icon: Lightbulb, label: "LED Signs",    bg: "bg-brand-gold/10", color: "text-brand-gold" },
+  { icon: Square,    label: "Acrylic",      bg: "bg-white/[0.04]",   color: "text-brand-gold" },
+  { icon: Type,      label: "3D Letters",   bg: "bg-brand-gold/10", color: "text-brand-gold" },
+  { icon: Building2, label: "ACP Signage",  bg: "bg-white/[0.04]",   color: "text-brand-gold" },
+  { icon: Shield,    label: "SS Signs",     bg: "bg-brand-gold/10", color: "text-brand-gold" },
+  { icon: Sparkles,  label: "Glow Signs",   bg: "bg-white/[0.04]",   color: "text-brand-gold" },
 ];
 
 const VALUES = [
@@ -154,8 +154,8 @@ export default function AboutClient() {
       <Navbar />
 
       {/* ── HERO ─────────────────────────────────────────────────────────── */}
-      <section className="relative bg-[#080814] overflow-hidden pt-20 pb-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#080814] via-brand-navy to-[#14142e]" aria-hidden="true" />
+      <section className="relative bg-[#0B0B14] overflow-hidden pt-20 pb-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0B0B14] via-brand-navy to-[#0B0B14]" aria-hidden="true" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           aria-hidden="true"
@@ -168,7 +168,7 @@ export default function AboutClient() {
         <div className="absolute top-0 right-1/4 h-80 w-80 rounded-full bg-brand-gold/6 blur-[120px] pointer-events-none" aria-hidden="true" />
         <div className="absolute bottom-0 left-1/3 h-56 w-56 rounded-full bg-brand-gold/4 blur-[80px] pointer-events-none" aria-hidden="true" />
 
-        <div className="container-wide relative z-10 py-20 sm:py-24">
+        <div className="container-wide relative z-10 py-24 sm:py-28 lg:py-32">
           <AnimateIn from="bottom" className="text-center">
             {/* Breadcrumb */}
             <nav className="flex items-center justify-center gap-2 text-xs text-gray-500 mb-6" aria-label="Breadcrumb">
@@ -184,7 +184,7 @@ export default function AboutClient() {
             </div>
 
             {/* H1 */}
-            <h1 className="font-display font-bold text-white leading-tight tracking-tight text-[clamp(2rem,5vw,3.8rem)] mb-5">
+            <h1 className="font-display font-bold text-white leading-[1.04] tracking-tight text-[clamp(2.5rem,5vw,4rem)] mb-6">
               Crafting Signs That{" "}
               <span
                 style={{
@@ -200,7 +200,7 @@ export default function AboutClient() {
             </h1>
 
             {/* Subtitle */}
-            <p className="text-gray-400 text-[15px] leading-relaxed max-w-2xl mx-auto mb-10">
+            <p className="text-gray-400 text-base sm:text-lg leading-8 max-w-2xl mx-auto mb-10">
               Shreeji Art designs, fabricates, and installs premium indoor and
               outdoor signage for commercial, retail, corporate, and industrial
               clients across Gujarat — entirely in-house, from concept to
@@ -251,16 +251,25 @@ export default function AboutClient() {
       </section>
 
       {/* ── COMPANY STORY ────────────────────────────────────────────────── */}
-      <section className="py-20 sm:py-24 bg-white">
-        <div className="container-wide grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
+      <section className="relative overflow-hidden bg-[#F8F6F2] py-24 sm:py-28 lg:py-32">
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          aria-hidden="true"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(11,11,20,0.35) 1px,transparent 1px),linear-gradient(90deg,rgba(11,11,20,0.35) 1px,transparent 1px)",
+            backgroundSize: "72px 72px",
+          }}
+        />
+        <div className="container-wide relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-14 lg:gap-20 items-center">
 
           {/* Text */}
           <AnimateIn from="left">
             <p className="text-caption text-brand-gold mb-3">Who We Are</p>
-            <h2 className="font-display font-bold text-brand-navy text-[clamp(1.8rem,3.5vw,2.6rem)] leading-tight mb-6">
+            <h2 className="font-display font-bold text-brand-navy text-[clamp(2.25rem,4vw,3.4rem)] leading-[1.04] mb-7">
               A Signage Company Built on Craft and Accountability
             </h2>
-            <div className="space-y-4 text-gray-500 text-[15px] leading-relaxed">
+            <div className="space-y-5 text-gray-600 text-base sm:text-lg leading-8">
               <p>
                 Shreeji Art is a premium signage manufacturing and branding company
                 based in Ahmedabad, Gujarat. We specialise in designing, fabricating,
@@ -298,7 +307,7 @@ export default function AboutClient() {
 
           {/* Visual panel */}
           <AnimateIn from="right" delay={120}>
-            <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-[#080814] via-brand-navy to-[#14142e] p-6 border border-white/5 shadow-sa-xl">
+            <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[#0B0B14] via-brand-navy to-[#0B0B14] p-8 border border-white/10 shadow-[0_32px_90px_-56px_rgba(11,11,20,0.75)]">
               {/* Dot texture */}
               <div
                 className="absolute inset-0 opacity-[0.03]"
@@ -321,12 +330,12 @@ export default function AboutClient() {
                   <div
                     key={label}
                     role="listitem"
-                    className="flex items-center gap-3 rounded-xl bg-white/[0.04] border border-white/[0.06] px-3.5 py-3 hover:bg-white/[0.07] transition-colors duration-150"
+                    className="flex items-center gap-3 rounded-2xl bg-white/[0.04] border border-white/[0.08] px-4 py-3.5 transition-all duration-[250ms] hover:-translate-y-1 hover:bg-white/[0.07] hover:border-brand-gold/20 motion-reduce:transition-none motion-reduce:transform-none"
                   >
                     <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${bg}`}>
                       <Icon className={`h-4 w-4 ${color}`} aria-hidden="true" />
                     </div>
-                    <span className="text-xs font-medium text-gray-300">{label}</span>
+                    <span className="text-sm font-medium text-gray-300">{label}</span>
                   </div>
                 ))}
               </div>
@@ -343,24 +352,25 @@ export default function AboutClient() {
       </section>
 
       {/* ── MISSION & VISION ─────────────────────────────────────────────── */}
-      <section className="py-20 bg-gray-50">
+      <section className="relative overflow-hidden bg-[#F2EEE6] py-24 sm:py-28 lg:py-32">
+        <div className="absolute right-0 top-0 h-72 w-72 rounded-full bg-brand-gold/8 blur-[110px]" aria-hidden="true" />
         <div className="container-wide">
           <AnimateIn from="bottom" className="text-center mb-12">
             <p className="text-caption text-brand-gold mb-3">Purpose & Direction</p>
-            <h2 className="font-display font-bold text-brand-navy text-[clamp(1.8rem,4vw,2.8rem)] leading-tight">
+            <h2 className="font-display font-bold text-brand-navy text-[clamp(2.25rem,4vw,3.35rem)] leading-[1.05]">
               Mission &amp; Vision
             </h2>
           </AnimateIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
             {/* Mission */}
             <AnimateIn from="left" delay={60}>
-              <div className="h-full rounded-2xl bg-white border border-brand-gold/15 p-7 shadow-sa-sm">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gold/10 mb-5">
+              <div className="h-full rounded-[2rem] bg-[#F8F6F2] border border-brand-gold/20 p-8 shadow-[0_24px_70px_-54px_rgba(11,11,20,0.45)] transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/35 motion-reduce:transition-none motion-reduce:transform-none md:translate-y-6">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-gold/25 mb-6">
                   <Star className="h-5 w-5 text-brand-gold" aria-hidden="true" />
                 </div>
-                <h3 className="font-display font-bold text-brand-navy text-xl mb-3">Our Mission</h3>
-                <p className="text-gray-500 text-[15px] leading-relaxed">
+                <h3 className="font-display font-bold text-brand-navy text-2xl mb-4">Our Mission</h3>
+                <p className="text-gray-600 text-base leading-8">
                   To deliver premium-quality signage solutions that combine
                   creativity, durability, and precision craftsmanship — helping
                   businesses create a strong, lasting visual presence.
@@ -370,12 +380,12 @@ export default function AboutClient() {
 
             {/* Vision */}
             <AnimateIn from="right" delay={60}>
-              <div className="h-full rounded-2xl bg-brand-navy border border-white/8 p-7">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gold/15 mb-5">
+              <div className="h-full rounded-[2rem] bg-[#0B0B14] border border-white/10 p-8 shadow-[0_28px_80px_-54px_rgba(11,11,20,0.7)] transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/25 motion-reduce:transition-none motion-reduce:transform-none">
+                <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-gold/25 mb-6">
                   <Lightbulb className="h-5 w-5 text-brand-gold" aria-hidden="true" />
                 </div>
-                <h3 className="font-display font-bold text-white text-xl mb-3">Our Vision</h3>
-                <p className="text-gray-400 text-[15px] leading-relaxed">
+                <h3 className="font-display font-bold text-white text-2xl mb-4">Our Vision</h3>
+                <p className="text-gray-300/80 text-base leading-8">
                   To build long-term trust as a signage solution provider by
                   delivering dependable quality, modern design,
                   and outstanding customer service on every project.
@@ -387,14 +397,14 @@ export default function AboutClient() {
       </section>
 
       {/* ── CORE VALUES ──────────────────────────────────────────────────── */}
-      <section className="py-20 bg-white">
+      <section className="bg-[#F8F6F2] py-24 sm:py-28 lg:py-32">
         <div className="container-wide">
           <AnimateIn from="bottom" className="text-center mb-14">
             <p className="text-caption text-brand-gold mb-3">What Drives Us</p>
-            <h2 className="font-display font-bold text-brand-navy text-[clamp(1.8rem,4vw,2.8rem)] leading-tight mb-4">
+            <h2 className="font-display font-bold text-brand-navy text-[clamp(2.25rem,4vw,3.35rem)] leading-[1.05] mb-5">
               Our Core Values
             </h2>
-            <p className="text-gray-500 text-[15px] max-w-lg mx-auto leading-relaxed">
+            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-8">
               These principles guide every project decision — from material
               selection to how we communicate with clients.
             </p>
@@ -405,13 +415,13 @@ export default function AboutClient() {
               const Icon = val.icon;
               return (
                 <AnimateIn key={val.title} from="bottom" delay={i * 60}>
-                  <div className="flex flex-col gap-3 rounded-2xl border border-gray-100 bg-white p-6 hover:border-brand-gold/30 hover:shadow-sa-sm transition-all duration-200">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gold/8">
+                  <div className="flex h-full flex-col gap-4 rounded-[1.75rem] border border-brand-navy/10 bg-[#F2EEE6]/65 p-8 transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/35 hover:bg-white motion-reduce:transition-none motion-reduce:transform-none">
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-gold/25">
                       <Icon className="h-5 w-5 text-brand-gold" aria-hidden="true" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-brand-navy mb-1.5">{val.title}</h3>
-                      <p className="text-sm text-gray-500 leading-relaxed">{val.desc}</p>
+                      <h3 className="font-semibold text-brand-navy text-lg mb-2">{val.title}</h3>
+                      <p className="text-sm sm:text-[15px] text-gray-600 leading-7">{val.desc}</p>
                     </div>
                   </div>
                 </AnimateIn>
@@ -422,34 +432,43 @@ export default function AboutClient() {
       </section>
 
       {/* ── WHAT MAKES US DIFFERENT ───────────────────────────────────────── */}
-      <section className="py-20 bg-[#080814] relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080814] via-brand-navy/40 to-[#080814]" aria-hidden="true" />
+      <section className="py-24 sm:py-28 lg:py-32 bg-[#0B0B14] relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B14] via-brand-navy/35 to-[#0B0B14]" aria-hidden="true" />
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          aria-hidden="true"
+          style={{
+            backgroundImage:
+              "linear-gradient(135deg,rgba(217,165,20,0.22) 1px,transparent 1px)",
+            backgroundSize: "96px 96px",
+          }}
+        />
         <div className="absolute top-0 right-1/3 h-64 w-64 rounded-full bg-brand-gold/5 blur-[100px] pointer-events-none" aria-hidden="true" />
         <div className="absolute bottom-0 left-1/3 h-48 w-48 rounded-full bg-brand-gold/4 blur-[80px] pointer-events-none" aria-hidden="true" />
 
         <div className="container-wide relative z-10">
           <AnimateIn from="bottom" className="text-center mb-14">
             <p className="text-caption text-brand-gold mb-3">Why Shreeji Art</p>
-            <h2 className="font-display font-bold text-white text-[clamp(1.8rem,4vw,2.8rem)] leading-tight mb-4">
+            <h2 className="font-display font-bold text-white text-[clamp(2.25rem,4vw,3.45rem)] leading-[1.05] mb-5">
               What Makes Us Different
             </h2>
-            <p className="text-gray-400 text-[15px] max-w-lg mx-auto leading-relaxed">
+            <p className="text-gray-400 text-base sm:text-lg max-w-2xl mx-auto leading-8">
               We are not a broker or a print shop. We are a manufacturing company
               with in-house design, fabrication, and installation — under one roof.
             </p>
           </AnimateIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-w-5xl mx-auto">
             {DIFFERENTIATORS.map((item, i) => (
               <AnimateIn key={item.title} from="bottom" delay={Math.floor(i / 2) * 60}>
-                <div className="flex gap-3.5 rounded-2xl border border-white/8 bg-white/[0.03] p-5 hover:bg-white/[0.06] transition-all duration-200">
+                <div className="group flex h-full gap-4 rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-6 transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/25 hover:bg-white/[0.06] motion-reduce:transition-none motion-reduce:transform-none">
                   <CheckCircle2
-                    className="h-5 w-5 shrink-0 text-brand-gold mt-0.5"
+                    className="h-5 w-5 shrink-0 text-brand-gold/85 mt-0.5 transition-colors duration-[250ms] group-hover:text-brand-gold motion-reduce:transition-none"
                     aria-hidden="true"
                   />
                   <div>
-                    <h3 className="font-semibold text-white text-sm mb-1.5">{item.title}</h3>
-                    <p className="text-xs text-gray-400 leading-relaxed">{item.desc}</p>
+                    <h3 className="font-semibold text-white text-base mb-2">{item.title}</h3>
+                    <p className="text-sm text-gray-400 leading-7">{item.desc}</p>
                   </div>
                 </div>
               </AnimateIn>
@@ -459,35 +478,35 @@ export default function AboutClient() {
       </section>
 
       {/* ── OUR PROCESS ──────────────────────────────────────────────────── */}
-      <section className="py-20 bg-gray-50">
+      <section className="bg-[#F2EEE6] py-24 sm:py-28 lg:py-32">
         <div className="container-wide">
           <AnimateIn from="bottom" className="text-center mb-14">
             <p className="text-caption text-brand-gold mb-3">How We Work</p>
-            <h2 className="font-display font-bold text-brand-navy text-[clamp(1.8rem,4vw,2.8rem)] leading-tight mb-4">
+            <h2 className="font-display font-bold text-brand-navy text-[clamp(2.25rem,4vw,3.35rem)] leading-[1.05] mb-5">
               Our 8-Step Process
             </h2>
-            <p className="text-gray-500 text-[15px] max-w-lg mx-auto leading-relaxed">
+            <p className="text-gray-600 text-base sm:text-lg max-w-2xl mx-auto leading-8">
               Every project, regardless of size, follows the same rigorous process —
               no shortcuts, no surprises at any stage.
             </p>
           </AnimateIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-5 gap-y-8">
             {PROCESS.map((step, i) => {
               const Icon = step.icon;
               return (
                 <AnimateIn key={step.step} from="bottom" delay={i * 50}>
-                  <div className="relative flex flex-col gap-3.5 rounded-2xl border border-gray-100 bg-white p-5 hover:border-brand-gold/25 hover:shadow-sa-sm transition-all duration-200 h-full">
+                  <div className="relative flex h-full flex-col gap-4 rounded-[1.6rem] border border-brand-navy/10 bg-[#F8F6F2] p-6 transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/35 motion-reduce:transition-none motion-reduce:transform-none">
                     {/* Step badge */}
-                    <div className="absolute -top-3.5 left-5 font-mono text-xs font-bold text-brand-gold bg-gray-50 border border-brand-gold/25 rounded-full px-2.5 py-0.5">
+                    <div className="absolute -top-3.5 left-6 font-mono text-xs font-bold text-brand-gold bg-[#F2EEE6] border border-brand-gold/30 rounded-full px-2.5 py-0.5">
                       {step.step}
                     </div>
-                    <div className="mt-1.5 flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gold/8">
+                    <div className="mt-2 flex h-10 w-10 items-center justify-center rounded-2xl border border-brand-gold/25">
                       <Icon className="h-[1.125rem] w-[1.125rem] text-brand-gold" aria-hidden="true" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-brand-navy text-sm mb-1.5">{step.title}</h3>
-                      <p className="text-xs text-gray-500 leading-relaxed">{step.desc}</p>
+                      <h3 className="font-semibold text-brand-navy text-base mb-2">{step.title}</h3>
+                      <p className="text-sm text-gray-600 leading-7">{step.desc}</p>
                     </div>
                   </div>
                 </AnimateIn>
@@ -498,26 +517,26 @@ export default function AboutClient() {
       </section>
 
       {/* ── INDUSTRIES SERVED ─────────────────────────────────────────────── */}
-      <section className="py-20 bg-white">
+      <section className="bg-[#F8F6F2] py-24 sm:py-28 lg:py-32">
         <div className="container-wide">
           <AnimateIn from="bottom" className="text-center mb-12">
             <p className="text-caption text-brand-gold mb-3">Industries We Serve</p>
-            <h2 className="font-display font-bold text-brand-navy text-[clamp(1.8rem,4vw,2.6rem)] leading-tight">
+            <h2 className="font-display font-bold text-brand-navy text-[clamp(2.25rem,4vw,3.25rem)] leading-[1.05]">
               Signage for Every Sector
             </h2>
           </AnimateIn>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-3 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-5 gap-x-4 gap-y-6 max-w-5xl mx-auto">
             {INDUSTRIES.map((ind, i) => {
               const Icon = ind.icon;
               return (
                 <AnimateIn key={ind.label} from="bottom" delay={i * 40}>
-                  <div className="flex flex-col items-center gap-2 rounded-2xl border border-gray-100 bg-white p-4 hover:border-brand-gold/30 hover:bg-brand-gold/4 transition-all duration-200 group cursor-default text-center">
+                  <div className="group flex cursor-default flex-col items-center gap-3 rounded-[1.5rem] border border-brand-navy/10 bg-transparent p-5 text-center transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/35 hover:bg-white/45 motion-reduce:transition-none motion-reduce:transform-none">
                     <Icon
-                      className="h-6 w-6 text-gray-400 group-hover:text-brand-gold transition-colors"
+                      className="h-6 w-6 text-brand-gold/75 group-hover:text-brand-gold transition-colors duration-[250ms]"
                       aria-hidden="true"
                     />
-                    <p className="text-[11px] font-medium text-gray-500 group-hover:text-brand-gold transition-colors leading-tight">
+                    <p className="text-xs font-semibold text-gray-600 group-hover:text-brand-navy transition-colors duration-[250ms] leading-tight">
                       {ind.label}
                     </p>
                   </div>
@@ -529,14 +548,23 @@ export default function AboutClient() {
       </section>
 
       {/* ── CAPABILITIES OVERVIEW ─────────────────────────────────────────── */}
-      <section className="py-20 bg-gray-50">
-        <div className="container-wide">
+      <section className="relative overflow-hidden bg-[#F2EEE6] py-24 sm:py-28 lg:py-32">
+        <div
+          className="absolute inset-0 opacity-[0.035]"
+          aria-hidden="true"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 1px 1px,rgba(11,11,20,0.55) 1px,transparent 0)",
+            backgroundSize: "28px 28px",
+          }}
+        />
+        <div className="container-wide relative z-10">
           <AnimateIn from="bottom" className="text-center mb-12">
             <p className="text-caption text-brand-gold mb-3">What We Deliver</p>
-            <h2 className="font-display font-bold text-brand-navy text-[clamp(1.8rem,4vw,2.6rem)] leading-tight mb-3">
+            <h2 className="font-display font-bold text-brand-navy text-[clamp(2.25rem,4vw,3.25rem)] leading-[1.05] mb-4">
               Our Capabilities
             </h2>
-            <p className="text-gray-500 text-[14px] max-w-md mx-auto leading-relaxed">
+            <p className="text-gray-600 text-base max-w-xl mx-auto leading-8">
               A compact overview of what we build and install.{" "}
               <Link
                 href="/services"
@@ -548,18 +576,18 @@ export default function AboutClient() {
             </p>
           </AnimateIn>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {CAPABILITIES.map((cap, i) => {
               const Icon = cap.icon;
               return (
                 <AnimateIn key={cap.title} from="bottom" delay={i * 50}>
-                  <div className="flex items-start gap-4 rounded-2xl border border-gray-100 bg-white p-[1.125rem] hover:border-brand-gold/25 transition-all duration-200">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-gold/8">
+                  <div className="group flex h-full items-start gap-5 rounded-[1.75rem] border border-brand-navy/10 bg-[#F8F6F2] p-6 transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/35 hover:bg-white motion-reduce:transition-none motion-reduce:transform-none">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-brand-gold/25">
                       <Icon className="h-[1.125rem] w-[1.125rem] text-brand-gold" aria-hidden="true" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-brand-navy text-sm mb-0.5">{cap.title}</h3>
-                      <p className="text-xs text-gray-500 leading-relaxed">{cap.desc}</p>
+                      <h3 className="font-semibold text-brand-navy text-base mb-2">{cap.title}</h3>
+                      <p className="text-sm text-gray-600 leading-7">{cap.desc}</p>
                     </div>
                   </div>
                 </AnimateIn>
@@ -570,17 +598,17 @@ export default function AboutClient() {
       </section>
 
       {/* ── CRAFTSMANSHIP & TRUST ─────────────────────────────────────────── */}
-      <section className="relative py-24 bg-[#080814] overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080814] via-brand-navy/50 to-[#080814]" aria-hidden="true" />
+      <section className="relative py-24 sm:py-28 lg:py-32 bg-[#0B0B14] overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0B0B14] via-brand-navy/45 to-[#0B0B14]" aria-hidden="true" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-brand-gold/5 blur-[140px] pointer-events-none" aria-hidden="true" />
 
         <div className="container-wide relative z-10">
           <AnimateIn from="bottom" className="text-center mb-14">
             <p className="text-caption text-brand-gold mb-3">Built to Last</p>
-            <h2 className="font-display font-bold text-white text-[clamp(1.8rem,4vw,2.8rem)] leading-tight mb-4">
+            <h2 className="font-display font-bold text-white text-[clamp(2.25rem,4vw,3.45rem)] leading-[1.05] mb-5">
               Signs Crafted for the Long Term
             </h2>
-            <p className="text-gray-400 text-[15px] leading-relaxed max-w-2xl mx-auto">
+            <p className="text-gray-400 text-base sm:text-lg leading-8 max-w-2xl mx-auto">
               Our commitment does not end at installation. We use durable
               materials, precise fabrication methods, and proper electrical
               work so that every sign continues to represent your brand well —
@@ -588,18 +616,18 @@ export default function AboutClient() {
             </p>
           </AnimateIn>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto">
             {TRUST_PILLARS.map((pillar, i) => {
               const Icon = pillar.icon;
               return (
                 <AnimateIn key={pillar.title} from="bottom" delay={i * 80}>
-                  <div className="flex flex-col gap-4 rounded-2xl border border-white/8 bg-white/[0.03] p-6 text-center hover:bg-white/[0.06] transition-all duration-200">
-                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-brand-gold/10">
+                  <div className="flex h-full flex-col gap-5 rounded-[1.75rem] border border-white/10 bg-white/[0.035] p-8 text-center transition-all duration-[250ms] hover:-translate-y-1 hover:border-brand-gold/25 hover:bg-white/[0.06] motion-reduce:transition-none motion-reduce:transform-none">
+                    <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl border border-brand-gold/25">
                       <Icon className="h-5 w-5 text-brand-gold" aria-hidden="true" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-white mb-2">{pillar.title}</h3>
-                      <p className="text-sm text-gray-400 leading-relaxed">{pillar.desc}</p>
+                      <h3 className="font-semibold text-white text-lg mb-3">{pillar.title}</h3>
+                      <p className="text-sm sm:text-[15px] text-gray-400 leading-7">{pillar.desc}</p>
                     </div>
                   </div>
                 </AnimateIn>
@@ -610,7 +638,7 @@ export default function AboutClient() {
       </section>
 
       {/* ── FINAL CTA ────────────────────────────────────────────────────── */}
-      <section className="relative py-24 bg-brand-navy overflow-hidden">
+      <section className="relative py-24 sm:py-28 lg:py-32 bg-[#0B0B14] overflow-hidden">
         <div className="absolute -top-24 -right-24 h-80 w-80 rounded-full bg-brand-gold/10 blur-[80px]" aria-hidden="true" />
         <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-brand-gold/8 blur-[60px]" aria-hidden="true" />
         <div
@@ -626,7 +654,7 @@ export default function AboutClient() {
         <div className="container-narrow relative z-10 text-center">
           <AnimateIn from="bottom">
             <p className="text-caption text-brand-gold mb-4">Start Your Project</p>
-            <h2 className="font-display font-bold text-white text-[clamp(1.8rem,4vw,3rem)] leading-tight mb-4">
+            <h2 className="font-display font-bold text-white text-[clamp(2.25rem,4vw,3.5rem)] leading-[1.05] mb-5">
               Let&apos;s Build a Sign That{" "}
               <span
                 style={{
@@ -640,7 +668,7 @@ export default function AboutClient() {
                 Represents Your Brand
               </span>
             </h2>
-            <p className="text-gray-400 text-[15px] leading-relaxed mb-10 max-w-md mx-auto">
+            <p className="text-gray-400 text-base leading-8 mb-10 max-w-xl mx-auto">
               Tell us about your project. We will visit your site, design something
               that works for your space, and give you a clear quote with practical timelines.
             </p>

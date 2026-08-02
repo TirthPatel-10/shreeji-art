@@ -174,10 +174,10 @@ const PROCESS_STEPS = [
 ];
 
 const HERO_TRUST_POINTS = [
-  "Premium Quality",
-  "Custom Designs",
-  "Timely Delivery",
-  "Expert Installation",
+  "500+ Projects",
+  "100+ Clients",
+  "Premium Fabrication",
+  "Across Gujarat",
 ];
 
 const PREMIUM_TRANSITION =
@@ -317,11 +317,11 @@ export default function HomeClient({
             sizes="100vw"
             className="object-cover opacity-50"
           />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_28%,rgba(212,160,23,0.22),transparent_30%),linear-gradient(90deg,rgba(5,5,12,0.98)_0%,rgba(10,10,24,0.86)_46%,rgba(10,10,24,0.68)_100%)]" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_30%,rgba(212,160,23,0.16),transparent_34%),linear-gradient(90deg,rgba(5,5,12,0.98)_0%,rgba(10,10,24,0.88)_48%,rgba(10,10,24,0.7)_100%)]" />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/35 via-transparent to-brand-navy/90" />
           <div
             aria-hidden="true"
-            className="absolute inset-0 opacity-[0.06]"
+            className="absolute inset-0 opacity-[0.045]"
             style={{
               backgroundImage:
                 "linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px)",
@@ -332,6 +332,20 @@ export default function HomeClient({
             className="absolute left-10 top-24 h-80 w-80 animate-pulse-subtle rounded-full bg-brand-gold/15 blur-[120px] motion-reduce:animate-none"
             aria-hidden="true"
           />
+          <div className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden w-[46%] overflow-hidden md:block">
+            <div
+              className="absolute right-[-20%] top-[54%] h-80 w-80 -translate-y-1/2 rounded-full bg-[#D9A514]/16 blur-3xl lg:h-[26.5rem] lg:w-[26.5rem]"
+              aria-hidden="true"
+            />
+            <Image
+              src="/shreeji-final-logo.png"
+              alt=""
+              width={520}
+              height={520}
+              className="absolute right-[-22%] top-[54%] h-80 w-80 -translate-y-1/2 select-none rounded-full object-cover opacity-[0.11] blur-[1px] lg:h-[33rem] lg:w-[33rem]"
+              aria-hidden="true"
+            />
+          </div>
 
           <div className="container-full relative z-10 flex min-h-[calc(100vh-4rem)] items-center py-24 sm:py-28 lg:py-32">
             <div className="max-w-[64rem] text-center lg:text-left">
@@ -343,7 +357,7 @@ export default function HomeClient({
               </AnimateIn>
 
               <AnimateIn from="bottom" delay={80}>
-                <h1 className="max-w-[64rem] font-display text-[clamp(3.1rem,7.15vw,6.45rem)] font-bold leading-[1.1] tracking-[-0.05em] text-white drop-shadow-[0_24px_60px_rgba(0,0,0,0.55)]">
+                <h1 className="max-w-[64rem] font-display text-[clamp(2.85rem,6.5vw,5.5rem)] font-bold leading-[0.94] tracking-[-0.05em] text-white drop-shadow-[0_24px_60px_rgba(0,0,0,0.55)]">
                   <span className="block">We Design.</span>
                   <span className="block">We Manufacture.</span>
                   <span className="block bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold bg-clip-text text-transparent lg:whitespace-nowrap">
@@ -353,7 +367,7 @@ export default function HomeClient({
               </AnimateIn>
 
               <AnimateIn from="bottom" delay={160}>
-                <p className="mx-auto mt-11 max-w-[39rem] text-base leading-8 text-[#e7dfd1]/85 sm:text-lg lg:mx-0">
+                <p className="mx-auto mt-9 max-w-[35rem] text-base leading-8 text-[#e7dfd1]/85 sm:text-lg lg:mx-0">
                   From concept to installation, we create high-quality signage that
                   builds your brand and attracts attention.
                 </p>
@@ -363,14 +377,14 @@ export default function HomeClient({
                 <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row lg:justify-start">
                   <Link
                     href="/quote"
-                    className={`group inline-flex items-center justify-center gap-2 rounded-2xl bg-brand-gold px-7 py-4 text-sm font-bold text-white shadow-[0_18px_60px_rgba(212,160,23,.25)] ${PREMIUM_TRANSITION} hover:-translate-y-0.5 hover:bg-brand-gold-dark hover:shadow-[0_22px_70px_rgba(212,160,23,.34)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-brand-gold`}
+                    className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-brand-gold via-brand-gold-light to-brand-gold px-7 py-4 text-sm font-bold text-white shadow-[0_18px_52px_rgba(212,160,23,.22)] transition-all duration-[250ms] ease-out hover:-translate-y-0.5 hover:shadow-[0_22px_62px_rgba(212,160,23,.32)] active:translate-y-0 active:scale-[0.99] focus-visible:outline-brand-gold motion-reduce:transition-none motion-reduce:transform-none"
                   >
-                    Get a Free Quote
+                    Request a Quote
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transition-none motion-reduce:transform-none" aria-hidden="true" />
                   </Link>
                   <Link
                     href="/portfolio"
-                    className={`inline-flex items-center justify-center rounded-2xl border border-white/12 bg-white/[0.04] px-7 py-4 text-sm font-bold text-white backdrop-blur ${PREMIUM_TRANSITION} hover:-translate-y-0.5 hover:border-brand-gold/40 hover:bg-white/[0.08] active:translate-y-0 active:scale-[0.99]`}
+                    className="inline-flex items-center justify-center rounded-2xl border border-white/16 bg-white/[0.04] px-7 py-4 text-sm font-bold text-white backdrop-blur transition-all duration-[250ms] ease-out hover:-translate-y-0.5 hover:border-brand-gold/55 hover:bg-white/[0.08] active:translate-y-0 active:scale-[0.99] motion-reduce:transition-none motion-reduce:transform-none"
                   >
                     Explore Our Work
                   </Link>
@@ -378,13 +392,13 @@ export default function HomeClient({
               </AnimateIn>
 
               <AnimateIn from="bottom" delay={320}>
-                <div className="mt-12 grid grid-cols-2 justify-center gap-3 sm:inline-grid lg:flex lg:flex-nowrap lg:justify-start">
+                <div className="mt-11 flex flex-wrap items-center justify-center gap-x-5 gap-y-3 border-y border-white/[0.14] bg-white/[0.02] py-4 text-xs font-semibold uppercase tracking-[0.16em] text-[#D7D4CC]/80 sm:gap-x-7 lg:justify-start">
                   {HERO_TRUST_POINTS.map((point) => (
                     <span
                       key={point}
-                      className={`inline-flex items-center justify-center gap-2 rounded-full border border-white/[0.18] bg-white/[0.065] px-4 py-2.5 text-sm font-semibold text-[#f4efe4]/85 shadow-[0_10px_30px_rgba(0,0,0,0.12)] ${PREMIUM_TRANSITION} hover:-translate-y-0.5 hover:border-brand-gold/65 hover:bg-brand-gold/[0.11] hover:text-[#fff8ea] hover:shadow-[0_14px_34px_rgba(212,160,23,0.14)]`}
+                      className="group inline-flex items-center justify-center gap-2 transition-all duration-[220ms] ease-out hover:-translate-y-px hover:text-[#f4efe4]/90 motion-reduce:transition-none motion-reduce:transform-none"
                     >
-                      <BadgeCheck className="h-4 w-4 text-brand-gold" aria-hidden="true" />
+                      <BadgeCheck className="h-3.5 w-3.5 text-brand-gold/90 transition-colors duration-[220ms] ease-out group-hover:text-brand-gold motion-reduce:transition-none" aria-hidden="true" />
                       {point}
                     </span>
                   ))}

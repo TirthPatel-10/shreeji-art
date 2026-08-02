@@ -101,7 +101,7 @@ export default function ContactClient() {
                     href="/quote"
                     className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D9A514] px-6 py-3.5 text-base font-semibold text-[#121426] shadow-sm transition-colors duration-200 hover:bg-[#D9A514]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
                   >
-                    Request a Free Quote
+                    Request a Quote
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                   <a
@@ -233,7 +233,7 @@ export default function ContactClient() {
                 href="/quote"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-[#D9A514] px-6 py-3.5 text-base font-semibold text-[#121426] transition-colors duration-200 hover:bg-[#D9A514]/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
               >
-                Get a Free Quote
+                Request a Quote
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <a

@@ -29,9 +29,8 @@ const QUICK_LINKS = [
   { href: "/services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
-  { href: "/quote", label: "Get Quote" },
+  { href: "/quote", label: "Request a Quote" },
 ] as const;
 
 const SOCIAL_LINKS = [
@@ -39,6 +38,8 @@ const SOCIAL_LINKS = [
   { href: "https://www.facebook.com/", label: "Facebook", icon: Facebook },
   { href: "https://www.linkedin.com/", label: "LinkedIn", icon: Linkedin },
 ] as const;
+
+const SHOW_SOCIAL_LINKS = false;
 
 const CONTACT_LINKS = [
   {
@@ -126,7 +127,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
                 href="/quote"
                 className="inline-flex items-center justify-center rounded-full bg-brand-gold px-5 py-3 text-sm font-semibold text-brand-navy shadow-sa-md transition-all duration-200 hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep motion-reduce:transition-none"
               >
-                Get a Free Quote
+                Request a Quote
               </Link>
               <a
                 href={SITE_CONTACT.whatsappHref}
@@ -230,27 +231,30 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
             compact ? "mt-8 pt-5" : "mt-12 pt-6"
           }`}
         >
-          <p className="text-xs text-white/40">
-            © {currentYear} Shreeji Art. All rights reserved.
-          </p>
+          <div className="space-y-1 text-xs text-white/40">
+            <p>© {currentYear} Shreeji Art. All rights reserved.</p>
+            <p className="text-white/35">Designed &amp; Developed by Tirth Patel</p>
+          </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {SOCIAL_LINKS.map((social) => {
-              const Icon = social.icon;
+            {SHOW_SOCIAL_LINKS
+              ? SOCIAL_LINKS.map((social) => {
+                  const Icon = social.icon;
 
-              return (
-                <a
-                  key={social.label}
-                  href={social.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={social.label}
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all duration-200 hover:border-brand-gold/45 hover:bg-brand-gold/10 hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep motion-reduce:transition-none"
-                >
-                  <Icon className="h-4 w-4" aria-hidden="true" />
-                </a>
-              );
-            })}
+                  return (
+                    <a
+                      key={social.label}
+                      href={social.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={social.label}
+                      className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/10 text-white/50 transition-all duration-200 hover:border-brand-gold/45 hover:bg-brand-gold/10 hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep motion-reduce:transition-none"
+                    >
+                      <Icon className="h-4 w-4" aria-hidden="true" />
+                    </a>
+                  );
+                })
+              : null}
             <Link
               href="/contact"
               className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-xs font-semibold text-white/45 transition-colors hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep"

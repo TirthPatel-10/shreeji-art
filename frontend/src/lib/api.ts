@@ -242,6 +242,22 @@ export const adminApi = {
     request(`/admin/portfolio/${projectId}/images/${imageId}/cover`, {
       method: "PATCH",
     }),
+  addPortfolioImagesToGallery: (
+    projectId: number,
+    body: {
+      imageIds: number[];
+      title?: string;
+      category?: string;
+      altText?: string;
+      caption?: string;
+      featured?: boolean;
+      published?: boolean;
+    }
+  ) =>
+    request(`/admin/portfolio/${projectId}/images/gallery`, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
 
   // Blog
   getBlogPosts: () => request("/admin/blogs"),

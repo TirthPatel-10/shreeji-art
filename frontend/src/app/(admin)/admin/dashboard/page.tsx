@@ -12,26 +12,32 @@ import Link from "next/link";
 import {
   AlertCircle,
   ArrowRight,
+  CheckCircle2,
   FolderKanban,
+  ImageIcon,
   Inbox,
   MessageSquareQuote,
   RefreshCw,
-  UsersRound,
 } from "lucide-react";
 import { adminApi } from "@/lib/api";
-import type { Lead, Project, Quote } from "@/types";
+import type { GalleryItem, Lead, Project, Quote } from "@/types";
 
 type DashboardStatus = "loading" | "ready" | "error";
 
 const ACTIVE_PROJECT_STATUSES = [
-  "PLANNING",
   "PLANNED",
   "IN_PROGRESS",
-  "REVIEW",
   "QUALITY_CHECK",
   "INSTALLATION",
-  "ON_HOLD",
 ] as const;
+
+const LEAD_LABELS: Record<string, string> = {
+  NEW: "New Inquiry",
+  CONTACTED: "Contacted",
+  QUALIFIED: "Quotation Prepared",
+  CONVERTED: "Converted to Quote",
+  LOST: "Rejected / Closed",
+};
 
 const QUOTE_LABELS: Record<string, string> = {
   PENDING: "Pending Review",
@@ -43,23 +49,22 @@ const QUOTE_LABELS: Record<string, string> = {
 };
 
 const PROJECT_LABELS: Record<string, string> = {
-  PLANNING: "Planning",
   PLANNED: "Planned",
   IN_PROGRESS: "In Progress",
-  REVIEW: "Under Review",
   QUALITY_CHECK: "Quality Check",
   INSTALLATION: "Installation",
   COMPLETED: "Completed",
-  ON_HOLD: "On Hold",
   CANCELLED: "Cancelled",
 };
 
 export default function AdminDashboardPage() {
   const [counts, setCounts] = useState({
-    customers: 0,
-    leads: 0,
-    quotes: 0,
-    projects: 0,
+    newInquiries: 0,
+    pendingQuotes: 0,
+    acceptedQuotes: 0,
+    activeProjects: 0,
+    galleryImages: 0,
+    recentActivity: 0,
   });
   const [recentLeads, setRecentLeads] = useState<Lead[]>([]);
   const [recentQuotes, setRecentQuotes] = useState<Quote[]>([]);
@@ -73,23 +78,23 @@ export default function AdminDashboardPage() {
     setErrorMsg("");
 
     Promise.all([
-      adminApi.getCustomers(),
       adminApi.getLeads(),
       adminApi.getQuotes(),
       adminApi.getProjects(),
+      adminApi.getGalleryItems(),
     ])
-      .then(([customerResponse, leadResponse, quoteResponse, projectResponse]) => {
+      .then(([leadResponse, quoteResponse, projectResponse, galleryResponse]) => {
         if (
-          !customerResponse.success ||
           !leadResponse.success ||
           !quoteResponse.success ||
-          !projectResponse.success
+          !projectResponse.success ||
+          !galleryResponse.success
         ) {
           throw new Error(
-            customerResponse.message ||
-              leadResponse.message ||
+            leadResponse.message ||
               quoteResponse.message ||
               projectResponse.message ||
+              galleryResponse.message ||
               "Unable to load admin dashboard data."
           );
         }
@@ -97,16 +102,23 @@ export default function AdminDashboardPage() {
         const leads = newestFirst((leadResponse.data as Lead[]) ?? []);
         const quotes = newestFirst((quoteResponse.data as Quote[]) ?? []);
         const projects = newestFirst((projectResponse.data as Project[]) ?? []);
+        const galleryItems = (galleryResponse.data as GalleryItem[]) ?? [];
+        const recentActivityCount =
+          leads.slice(0, 5).length +
+          quotes.slice(0, 5).length +
+          projects.slice(0, 5).length;
 
         setCounts({
-          customers: ((customerResponse.data as unknown[]) ?? []).length,
-          leads: leads.filter((lead) => lead.status === "NEW").length,
-          quotes: quotes.length,
-          projects: projects.filter((project) =>
+          newInquiries: leads.filter((lead) => lead.status === "NEW").length,
+          pendingQuotes: quotes.filter((quote) => quote.status === "PENDING").length,
+          acceptedQuotes: quotes.filter((quote) => quote.status === "ACCEPTED").length,
+          activeProjects: projects.filter((project) =>
             ACTIVE_PROJECT_STATUSES.includes(
               project.status as (typeof ACTIVE_PROJECT_STATUSES)[number]
             )
           ).length,
+          galleryImages: galleryItems.length,
+          recentActivity: recentActivityCount,
         });
         setRecentLeads(leads.slice(0, 5));
         setRecentQuotes(quotes.slice(0, 5));
@@ -131,35 +143,56 @@ export default function AdminDashboardPage() {
   const stats = useMemo(
     () => [
       {
-        label: "Total Customers",
-        value: counts.customers,
-        href: "/admin/customers",
-        icon: UsersRound,
-        detail: "Registered customer accounts",
-      },
-      {
-        label: "New Leads",
-        value: counts.leads,
+        label: "New Inquiries",
+        value: counts.newInquiries,
         href: "/admin/leads",
         icon: Inbox,
-        detail: "Leads waiting for follow-up",
+        detail: "New inquiries waiting for follow-up",
       },
       {
-        label: "Quotes",
-        value: counts.quotes,
+        label: "Pending Quotes",
+        value: counts.pendingQuotes,
         href: "/admin/quotes",
         icon: MessageSquareQuote,
-        detail: "All quote records in the system",
+        detail: "Quote requests awaiting review",
       },
       {
-        label: "Active Projects",
-        value: counts.projects,
+        label: "Accepted Quotes",
+        value: counts.acceptedQuotes,
+        href: "/admin/quotes",
+        icon: CheckCircle2,
+        detail: "Quotes accepted by customers",
+      },
+      {
+        label: "Projects",
+        value: counts.activeProjects,
         href: "/admin/projects",
         icon: FolderKanban,
-        detail: "Projects not completed or cancelled",
+        detail: "Active projects in production",
+      },
+      {
+        label: "Gallery Images",
+        value: counts.galleryImages,
+        href: "/admin/gallery",
+        icon: ImageIcon,
+        detail: "Images available for the public gallery",
+      },
+      {
+        label: "Recent Activity",
+        value: counts.recentActivity,
+        href: "/admin/dashboard",
+        icon: RefreshCw,
+        detail: "Recent inquiries, quotes, and projects shown below",
       },
     ],
-    [counts.customers, counts.leads, counts.projects, counts.quotes]
+    [
+      counts.acceptedQuotes,
+      counts.activeProjects,
+      counts.galleryImages,
+      counts.newInquiries,
+      counts.pendingQuotes,
+      counts.recentActivity,
+    ]
   );
 
   if (status === "loading") {
@@ -206,7 +239,7 @@ export default function AdminDashboardPage() {
               Admin Dashboard
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-white/64 sm:text-base">
-              Monitor incoming leads, quote requests, active projects, and
+              Monitor incoming inquiries, quote requests, active projects, and
               customer activity from one premium control room.
             </p>
           </div>
@@ -230,7 +263,7 @@ export default function AdminDashboardPage() {
         ) : null}
       </section>
 
-      <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {stats.map((stat) => (
           <MetricCard key={stat.label} {...stat} />
         ))}
@@ -238,10 +271,10 @@ export default function AdminDashboardPage() {
 
       <section className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <ActivityPanel
-          title="Newest leads"
+          title="Newest inquiries"
           href="/admin/leads"
-          emptyTitle="No leads yet"
-          emptyText="New contact and quote leads will appear here."
+          emptyTitle="No inquiries yet"
+          emptyText="New contact and quote inquiries will appear here."
         >
           {recentLeads.map((lead) => (
             <ActivityRow
@@ -250,7 +283,7 @@ export default function AdminDashboardPage() {
               subtitle={lead.email}
               meta={lead.serviceType}
               date={lead.createdAt}
-              status={lead.status}
+              status={LEAD_LABELS[lead.status] ?? lead.status}
               href="/admin/leads"
             />
           ))}
@@ -423,8 +456,8 @@ function DashboardSkeleton() {
   return (
     <div className="space-y-8" aria-label="Loading admin dashboard">
       <div className="h-64 animate-pulse rounded-[2rem] bg-brand-navy/90" />
-      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-4">
-        {Array.from({ length: 4 }, (_, index) => (
+      <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        {Array.from({ length: 6 }, (_, index) => (
           <div
             key={index}
             className="h-56 animate-pulse rounded-[1.75rem] border border-white bg-white shadow-sa-lg"
@@ -467,25 +500,22 @@ function formatDate(value: string) {
 function statusClass(status: string) {
   const normalized = status.toUpperCase().replace(/\s+/g, "_");
   const map: Record<string, string> = {
-    NEW: "bg-yellow-100 text-yellow-800",
+    NEW_INQUIRY: "bg-yellow-100 text-yellow-800",
     CONTACTED: "bg-blue-100 text-blue-800",
-    QUALIFIED: "bg-purple-100 text-purple-800",
-    CONVERTED: "bg-emerald-100 text-emerald-800",
-    LOST: "bg-red-100 text-red-800",
+    QUOTATION_PREPARED: "bg-purple-100 text-purple-800",
+    CONVERTED_TO_QUOTE: "bg-emerald-100 text-emerald-800",
+    CLOSED: "bg-red-100 text-red-800",
     PENDING_REVIEW: "bg-yellow-100 text-yellow-800",
     UNDER_REVIEW: "bg-gray-100 text-gray-700",
     QUOTE_SENT: "bg-blue-100 text-blue-800",
     ACCEPTED: "bg-emerald-100 text-emerald-800",
     REJECTED: "bg-red-100 text-red-800",
     EXPIRED: "bg-orange-100 text-orange-800",
-    PLANNING: "bg-slate-100 text-slate-700",
     PLANNED: "bg-slate-100 text-slate-700",
     IN_PROGRESS: "bg-blue-100 text-blue-800",
-    REVIEW: "bg-amber-100 text-amber-800",
     QUALITY_CHECK: "bg-amber-100 text-amber-800",
     INSTALLATION: "bg-violet-100 text-violet-800",
     COMPLETED: "bg-emerald-100 text-emerald-800",
-    ON_HOLD: "bg-orange-100 text-orange-800",
     CANCELLED: "bg-red-100 text-red-800",
   };
 

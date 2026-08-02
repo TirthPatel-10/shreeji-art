@@ -70,13 +70,13 @@ export default function CustomerQuotesPage() {
           <p className="text-4xl mb-4">📄</p>
           <p className="font-semibold text-brand-navy mb-1">No quotes yet</p>
           <p className="text-sm text-gray-400 mb-6">
-            Submit a quote request and we&apos;ll prepare a detailed proposal for your signage project.
+            Request a quote and we&apos;ll prepare a detailed proposal for your signage project.
           </p>
           <Link
             href="/quote"
             className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-gold text-white font-semibold text-sm hover:bg-brand-gold/90 transition-colors"
           >
-            Request your first quote
+            Request Your Quote
           </Link>
         </div>
       ) : (

@@ -526,7 +526,7 @@ export default function ServiceDetailClient({ service }: { service: ServiceDetai
                 href={`/quote?service=${encodeURIComponent(service.label)}`}
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-gold-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transform-none motion-reduce:transition-none"
               >
-                Request a Free Quote
+                Request a Quote
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <Link

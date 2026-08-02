@@ -11,4 +11,6 @@ public interface GalleryItemRepository extends JpaRepository<GalleryItem, Long> 
     List<GalleryItem> findByPublishedTrueOrderBySortOrderAscDisplayOrderAscIdAsc();
     List<GalleryItem> findByCategoryAndPublishedTrueOrderBySortOrderAscDisplayOrderAscIdAsc(String category);
     List<GalleryItem> findByIsFeaturedTrueAndPublishedTrueOrderBySortOrderAscDisplayOrderAscIdAsc();
+
+    boolean existsByProjectIdAndImageUrl(Long projectId, String imageUrl);
 }

@@ -10,14 +10,17 @@ import {
   type TouchEvent,
 } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
+  BadgeCheck,
   Camera,
+  Grid3X3,
   ImageOff,
-  Maximize2,
   RefreshCw,
+  Sparkles,
   X,
 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
@@ -32,6 +35,12 @@ interface Props {
   items: DisplayGalleryItem[];
   status: GalleryStatus;
 }
+
+const GALLERY_STATS = [
+  { value: "150+", label: "Projects", icon: Camera },
+  { value: "12+", label: "Categories", icon: Grid3X3 },
+  { value: "8+", label: "Years", icon: BadgeCheck },
+];
 
 interface GalleryImageProps {
   src: string;
@@ -92,23 +101,25 @@ function galleryAlt(item: DisplayGalleryItem, index?: number) {
 function GallerySkeletonGrid() {
   return (
     <div
-      className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4"
+      className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4"
       aria-label="Loading gallery images"
     >
       {Array.from({ length: 12 }, (_, index) => (
         <div
           key={index}
-          className={`mb-4 break-inside-avoid overflow-hidden rounded-[1.35rem] bg-white/[0.06] shadow-sa-md ${
-            index % 4 === 1
+          className={`mb-5 break-inside-avoid overflow-hidden rounded-none bg-white shadow-sa-xs ${
+            index % 6 === 1
               ? "h-80"
-              : index % 4 === 2
-                ? "h-64"
-                : index % 4 === 3
+              : index % 6 === 2
+                ? "h-72"
+                : index % 6 === 3
                   ? "h-[28rem]"
-                  : "h-96"
+                  : index % 6 === 5
+                    ? "h-64"
+                    : "h-96"
           }`}
         >
-          <div className="h-full w-full animate-pulse bg-gradient-to-br from-white/[0.10] via-white/[0.04] to-brand-gold/[0.08]" />
+          <div className="h-full w-full animate-pulse bg-gradient-to-br from-[#F8F6F2] via-[#F2EEE6] to-brand-gold/10" />
         </div>
       ))}
     </div>
@@ -128,15 +139,15 @@ function GalleryState({
 }) {
   const copy = {
     empty: {
-      title: "Gallery coming soon",
-      body: "Published project images will appear here.",
+      title: "Gallery is being curated",
+      body: "Published signage photography will appear here as completed work is prepared for display.",
       icon: Camera,
       action: "Contact us",
     },
     "filter-empty": {
-      title: "No images found",
+      title: "No images in this category yet",
       body: activeCategory
-        ? `There are no published images in ${activeCategory} yet.`
+        ? `Published ${activeCategory} images will appear here once they are ready.`
         : "Try another gallery filter.",
       icon: ImageOff,
       action: "View all images",
@@ -152,21 +163,21 @@ function GalleryState({
   const Icon = copy.icon;
 
   return (
-    <div className="mx-auto flex max-w-xl flex-col items-center rounded-[2rem] border border-white/10 bg-white/[0.06] px-6 py-14 text-center shadow-sa-lg backdrop-blur-xl">
-      <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-brand-gold/25 bg-brand-gold/10 text-brand-gold">
+    <div className="mx-auto flex max-w-xl flex-col items-center rounded-[2rem] border border-brand-navy/10 bg-white px-6 py-14 text-center shadow-[0_24px_70px_rgba(18,20,38,0.08)]">
+      <span className="mb-5 flex h-16 w-16 items-center justify-center rounded-full border border-brand-gold/30 bg-brand-gold/10 text-brand-gold">
         <Icon className="h-7 w-7" aria-hidden="true" />
       </span>
-      <h2 className="font-display text-2xl font-semibold text-white">
+      <h2 className="font-display text-2xl font-semibold text-brand-navy">
         {copy.title}
       </h2>
-      <p className="mt-3 max-w-md text-sm leading-6 text-white/65">
+      <p className="mt-3 max-w-md text-sm leading-7 text-gray-600">
         {copy.body}
       </p>
       {type === "empty" ? null : (
         <button
           type="button"
           onClick={type === "error" ? onRetry : onReset}
-          className="mt-7 inline-flex items-center justify-center rounded-full bg-brand-gold px-6 py-3 text-sm font-semibold text-brand-navy shadow-sa-md transition-all duration-200 hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transition-none"
+          className="mt-7 inline-flex items-center justify-center rounded-full bg-brand-gold px-6 py-3 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-[250ms] hover:-translate-y-0.5 hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-white motion-reduce:transform-none motion-reduce:transition-none"
         >
           {copy.action}
         </button>
@@ -250,7 +261,7 @@ function Lightbox({
       <button
         type="button"
         aria-label="Close gallery preview"
-        className="absolute inset-0 cursor-default bg-black/90 backdrop-blur-xl"
+        className="absolute inset-0 cursor-default bg-[#050610]/92 backdrop-blur-xl"
         onClick={onClose}
       />
 
@@ -260,7 +271,7 @@ function Lightbox({
         onTouchEnd={onTouchEnd}
       >
         <div className="flex items-center justify-between gap-3">
-          <p className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white/70 backdrop-blur-md">
+          <p className="rounded-full border border-white/10 bg-white/10 px-4 py-2 text-sm font-medium text-white/72 backdrop-blur-md">
             {activeIndex + 1} / {total}
           </p>
           <button
@@ -268,14 +279,14 @@ function Lightbox({
             type="button"
             aria-label="Close gallery preview"
             onClick={onClose}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors duration-[250ms] hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
           >
             <X className="h-5 w-5" aria-hidden="true" />
           </button>
         </div>
 
         <div className="relative flex min-h-0 flex-1 items-center justify-center">
-          <div className="relative h-full max-h-[78vh] min-h-[320px] w-full overflow-hidden rounded-[1.6rem] bg-brand-navy shadow-2xl sm:rounded-[2rem]">
+          <div className="relative h-full max-h-[78vh] min-h-[320px] w-full overflow-hidden rounded-none bg-brand-navy shadow-2xl">
             <GalleryImage
               src={item.image}
               alt={galleryAlt(item, activeIndex)}
@@ -291,7 +302,7 @@ function Lightbox({
                 type="button"
                 onClick={previous}
                 aria-label="Previous gallery image"
-                className="absolute left-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur-md transition-all hover:bg-black/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none sm:flex lg:-left-6"
+                className="absolute left-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur-md transition-all duration-[250ms] hover:bg-black/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none sm:flex lg:-left-6"
               >
                 <ArrowLeft className="h-5 w-5" aria-hidden="true" />
               </button>
@@ -299,7 +310,7 @@ function Lightbox({
                 type="button"
                 onClick={next}
                 aria-label="Next gallery image"
-                className="absolute right-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur-md transition-all hover:bg-black/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none sm:flex lg:-right-6"
+                className="absolute right-2 top-1/2 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/35 text-white backdrop-blur-md transition-all duration-[250ms] hover:bg-black/55 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none sm:flex lg:-right-6"
               >
                 <ArrowRight className="h-5 w-5" aria-hidden="true" />
               </button>
@@ -313,7 +324,7 @@ function Lightbox({
               type="button"
               onClick={previous}
               aria-label="Previous gallery image"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors duration-[250ms] hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
             >
               <ArrowLeft className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -321,7 +332,7 @@ function Lightbox({
               type="button"
               onClick={next}
               aria-label="Next gallery image"
-              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+              className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/15 bg-white/10 text-white transition-colors duration-[250ms] hover:bg-white/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
             >
               <ArrowRight className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -389,40 +400,120 @@ export default function GalleryClient({ items, status }: Props) {
   return (
     <>
       <Navbar />
-      <main className="overflow-hidden bg-brand-deep text-white">
+      <main className="overflow-hidden bg-[#F8F6F2] text-brand-navy">
         <section className="relative isolate border-b border-white/10 pt-28">
           <div
-            className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.16),transparent_34%),radial-gradient(circle_at_82%_0%,rgba(255,255,255,0.08),transparent_28%),linear-gradient(135deg,#070917_0%,#0B1024_52%,#050610_100%)]"
+            className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_20%,rgba(217,165,20,0.14),transparent_34%),radial-gradient(circle_at_82%_0%,rgba(255,255,255,0.07),transparent_30%),linear-gradient(135deg,#070917_0%,#0B1024_52%,#050610_100%)]"
             aria-hidden="true"
           />
           <div
-            className="absolute inset-0 -z-10 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.55)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.55)_1px,transparent_1px)] [background-size:56px_56px]"
+            className="absolute inset-0 -z-10 opacity-[0.045] [background-image:linear-gradient(rgba(255,255,255,0.55)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.55)_1px,transparent_1px)] [background-size:64px_64px]"
             aria-hidden="true"
           />
+          <div
+            className="absolute right-[-6rem] top-12 -z-10 h-72 w-72 rotate-12 rounded-[2rem] border border-brand-gold/40 opacity-[0.045] sm:h-96 sm:w-96"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute right-[14%] top-[38%] -z-10 h-px w-72 bg-gradient-to-r from-transparent via-brand-gold/60 to-transparent opacity-[0.04]"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute bottom-10 left-[8%] -z-10 h-24 w-72 rounded-full border border-white/40 opacity-[0.03]"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute left-[6%] top-[38%] -z-10 h-72 w-72 rounded-full bg-[radial-gradient(circle,rgba(212,175,55,0.10),transparent_70%)] blur-2xl"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-[-5%] top-1/2 -z-10 hidden h-[78%] w-[48%] -translate-y-1/2 opacity-[0.12] mix-blend-luminosity [mask-image:radial-gradient(ellipse_at_center,black_0%,black_42%,transparent_78%)] lg:block"
+            aria-hidden="true"
+          >
+            {[
+              {
+                src: "/gallery/led-sign/led-sign-01.svg",
+                className: "absolute right-[8%] top-[2%] h-[42%] w-[54%]",
+              },
+              {
+                src: "/gallery/acrylic/acrylic-01.svg",
+                className: "absolute left-[4%] top-[20%] h-[38%] w-[46%]",
+              },
+              {
+                src: "/gallery/custom-fabrication/custom-fabrication-01.svg",
+                className: "absolute bottom-[8%] right-[2%] h-[46%] w-[58%]",
+              },
+              {
+                src: "/gallery/installation/installation-01.svg",
+                className: "absolute bottom-[3%] left-[16%] h-[32%] w-[40%]",
+              },
+            ].map((image) => (
+              <div key={image.src} className={image.className}>
+                <Image
+                  src={image.src}
+                  alt=""
+                  fill
+                  sizes="32vw"
+                  className="object-cover grayscale contrast-125 brightness-110"
+                  unoptimized
+                />
+              </div>
+            ))}
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(11,11,20,0.20)_48%,#0B0B14_82%)]" />
+            <div className="absolute inset-0 bg-brand-gold/10 mix-blend-soft-light" />
+          </div>
 
-          <div className="mx-auto max-w-7xl px-4 pb-12 pt-10 sm:px-6 lg:px-8 lg:pb-16">
-            <AnimateIn from="bottom" duration={600}>
-              <div className="max-w-3xl">
+          <div className="mx-auto max-w-7xl px-4 pb-14 pt-12 sm:px-6 sm:pt-14 lg:px-8 lg:pb-20 lg:pt-14">
+            <div className="max-w-[46rem] lg:max-w-[58%]">
+              <AnimateIn from="bottom" duration={560}>
                 <span className="inline-flex items-center gap-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand-gold shadow-[0_0_16px_rgba(212,160,23,0.85)]" />
                   Project Gallery
                 </span>
-                <h1 className="mt-6 font-display text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
+                <h1 className="mt-6 font-display text-5xl font-semibold leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-7xl">
                   Our Work
                 </h1>
-                <p className="mt-5 max-w-2xl text-base leading-7 text-white/68 sm:text-lg">
+              </AnimateIn>
+              <AnimateIn from="bottom" delay={90} duration={560}>
+                <p className="mt-7 max-w-[620px] text-lg leading-[1.8] text-white/80">
                   A clean visual archive of Shreeji Art signage, fabrication,
                   branding, and installation work.
                 </p>
+              </AnimateIn>
+              <div className="mt-9 grid max-w-2xl gap-3 sm:grid-cols-3">
+                {GALLERY_STATS.map((stat, index) => {
+                  const Icon = stat.icon;
+
+                  return (
+                    <AnimateIn key={stat.label} from="bottom" delay={160 + index * 70} duration={520}>
+                      <div
+                        className="group relative h-full overflow-hidden rounded-[18px] border border-brand-gold/20 bg-white/[0.05] p-4 shadow-[0_12px_34px_rgba(0,0,0,0.10)] backdrop-blur-md transition-all duration-[250ms] ease-out hover:-translate-y-1 hover:border-brand-gold/[0.32] hover:bg-white/[0.065] hover:shadow-[0_18px_46px_rgba(0,0,0,0.18)] motion-reduce:transform-none"
+                      >
+                        {index > 0 ? (
+                          <div className="absolute left-0 top-4 hidden h-12 w-px bg-white/10 sm:block" aria-hidden="true" />
+                        ) : null}
+                        <div className="mb-3 flex h-9 w-9 items-center justify-center rounded-full border border-brand-gold/30 bg-brand-gold/[0.12] text-brand-gold shadow-[0_0_20px_rgba(217,165,20,0.14)] transition-all duration-[250ms] group-hover:border-brand-gold/45 group-hover:brightness-110">
+                          <Icon className="h-4 w-4" aria-hidden="true" />
+                        </div>
+                        <p className="font-display text-3xl font-semibold leading-none text-brand-gold">
+                          {stat.value}
+                        </p>
+                        <p className="mt-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/[0.88]">
+                          {stat.label}
+                        </p>
+                      </div>
+                    </AnimateIn>
+                  );
+                })}
               </div>
-            </AnimateIn>
+            </div>
           </div>
         </section>
 
-        <section className="sticky top-16 z-30 border-b border-white/10 bg-brand-deep/85 backdrop-blur-xl">
-          <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <section className="sticky top-16 z-30 border-b border-brand-navy/10 bg-[#F8F6F2]/90 backdrop-blur-xl">
+          <div className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
             <div
-              className="flex gap-2 overflow-x-auto pb-1 scrollbar-none"
+              className="flex gap-3 overflow-x-auto pb-1 scrollbar-none"
               aria-label="Gallery categories"
             >
               {visibleCategories.map((category) => {
@@ -435,10 +526,10 @@ export default function GalleryClient({ items, status }: Props) {
                     aria-pressed={isActive}
                     onClick={() => setActiveCategory(category.value)}
                     className={[
-                      "shrink-0 rounded-full border px-4 py-2.5 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transition-none",
+                      "relative shrink-0 rounded-full border px-5 py-2.5 text-sm font-semibold transition-all duration-[250ms] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-[#F8F6F2] motion-reduce:transition-none",
                       isActive
-                        ? "border-brand-gold bg-brand-gold text-brand-navy shadow-[0_14px_32px_rgba(212,160,23,0.20)]"
-                        : "border-white/10 bg-white/[0.06] text-white/72 hover:border-brand-gold/45 hover:bg-white/[0.10] hover:text-white",
+                        ? "border-brand-gold bg-brand-gold text-brand-navy shadow-[0_14px_32px_rgba(217,165,20,0.18)]"
+                        : "border-brand-navy/15 bg-brand-navy/[0.035] text-brand-navy/70 hover:border-brand-gold/45 hover:bg-white hover:text-brand-navy",
                     ].join(" ")}
                   >
                     {category.label}
@@ -449,7 +540,11 @@ export default function GalleryClient({ items, status }: Props) {
           </div>
         </section>
 
-        <section className="relative mx-auto max-w-[90rem] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <section className="relative mx-auto max-w-[90rem] px-4 py-14 sm:px-6 sm:py-[4.5rem] lg:px-8 lg:py-20">
+          <div
+            className="absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold/25 to-transparent"
+            aria-hidden="true"
+          />
           {status === "loading" ? (
             <GallerySkeletonGrid />
           ) : status === "error" ? (
@@ -463,7 +558,7 @@ export default function GalleryClient({ items, status }: Props) {
               onReset={() => setActiveCategory("")}
             />
           ) : (
-            <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 xl:columns-4">
+            <div className="columns-1 gap-6 sm:columns-2 lg:columns-3 xl:columns-4">
               {filteredItems.map((item, index) => (
                 <AnimateIn
                   key={item.id}
@@ -475,18 +570,18 @@ export default function GalleryClient({ items, status }: Props) {
                     type="button"
                     onClick={() => openLightbox(index)}
                     onKeyDown={(event) => onGridKeyDown(event, index)}
-                    aria-label={`Open gallery image ${index + 1}`}
-                    className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-[1.35rem] bg-white/[0.04] text-left shadow-[0_18px_60px_rgba(0,0,0,0.22)] outline-none ring-1 ring-white/10 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_80px_rgba(0,0,0,0.34)] hover:ring-brand-gold/45 focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
+                    aria-label={`Open ${item.title || "gallery image"} preview`}
+                    className="group mb-6 block w-full break-inside-avoid overflow-hidden rounded-none bg-transparent text-left shadow-[0_14px_38px_rgba(18,20,38,0.08)] outline-none transition-all duration-[350ms] ease-out hover:-translate-y-1 hover:shadow-[0_22px_58px_rgba(18,20,38,0.14)] focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-4 focus-visible:ring-offset-[#F8F6F2] motion-reduce:transform-none motion-reduce:transition-none"
                   >
                     <span
                       className={[
-                        "relative block overflow-hidden",
-                        index % 7 === 1
-                          ? "aspect-[3/4]"
-                          : index % 7 === 3
-                            ? "aspect-[5/6]"
-                            : index % 7 === 5
-                              ? "aspect-[16/10]"
+                        "relative block overflow-hidden rounded-none",
+                        index % 6 === 0
+                          ? "aspect-[4/5]"
+                          : index % 6 === 2
+                            ? "aspect-[16/11]"
+                            : index % 6 === 4
+                              ? "aspect-[5/6]"
                               : "aspect-[4/3]",
                       ].join(" ")}
                     >
@@ -495,21 +590,46 @@ export default function GalleryClient({ items, status }: Props) {
                         alt={galleryAlt(item, index)}
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
                         priority={index < 4}
-                        className="transition-transform duration-700 ease-smooth group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:transform-none"
+                        className="transition-transform duration-[350ms] ease-smooth group-hover:scale-[1.03] motion-reduce:transition-none motion-reduce:transform-none"
                       />
-                      <span
-                        className="absolute inset-0 bg-brand-deep/0 transition-colors duration-300 group-hover:bg-brand-deep/24 motion-reduce:transition-none"
-                        aria-hidden="true"
-                      />
-                      <span className="absolute right-3 top-3 flex h-10 w-10 translate-y-1 items-center justify-center rounded-full border border-white/15 bg-black/25 text-white opacity-0 shadow-sa-sm backdrop-blur-md transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transform-none motion-reduce:transition-none">
-                        <Maximize2 className="h-4 w-4" aria-hidden="true" />
-                      </span>
                     </span>
                   </button>
                 </AnimateIn>
               ))}
             </div>
           )}
+        </section>
+
+        <section className="bg-[#F2EEE6] px-4 py-24 sm:py-28 lg:py-32">
+          <AnimateIn from="bottom">
+            <div className="relative mx-auto max-w-6xl overflow-hidden rounded-[2rem] bg-[linear-gradient(135deg,#121426_0%,#181B31_58%,#0B0B14_100%)] px-6 py-16 text-center text-white shadow-sa-premium sm:px-10 sm:py-20">
+              <div className="absolute left-1/2 top-0 h-56 w-56 -translate-x-1/2 rounded-full bg-brand-gold/15 blur-3xl" aria-hidden="true" />
+              <div className="relative">
+                <div className="mx-auto mb-5 flex h-11 w-11 items-center justify-center rounded-full border border-brand-gold/30 bg-brand-gold/10 text-brand-gold">
+                  <Sparkles className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <p className="text-caption text-brand-gold">Inspired by Our Work?</p>
+                <h2 className="mx-auto mt-4 max-w-3xl font-display text-[clamp(2.5rem,4.6vw,3.8rem)] font-semibold leading-[1.04] tracking-tight">
+                  Let&apos;s build signage that represents your brand.
+                </h2>
+                <div className="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row">
+                  <Link
+                    href="/quote"
+                    className="inline-flex min-h-12 items-center justify-center gap-2 rounded-full bg-brand-gold px-8 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-[250ms] hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_18px_44px_rgba(217,165,20,0.32)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
+                  >
+                    Request a Quote
+                    <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                  </Link>
+                  <Link
+                    href="/services"
+                    className="inline-flex min-h-12 items-center justify-center rounded-full border border-white/18 bg-white/[0.08] px-8 py-3.5 text-sm font-semibold text-white transition-all duration-[250ms] hover:-translate-y-0.5 hover:border-brand-gold/55 hover:bg-white/[0.12] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
+                  >
+                    View Services
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </AnimateIn>
         </section>
       </main>
 

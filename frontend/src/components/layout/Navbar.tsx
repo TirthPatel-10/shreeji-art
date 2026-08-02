@@ -17,7 +17,6 @@ const navLinks = [
   { href: "/services", label: "Services" },
   { href: "/portfolio", label: "Portfolio" },
   { href: "/gallery", label: "Gallery" },
-  { href: "/blog", label: "Blog" },
   { href: "/contact", label: "Contact" },
 ];
 
@@ -150,7 +149,7 @@ export default function Navbar() {
               href="/quote"
               className="rounded-full bg-brand-gold px-4 py-2 text-sm font-semibold text-white shadow-sa-sm transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-gold-light hover:text-brand-navy hover:shadow-sa-gold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy active:translate-y-0"
             >
-              Get Quote
+              Request a Quote
             </Link>
             {loading ? null : isAuthenticated ? (
               <>
@@ -268,7 +267,7 @@ export default function Navbar() {
               className="flex w-full items-center justify-center rounded-2xl bg-brand-gold px-5 py-3 text-base font-semibold text-white shadow-sa-sm transition-all duration-200 hover:bg-brand-gold-light hover:text-brand-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy"
               onClick={() => setOpen(false)}
             >
-              Get Quote
+              Request a Quote
             </Link>
             {loading ? null : isAuthenticated ? (
               <>

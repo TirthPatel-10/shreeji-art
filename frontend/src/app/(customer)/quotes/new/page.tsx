@@ -87,10 +87,11 @@ export default function NewQuotePage() {
       <div className="text-center py-16">
         <p className="text-5xl mb-5">✅</p>
         <h2 className="text-xl font-bold text-brand-navy mb-2">
-          Quote Request Submitted!
+          Thank you.
         </h2>
         <p className="text-gray-500 text-sm mb-1">
-          We&apos;ll review your request and follow up with the next steps.
+          Your inquiry has been received successfully. Our team will review
+          your project and contact you shortly with a quotation.
         </p>
         <p className="text-gray-400 text-xs">Redirecting to My Quotes…</p>
       </div>
@@ -115,7 +116,8 @@ export default function NewQuotePage() {
         Request a Quote
       </h1>
       <p className="text-gray-500 text-sm mb-6">
-        Describe your requirements and we&apos;ll review your project details.
+        Share your project requirements and our team will contact you with a
+        customized quotation.
       </p>
 
       {/* Submitting as */}
@@ -190,7 +192,7 @@ export default function NewQuotePage() {
           disabled={status === "loading"}
           className="w-full bg-brand-gold hover:bg-brand-gold-dark text-white font-bold py-3 rounded-lg transition-colors disabled:opacity-60"
         >
-          {status === "loading" ? "Submitting…" : "Submit Quote Request"}
+          {status === "loading" ? "Sending request…" : "Request Your Quote"}
         </button>
         <p className="text-xs text-gray-400 text-center">
           We&apos;ll review your request and follow up with the next steps.

@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   BarChart3,
-  BookOpenText,
   BriefcaseBusiness,
   FolderKanban,
   ImageIcon,
@@ -21,28 +20,59 @@ import {
   UsersRound,
   X,
   Zap,
+  type LucideIcon,
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
-const adminLinks = [
-  { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/customers", label: "Customers", icon: UsersRound },
-  { href: "/admin/leads", label: "Leads", icon: Inbox },
-  { href: "/admin/quotes", label: "Quotes", icon: MessageSquareQuote },
-  { href: "/admin/projects", label: "Projects", icon: FolderKanban },
-  { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
-  { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
-  { href: "/admin/services", label: "Services", icon: Zap },
-  { href: "/admin/blog", label: "Blog", icon: BookOpenText },
-  { href: "/admin/contacts", label: "Contact Requests", icon: BriefcaseBusiness },
-  { href: "/admin/testimonials", label: "Testimonials", icon: Star },
-  { href: "/admin/settings", label: "Settings", icon: Settings },
-] as const;
+type AdminLink = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+};
+
+type AdminLinkGroup = {
+  title: string | null;
+  links: AdminLink[];
+};
+
+const adminLinkGroups: AdminLinkGroup[] = [
+  {
+    title: null,
+    links: [{ href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard }],
+  },
+  {
+    title: "Sales",
+    links: [
+      { href: "/admin/leads", label: "Inquiries", icon: Inbox },
+      { href: "/admin/quotes", label: "Quotes", icon: MessageSquareQuote },
+      { href: "/admin/projects", label: "Projects", icon: FolderKanban },
+      { href: "/admin/customers", label: "Customers", icon: UsersRound },
+    ],
+  },
+  {
+    title: "Content",
+    links: [
+      { href: "/admin/portfolio", label: "Portfolio", icon: ImageIcon },
+      { href: "/admin/gallery", label: "Gallery", icon: ImageIcon },
+      { href: "/admin/services", label: "Services", icon: Zap },
+      { href: "/admin/testimonials", label: "Testimonials", icon: Star },
+    ],
+  },
+  {
+    title: "System",
+    links: [
+      { href: "/admin/contacts", label: "Contact Requests", icon: BriefcaseBusiness },
+      { href: "/admin/settings", label: "Settings", icon: Settings },
+    ],
+  },
+];
+
+const adminLinks = adminLinkGroups.flatMap((group) => group.links);
 
 const SECTION_TITLES: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
   "/admin/customers": "Customers",
-  "/admin/leads": "Leads",
+  "/admin/leads": "Inquiries",
   "/admin/quotes": "Quotes",
   "/admin/projects": "Projects",
   "/admin/portfolio": "Portfolio",
@@ -285,35 +315,44 @@ function AdminSidebarContent({
         </div>
       </div>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-4 pb-4" aria-label="Admin sections">
-        {adminLinks.map((link) => {
-          const Icon = link.icon;
-          const active =
-            pathname === link.href ||
-            (link.href !== "/admin/dashboard" && pathname.startsWith(link.href));
+      <nav className="flex-1 space-y-5 overflow-y-auto px-4 pb-4" aria-label="Admin sections">
+        {adminLinkGroups.map((group) => (
+          <div key={group.title ?? "dashboard"} className="space-y-1">
+            {group.title ? (
+              <p className="px-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/32">
+                {group.title}
+              </p>
+            ) : null}
+            {group.links.map((link) => {
+              const Icon = link.icon;
+              const active =
+                pathname === link.href ||
+                (link.href !== "/admin/dashboard" && pathname.startsWith(link.href));
 
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              aria-current={active ? "page" : undefined}
-              className={[
-                "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none",
-                active
-                  ? "bg-brand-gold text-brand-navy shadow-[0_18px_38px_rgba(212,160,23,0.22)]"
-                  : "text-white/62 hover:bg-white/[0.08] hover:text-white",
-              ].join(" ")}
-            >
-              <Icon
-                className={`h-4 w-4 ${
-                  active ? "text-brand-navy" : "text-brand-gold"
-                }`}
-                aria-hidden="true"
-              />
-              <span>{link.label}</span>
-            </Link>
-          );
-        })}
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={[
+                    "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none",
+                    active
+                      ? "bg-brand-gold text-brand-navy shadow-[0_18px_38px_rgba(212,160,23,0.22)]"
+                      : "text-white/62 hover:bg-white/[0.08] hover:text-white",
+                  ].join(" ")}
+                >
+                  <Icon
+                    className={`h-4 w-4 ${
+                      active ? "text-brand-navy" : "text-brand-gold"
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <span>{link.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       <div className="border-t border-white/10 p-4">

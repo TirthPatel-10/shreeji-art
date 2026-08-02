@@ -11,9 +11,9 @@ import { AnimateIn } from "@/components/ui/animate-in";
 import QuoteForm from "./QuoteForm";
 
 export const metadata: Metadata = {
-  title: "Request a Free Quote | Shreeji Art",
+  title: "Request a Quote | Shreeji Art",
   description:
-    "Request a free signage quote from Shreeji Art in Ahmedabad. Share your signage requirements for LED signs, acrylic signs, 3D letters, ACP signage, branding, and installation.",
+    "Request a tailored signage quotation from Shreeji Art in Ahmedabad. Share your requirements for LED signs, acrylic signs, 3D letters, ACP signage, branding, and installation.",
 };
 
 const TRUST_CHIPS = [
@@ -63,7 +63,7 @@ export default function QuotePage() {
                   Free Project Estimate
                 </span>
                 <h1 className="mt-6 font-display text-5xl font-semibold leading-[0.98] tracking-tight text-brand-navy sm:text-6xl">
-                  Request a Free Quote
+                  Request a Quote
                 </h1>
                 <p className="mt-5 max-w-2xl text-base leading-8 text-gray-600 sm:text-lg">
                   Share your signage requirements and our team will recommend

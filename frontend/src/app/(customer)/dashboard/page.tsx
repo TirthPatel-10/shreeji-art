@@ -208,7 +208,7 @@ export default function CustomerDashboardPage() {
             title="Recent quote activity"
             href="/quotes"
             emptyTitle="No quotes yet"
-            emptyText="Submit a quote request and your latest quote activity will appear here."
+            emptyText="Request a quote and your latest quotation activity will appear here."
           >
             {recentQuotes.map((quote) => (
               <ActivityItem
@@ -389,7 +389,7 @@ function EmptyDashboard() {
             Ready to start your first signage project?
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500">
-            Submit a quote request and our team will review your project details.
+            Request a quote and our team will review your project details.
             Your quotes and projects will appear here once they are created.
           </p>
           <Link

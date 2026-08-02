@@ -4,12 +4,16 @@ import com.shreejiart.common.exception.ResourceNotFoundException;
 import com.shreejiart.media.MediaStorageService;
 import com.shreejiart.media.StoredMedia;
 import com.shreejiart.portfolio.PortfolioItemRepository;
+import com.shreejiart.portfolio.PortfolioImage;
+import com.shreejiart.portfolio.PortfolioImageRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,6 +23,7 @@ public class GalleryItemService {
 
     private final GalleryItemRepository repository;
     private final PortfolioItemRepository portfolioRepository;
+    private final PortfolioImageRepository portfolioImageRepository;
     private final MediaStorageService storageService;
 
     public List<GalleryItem> findAll(String category) {
@@ -106,6 +111,57 @@ public class GalleryItemService {
     }
 
     @Transactional
+    public CopyPortfolioImagesResult copyPortfolioImages(
+            Long projectId,
+            List<Long> imageIds,
+            String title,
+            String category,
+            String altText,
+            String caption,
+            boolean featured,
+            boolean published
+    ) {
+        validateOptionalProject(projectId);
+        if (imageIds == null || imageIds.isEmpty()) {
+            throw new IllegalArgumentException("Select at least one portfolio image.");
+        }
+
+        List<GalleryItem> created = new ArrayList<>();
+        List<Long> skippedDuplicateImageIds = new ArrayList<>();
+        int nextSortOrder = nextSortOrder();
+
+        for (Long imageId : imageIds.stream().distinct().toList()) {
+            PortfolioImage sourceImage = portfolioImageRepository
+                    .findByIdAndProjectId(imageId, projectId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Portfolio image", imageId));
+
+            if (repository.existsByProjectIdAndImageUrl(projectId, sourceImage.getImageUrl())) {
+                skippedDuplicateImageIds.add(imageId);
+                continue;
+            }
+
+            GalleryItem galleryItem = GalleryItem.builder()
+                    .title(firstText(title, sourceImage.getCaption()))
+                    .imageUrl(sourceImage.getImageUrl())
+                    .storagePath(null)
+                    .altText(firstText(altText, sourceImage.getAltText()))
+                    .caption(firstText(caption, sourceImage.getCaption()))
+                    .category(category)
+                    .projectId(projectId)
+                    .isFeatured(featured)
+                    .published(published)
+                    .sortOrder(nextSortOrder)
+                    .displayOrder(nextSortOrder)
+                    .build();
+
+            created.add(repository.save(galleryItem));
+            nextSortOrder += 1;
+        }
+
+        return new CopyPortfolioImagesResult(created, skippedDuplicateImageIds);
+    }
+
+    @Transactional
     public GalleryItem setPublished(Long id, boolean published) {
         GalleryItem item = findByIdAdmin(id);
         item.setPublished(published);
@@ -155,5 +211,14 @@ public class GalleryItemService {
                 .orElse(-1) + 1;
     }
 
+    private String firstText(String preferred, String fallback) {
+        return StringUtils.hasText(preferred) ? preferred : fallback;
+    }
+
     public record GalleryOrder(Long galleryItemId, int sortOrder) {}
+
+    public record CopyPortfolioImagesResult(
+            List<GalleryItem> created,
+            List<Long> skippedDuplicateImageIds
+    ) {}
 }

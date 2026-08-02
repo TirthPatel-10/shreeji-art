@@ -1,18 +1,16 @@
 import type { Metadata } from "next";
-import BlogClient from "./BlogClient";
+import BlogComingSoon from "./BlogComingSoon";
 
 export const metadata: Metadata = {
-  title: "Blog | Shreeji Art — Signage Tips & Branding Insights",
-  description:
-    "Learn about signage, branding, fabrication, installation, and design trends from Shreeji Art's expert team in Ahmedabad, Gujarat.",
+  title: "Blog Coming Soon | Shreeji Art",
+  description: "Shreeji Art signage and branding insights are coming soon.",
   openGraph: {
-    title: "Blog | Shreeji Art — Signage & Branding Insights",
-    description:
-      "Tips on LED signage, acrylic signs, office branding, retail trends, outdoor sign maintenance, and more.",
+    title: "Blog Coming Soon | Shreeji Art",
+    description: "Shreeji Art signage and branding insights are coming soon.",
     type: "website",
   },
 };
 
 export default function BlogPage() {
-  return <BlogClient />;
+  return <BlogComingSoon />;
 }

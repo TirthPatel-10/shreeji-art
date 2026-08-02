@@ -19,7 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { adminApi, apiErrorMessage, caughtApiErrorMessage } from "@/lib/api";
-import type { PortfolioImage, PortfolioItem } from "@/types";
+import type { GalleryItem, PortfolioImage, PortfolioItem } from "@/types";
 
 type Mode = "list" | "create" | "edit";
 
@@ -59,6 +59,7 @@ const inputClass =
 export default function AdminPortfolioPage() {
   const [items, setItems] = useState<PortfolioItem[]>([]);
   const [images, setImages] = useState<PortfolioImage[]>([]);
+  const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageLoading, setImageLoading] = useState(false);
   const [mode, setMode] = useState<Mode>("list");
@@ -68,7 +69,10 @@ export default function AdminPortfolioPage() {
   const [statusFilter, setStatusFilter] = useState("all");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [copyingToGallery, setCopyingToGallery] = useState(false);
   const [uploadProgress, setUploadProgress] = useState("");
+  const [selectedImageIds, setSelectedImageIds] = useState<number[]>([]);
+  const [copyNotice, setCopyNotice] = useState("");
   const [error, setError] = useState("");
   const [dirty, setDirty] = useState(false);
 
@@ -113,17 +117,36 @@ export default function AdminPortfolioPage() {
     });
   }, [items, query, statusFilter]);
 
+  const galleryImageUrlsForEditing = useMemo(() => {
+    if (!editing) return new Set<string>();
+
+    return new Set(
+      galleryItems
+        .filter((item) => item.projectId === editing.id)
+        .map((item) => item.imageUrl)
+    );
+  }, [editing, galleryItems]);
+
   async function reload() {
     setLoading(true);
     setError("");
     try {
-      const res = await adminApi.getPortfolioItems();
-      if (!res.success) {
-        setError(apiErrorMessage(res, "Could not load portfolio projects."));
+      const [portfolioRes, galleryRes] = await Promise.all([
+        adminApi.getPortfolioItems(),
+        adminApi.getGalleryItems(),
+      ]);
+      if (!portfolioRes.success || !galleryRes.success) {
+        setError(
+          apiErrorMessage(
+            !portfolioRes.success ? portfolioRes : galleryRes,
+            "Could not load portfolio projects."
+          )
+        );
         setItems([]);
         return;
       }
-      setItems((res.data as PortfolioItem[]) ?? []);
+      setItems((portfolioRes.data as PortfolioItem[]) ?? []);
+      setGalleryItems((galleryRes.data as GalleryItem[]) ?? []);
     } catch (error) {
       setError(caughtApiErrorMessage(error, "Connection error while loading portfolio projects."));
     } finally {
@@ -163,6 +186,8 @@ export default function AdminPortfolioPage() {
   function openCreate() {
     setEditing(null);
     setImages([]);
+    setSelectedImageIds([]);
+    setCopyNotice("");
     setForm(emptyForm);
     setError("");
     setDirty(false);
@@ -171,6 +196,8 @@ export default function AdminPortfolioPage() {
 
   function openEdit(project: PortfolioItem) {
     setEditing(project);
+    setSelectedImageIds([]);
+    setCopyNotice("");
     setForm({
       title: project.title ?? "",
       slug: project.slug ?? "",
@@ -196,6 +223,8 @@ export default function AdminPortfolioPage() {
     setMode("list");
     setEditing(null);
     setImages([]);
+    setSelectedImageIds([]);
+    setCopyNotice("");
     setDirty(false);
   }
 
@@ -298,6 +327,7 @@ export default function AdminPortfolioPage() {
 
       await loadImages(editing.id);
       await reload();
+      setSelectedImageIds([]);
     } catch (error) {
       setError(caughtApiErrorMessage(error, "Connection error while uploading project images."));
     } finally {
@@ -331,6 +361,7 @@ export default function AdminPortfolioPage() {
     }
     await loadImages(editing.id);
     await reload();
+    setSelectedImageIds((prev) => prev.filter((id) => id !== image.id));
   }
 
   async function setCover(image: PortfolioImage) {
@@ -363,6 +394,78 @@ export default function AdminPortfolioPage() {
       return;
     }
     loadImages(editing.id);
+  }
+
+  function toggleImageSelection(image: PortfolioImage) {
+    if (galleryImageUrlsForEditing.has(image.imageUrl)) return;
+    setCopyNotice("");
+    setSelectedImageIds((previous) =>
+      previous.includes(image.id)
+        ? previous.filter((id) => id !== image.id)
+        : [...previous, image.id]
+    );
+  }
+
+  function selectGalleryCandidates() {
+    const availableIds = images
+      .filter((image) => !galleryImageUrlsForEditing.has(image.imageUrl))
+      .map((image) => image.id);
+    setCopyNotice("");
+    setSelectedImageIds(availableIds);
+  }
+
+  async function addSelectedImagesToGallery() {
+    if (!editing || selectedImageIds.length === 0) return;
+    if (
+      !confirm(
+        "Add the selected project images to Gallery as unpublished gallery items?"
+      )
+    ) {
+      return;
+    }
+
+    setCopyingToGallery(true);
+    setError("");
+    setCopyNotice("");
+    try {
+      const res = await adminApi.addPortfolioImagesToGallery(editing.id, {
+        imageIds: selectedImageIds,
+        title: editing.title,
+        category: form.category || editing.category || undefined,
+        published: false,
+        featured: false,
+      });
+
+      if (!res.success) {
+        setError(apiErrorMessage(res, "Could not add selected images to Gallery."));
+        return;
+      }
+
+      const data = res.data as
+        | {
+            created?: GalleryItem[];
+            skippedDuplicateImageIds?: number[];
+          }
+        | null;
+      const createdCount = data?.created?.length ?? 0;
+      const skippedCount = data?.skippedDuplicateImageIds?.length ?? 0;
+      setCopyNotice(
+        createdCount > 0
+          ? `${createdCount} image${createdCount === 1 ? "" : "s"} added to Gallery as unpublished item${createdCount === 1 ? "" : "s"}.${
+              skippedCount ? ` ${skippedCount} duplicate${skippedCount === 1 ? "" : "s"} skipped.` : ""
+            }`
+          : "Those images are already in Gallery. No duplicates were created."
+      );
+      setSelectedImageIds([]);
+      const galleryRes = await adminApi.getGalleryItems();
+      if (galleryRes.success) {
+        setGalleryItems((galleryRes.data as GalleryItem[]) ?? []);
+      }
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while adding images to Gallery."));
+    } finally {
+      setCopyingToGallery(false);
+    }
   }
 
   if (mode !== "list") {
@@ -540,12 +643,19 @@ export default function AdminPortfolioPage() {
             images={images}
             imageLoading={imageLoading}
             uploading={uploading}
+            copyingToGallery={copyingToGallery}
             uploadProgress={uploadProgress}
+            selectedImageIds={selectedImageIds}
+            galleryImageUrls={galleryImageUrlsForEditing}
+            copyNotice={copyNotice}
             onUpload={uploadFiles}
             onUpdate={updateImage}
             onDelete={deleteImage}
             onCover={setCover}
             onMove={moveImage}
+            onToggleSelection={toggleImageSelection}
+            onSelectAll={selectGalleryCandidates}
+            onAddSelectedToGallery={addSelectedImagesToGallery}
           />
         </div>
       </div>
@@ -720,23 +830,37 @@ function ProjectImagesPanel({
   images,
   imageLoading,
   uploading,
+  copyingToGallery,
   uploadProgress,
+  selectedImageIds,
+  galleryImageUrls,
+  copyNotice,
   onUpload,
   onUpdate,
   onDelete,
   onCover,
   onMove,
+  onToggleSelection,
+  onSelectAll,
+  onAddSelectedToGallery,
 }: {
   editing: PortfolioItem | null;
   images: PortfolioImage[];
   imageLoading: boolean;
   uploading: boolean;
+  copyingToGallery: boolean;
   uploadProgress: string;
+  selectedImageIds: number[];
+  galleryImageUrls: Set<string>;
+  copyNotice: string;
   onUpload: (files: FileList | null, coverImage?: boolean) => void;
   onUpdate: (image: PortfolioImage, changes: Partial<PortfolioImage>) => void;
   onDelete: (image: PortfolioImage) => void;
   onCover: (image: PortfolioImage) => void;
   onMove: (index: number, direction: -1 | 1) => void;
+  onToggleSelection: (image: PortfolioImage) => void;
+  onSelectAll: () => void;
+  onAddSelectedToGallery: () => void;
 }) {
   if (!editing) {
     return (
@@ -782,6 +906,56 @@ function ProjectImagesPanel({
         </label>
       </div>
 
+      <div className="rounded-[2rem] border border-white bg-white p-5 shadow-sa-lg">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-brand-gold">
+              Gallery reuse
+            </p>
+            <h3 className="mt-2 font-display text-2xl font-semibold text-brand-navy">
+              Add project images to Gallery
+            </h3>
+            <p className="mt-2 text-sm leading-6 text-gray-500">
+              Selected images reuse the existing Portfolio image URL and are added as
+              unpublished Gallery items. Existing Gallery matches are skipped.
+            </p>
+          </div>
+          <Badge tone="muted">
+            {selectedImageIds.length} selected
+          </Badge>
+        </div>
+
+        {copyNotice ? (
+          <div className="mt-4 rounded-2xl border border-emerald-100 bg-emerald-50 px-4 py-3 text-sm text-emerald-700" role="status">
+            {copyNotice}
+          </div>
+        ) : null}
+
+        <div className="mt-5 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onSelectAll}
+            disabled={imageLoading || images.every((image) => galleryImageUrls.has(image.imageUrl))}
+            className="rounded-full border border-gray-200 px-4 py-2 text-xs font-bold text-gray-600 transition hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Select available
+          </button>
+          <button
+            type="button"
+            onClick={onAddSelectedToGallery}
+            disabled={copyingToGallery || selectedImageIds.length === 0}
+            className="inline-flex items-center gap-2 rounded-full bg-brand-gold px-4 py-2 text-xs font-bold text-brand-navy transition hover:bg-brand-gold-dark disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {copyingToGallery ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />
+            ) : (
+              <ImagePlus className="h-3.5 w-3.5" aria-hidden="true" />
+            )}
+            {copyingToGallery ? "Adding..." : "Add Selected Images to Gallery"}
+          </button>
+        </div>
+      </div>
+
       <div className="space-y-3">
         {imageLoading ? (
           Array.from({ length: 3 }).map((_, index) => (
@@ -792,7 +966,11 @@ function ProjectImagesPanel({
             No images uploaded yet.
           </div>
         ) : (
-          images.map((image, index) => (
+          images.map((image, index) => {
+            const inGallery = galleryImageUrls.has(image.imageUrl);
+            const selected = selectedImageIds.includes(image.id);
+
+            return (
             <div key={image.id} className="rounded-3xl border border-gray-100 bg-white p-3 shadow-sm">
               <div className="flex gap-3">
                 <div className="relative h-24 w-28 shrink-0 overflow-hidden rounded-2xl bg-gray-100">
@@ -805,11 +983,27 @@ function ProjectImagesPanel({
                   />
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <label className="inline-flex items-center gap-2 rounded-full border border-gray-200 px-2.5 py-1 text-[11px] font-bold text-gray-600">
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        disabled={inGallery}
+                        onChange={() => onToggleSelection(image)}
+                        className="h-3.5 w-3.5 rounded border-gray-300 text-brand-gold focus:ring-brand-gold disabled:cursor-not-allowed"
+                      />
+                      Select
+                    </label>
                     {image.coverImage ? <Badge tone="gold">Cover</Badge> : null}
                     <Badge tone={image.published ? "success" : "muted"}>
                       {image.published ? "Visible" : "Hidden"}
                     </Badge>
+                    {inGallery ? (
+                      <Badge tone="success">
+                        <CheckCircle2 className="mr-1 h-3 w-3" aria-hidden="true" />
+                        In Gallery
+                      </Badge>
+                    ) : null}
                   </div>
                   <input
                     defaultValue={image.altText ?? ""}
@@ -863,7 +1057,8 @@ function ProjectImagesPanel({
                 </button>
               </div>
             </div>
-          ))
+            );
+          })
         )}
       </div>
     </aside>

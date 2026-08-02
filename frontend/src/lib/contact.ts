@@ -5,7 +5,7 @@ export const SITE_CONTACT = {
   email: "shreejiart1119@gmail.com",
   emailHref: "mailto:shreejiart1119@gmail.com",
   address:
-    "C-61, Karmchari Nagar Society-1, Karmachari Nagar Road, Behind Junior Genius, Opposite Rannapark, Ghatlodia, Ahmedabad, Gujarat – 380061, India",
+    "C-60, Karmchari Nagar Society-1, Karmachari Nagar Road, Behind Junior Genius, Opposite Rannapark, Ghatlodia, Ahmedabad, Gujarat – 380061, India",
   shortLocation: "Ghatlodia, Ahmedabad, Gujarat",
   businessHours: "Monday - Saturday, 9:00 AM - 8:00 PM",
   latitude: 23.065653,

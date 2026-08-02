@@ -150,7 +150,7 @@ export default function QuoteForm() {
         } else {
           setErrorMsg(
             res.message ||
-              "We could not submit your quote request. Please try again."
+              "We could not send your quotation request. Please try again."
           );
         }
       }
@@ -181,12 +181,12 @@ export default function QuoteForm() {
         <span className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-emerald-200 bg-emerald-50 text-emerald-600">
           <CheckCircle2 className="h-7 w-7" aria-hidden="true" />
         </span>
-        <h2 className="font-display text-3xl font-semibold text-brand-navy">
-          Quote request submitted
-        </h2>
-        <p className="mt-3 max-w-lg text-sm leading-6 text-gray-600">
-          We&apos;ll review your signage requirements and follow up with the
-          next steps within 24 working hours.
+          <h2 className="font-display text-3xl font-semibold text-brand-navy">
+            Thank you.
+          </h2>
+          <p className="mt-3 max-w-lg text-sm leading-6 text-gray-600">
+          Your inquiry has been received successfully. Our team will review
+          your project and contact you shortly with a quotation.
         </p>
         {isCustomer ? (
           <p className="mt-6 inline-flex items-center gap-2 rounded-full bg-brand-gold/10 px-4 py-2 text-sm font-semibold text-brand-gold">
@@ -199,7 +199,7 @@ export default function QuoteForm() {
             onClick={() => setStatus("idle")}
             className="mt-7 inline-flex items-center justify-center rounded-full border border-brand-gold/25 bg-brand-gold/10 px-6 py-3 text-sm font-semibold text-brand-gold transition-colors hover:bg-brand-gold/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
           >
-            Submit another request
+            Send another request
           </button>
         )}
       </div>
@@ -217,11 +217,11 @@ export default function QuoteForm() {
             Project Request
           </p>
           <h2 className="mt-3 font-display text-3xl font-semibold text-brand-navy">
-            Tell us what you need built.
+            Tell Us About Your Project
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-600">
-            A few clear details help us recommend the right signage approach
-            without unnecessary back-and-forth.
+            Share your project requirements and our team will contact you with
+            a customized quotation.
           </p>
         </div>
 
@@ -231,7 +231,7 @@ export default function QuoteForm() {
             <span className="font-semibold">
               {user.firstName} {user.lastName}
             </span>{" "}
-            ({user.email}). Your quote will be saved to My Quotes.
+            ({user.email}). Your request will be saved to My Quotes.
           </div>
         ) : null}
 
@@ -386,7 +386,7 @@ export default function QuoteForm() {
             </>
           ) : (
             <>
-              Submit Quote Request
+              Request Your Quote
               <ArrowRight className="h-4 w-4" aria-hidden="true" />
             </>
           )}
