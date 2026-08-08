@@ -225,20 +225,20 @@ export default function AdminDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] bg-brand-navy p-6 text-white shadow-sa-xl sm:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-[2rem] bg-[#121426] p-6 text-white shadow-[0_24px_70px_rgba(18,20,38,0.22)] sm:p-8 lg:p-10">
         <div
-          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.22),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.18),transparent_32%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]"
           aria-hidden="true"
         />
         <div className="relative flex flex-col justify-between gap-6 lg:flex-row lg:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">
               Live operations
             </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight text-[#FAF8F2] sm:text-5xl">
               Admin Dashboard
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-white/64 sm:text-base">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#E8E4DA]/80 sm:text-base">
               Monitor incoming inquiries, quote requests, active projects, and
               customer activity from one premium control room.
             </p>
@@ -246,14 +246,14 @@ export default function AdminDashboardPage() {
           <button
             type="button"
             onClick={loadDashboard}
-            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-md transition-all hover:border-brand-gold/45 hover:bg-white/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-white/18 bg-white/[0.07] px-5 py-3 text-sm font-semibold text-[#FAF8F2] shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-md transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-gold/45 hover:bg-white/[0.11] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transform-none motion-reduce:transition-none"
           >
             <RefreshCw className="h-4 w-4" aria-hidden="true" />
             Refresh data
           </button>
         </div>
         {lastUpdatedAt ? (
-          <p className="relative mt-6 text-xs text-white/45">
+          <p className="relative mt-6 text-xs text-[#E8E4DA]/55">
             Last updated{" "}
             {lastUpdatedAt.toLocaleTimeString("en-IN", {
               hour: "2-digit",
@@ -347,24 +347,24 @@ function MetricCard({
   return (
     <Link
       href={href}
-      className="group rounded-[1.75rem] border border-white bg-white p-6 shadow-sa-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-sa-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+      className="group rounded-[1.75rem] border border-[#E9E2D3] bg-[#fffefa] p-6 shadow-[0_16px_42px_rgba(18,20,38,0.07)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-gold/35 hover:shadow-[0_20px_52px_rgba(18,20,38,0.10)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
     >
       <div className="flex items-start justify-between gap-4">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gold/10 text-brand-gold transition-colors group-hover:bg-brand-gold group-hover:text-brand-navy">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
         <ArrowRight
-          className="h-4 w-4 text-gray-300 transition-transform group-hover:translate-x-1 group-hover:text-brand-gold motion-reduce:transform-none"
+          className="h-4 w-4 text-gray-300 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-brand-gold motion-reduce:transform-none"
           aria-hidden="true"
         />
       </div>
-      <p className="mt-6 text-sm font-semibold uppercase tracking-[0.22em] text-gray-400">
+      <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
         {label}
       </p>
-      <p className="mt-2 font-display text-5xl font-semibold text-brand-navy">
+      <p className="mt-2 text-5xl font-semibold tracking-tight text-brand-navy">
         {value}
       </p>
-      <p className="mt-3 text-sm leading-6 text-gray-500">{detail}</p>
+      <p className="mt-3 text-sm leading-6 text-gray-600">{detail}</p>
     </Link>
   );
 }
@@ -383,25 +383,33 @@ function ActivityPanel({
   children: ReactNode[];
 }) {
   return (
-    <section className="rounded-[2rem] border border-white bg-white p-6 shadow-sa-xl sm:p-8">
+    <section className="rounded-[2rem] border border-[#E9E2D3] bg-[#fffefa] p-6 shadow-[0_18px_48px_rgba(18,20,38,0.08)] sm:p-8">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h2 className="font-display text-2xl font-semibold text-brand-navy">
           {title}
         </h2>
         <Link
           href={href}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-gold transition-colors hover:text-brand-gold-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+          className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-gold transition-colors hover:text-brand-gold-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
         >
           View all
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ArrowRight
+            className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
+            aria-hidden="true"
+          />
         </Link>
       </div>
 
       {children.length > 0 ? (
         <div className="space-y-3">{children}</div>
       ) : (
-        <div className="rounded-[1.5rem] border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
-          <p className="font-semibold text-brand-navy">{emptyTitle}</p>
+        <div className="rounded-[1.5rem] border border-dashed border-[#DED6C8] bg-[#fbfaf6] p-8 text-center">
+          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-gold/10 text-brand-gold">
+            <FolderKanban className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="mt-4 font-semibold text-brand-navy">
+            {emptyTitle === "No projects yet" ? "No active projects yet" : emptyTitle}
+          </p>
           <p className="mt-2 text-sm leading-6 text-gray-500">{emptyText}</p>
         </div>
       )}
@@ -427,13 +435,13 @@ function ActivityRow({
   return (
     <Link
       href={href}
-      className="group block rounded-[1.4rem] border border-gray-100 bg-[#fbfaf6] p-4 transition-all duration-200 hover:border-brand-gold/35 hover:bg-white hover:shadow-sa-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
+      className="group block rounded-[1.4rem] border border-[#EEE7DA] bg-[#fbfaf6] p-4 transition-all duration-200 hover:border-brand-gold/35 hover:bg-white hover:shadow-[0_12px_28px_rgba(18,20,38,0.07)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="truncate font-semibold text-brand-navy">{title}</p>
           {subtitle ? (
-            <p className="mt-1 truncate text-xs text-gray-400">{subtitle}</p>
+            <p className="mt-1 truncate text-xs text-gray-500">{subtitle}</p>
           ) : null}
         </div>
         <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${statusClass(status)}`}>
@@ -441,12 +449,12 @@ function ActivityRow({
         </span>
       </div>
       {meta ? (
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-500">
+        <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600">
           {meta}
         </p>
       ) : null}
       {date ? (
-        <p className="mt-3 text-xs text-gray-400">{formatDate(date)}</p>
+        <p className="mt-3 text-xs text-gray-500">{formatDate(date)}</p>
       ) : null}
     </Link>
   );
@@ -455,12 +463,12 @@ function ActivityRow({
 function DashboardSkeleton() {
   return (
     <div className="space-y-8" aria-label="Loading admin dashboard">
-      <div className="h-64 animate-pulse rounded-[2rem] bg-brand-navy/90" />
+      <div className="h-64 animate-pulse rounded-[2rem] bg-brand-navy/90 shadow-[0_24px_70px_rgba(18,20,38,0.18)]" />
       <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 6 }, (_, index) => (
           <div
             key={index}
-            className="h-56 animate-pulse rounded-[1.75rem] border border-white bg-white shadow-sa-lg"
+            className="h-56 animate-pulse rounded-[1.75rem] border border-[#E9E2D3] bg-[#fffefa] shadow-[0_16px_42px_rgba(18,20,38,0.07)]"
           />
         ))}
       </div>
@@ -468,7 +476,7 @@ function DashboardSkeleton() {
         {Array.from({ length: 2 }, (_, index) => (
           <div
             key={index}
-            className="h-96 animate-pulse rounded-[2rem] border border-white bg-white shadow-sa-xl"
+            className="h-96 animate-pulse rounded-[2rem] border border-[#E9E2D3] bg-[#fffefa] shadow-[0_18px_48px_rgba(18,20,38,0.08)]"
           />
         ))}
       </div>
@@ -500,24 +508,26 @@ function formatDate(value: string) {
 function statusClass(status: string) {
   const normalized = status.toUpperCase().replace(/\s+/g, "_");
   const map: Record<string, string> = {
-    NEW_INQUIRY: "bg-yellow-100 text-yellow-800",
-    CONTACTED: "bg-blue-100 text-blue-800",
-    QUOTATION_PREPARED: "bg-purple-100 text-purple-800",
-    CONVERTED_TO_QUOTE: "bg-emerald-100 text-emerald-800",
-    CLOSED: "bg-red-100 text-red-800",
-    PENDING_REVIEW: "bg-yellow-100 text-yellow-800",
+    NEW_INQUIRY: "border border-amber-200/70 bg-amber-50 text-amber-800",
+    CONTACTED: "border border-sky-200/70 bg-sky-50 text-sky-800",
+    QUOTATION_PREPARED: "border border-amber-200/70 bg-amber-50 text-amber-800",
+    CONVERTED_TO_QUOTE: "border border-emerald-200/70 bg-emerald-50 text-emerald-800",
+    LOST: "border border-red-200/70 bg-red-50 text-red-700",
+    CLOSED: "border border-red-200/70 bg-red-50 text-red-700",
+    REJECTED_CLOSED: "border border-red-200/70 bg-red-50 text-red-700",
+    PENDING_REVIEW: "border border-amber-200/70 bg-amber-50 text-amber-800",
     UNDER_REVIEW: "bg-gray-100 text-gray-700",
-    QUOTE_SENT: "bg-blue-100 text-blue-800",
-    ACCEPTED: "bg-emerald-100 text-emerald-800",
-    REJECTED: "bg-red-100 text-red-800",
-    EXPIRED: "bg-orange-100 text-orange-800",
-    PLANNED: "bg-slate-100 text-slate-700",
-    IN_PROGRESS: "bg-blue-100 text-blue-800",
-    QUALITY_CHECK: "bg-amber-100 text-amber-800",
-    INSTALLATION: "bg-violet-100 text-violet-800",
-    COMPLETED: "bg-emerald-100 text-emerald-800",
-    CANCELLED: "bg-red-100 text-red-800",
+    QUOTE_SENT: "border border-sky-200/70 bg-sky-50 text-sky-800",
+    ACCEPTED: "border border-emerald-200/70 bg-emerald-50 text-emerald-800",
+    REJECTED: "border border-red-200/70 bg-red-50 text-red-700",
+    EXPIRED: "border border-orange-200/70 bg-orange-50 text-orange-800",
+    PLANNED: "border border-slate-200/70 bg-slate-50 text-slate-700",
+    IN_PROGRESS: "border border-sky-200/70 bg-sky-50 text-sky-800",
+    QUALITY_CHECK: "border border-amber-200/70 bg-amber-50 text-amber-800",
+    INSTALLATION: "border border-violet-200/70 bg-violet-50 text-violet-800",
+    COMPLETED: "border border-emerald-200/70 bg-emerald-50 text-emerald-800",
+    CANCELLED: "border border-red-200/70 bg-red-50 text-red-700",
   };
 
-  return map[normalized] ?? "bg-gray-100 text-gray-700";
+  return map[normalized] ?? "border border-gray-200 bg-gray-100 text-gray-700";
 }

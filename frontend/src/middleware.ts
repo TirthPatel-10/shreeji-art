@@ -4,9 +4,16 @@ import type { NextRequest } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Admin login page is always public — never apply auth checks here
+  // Backward compatibility: the old admin login route now uses the unified login page.
   if (pathname === "/admin/login") {
-    return NextResponse.next();
+    const loginUrl = new URL("/login", request.url);
+    const from = request.nextUrl.searchParams.get("from");
+
+    if (from && from.startsWith("/admin") && from !== "/admin/login") {
+      loginUrl.searchParams.set("from", from);
+    }
+
+    return NextResponse.redirect(loginUrl);
   }
 
   const isAuthenticated = request.cookies.has("sa_auth");
@@ -14,7 +21,7 @@ export function middleware(request: NextRequest) {
 
   if (!isAuthenticated) {
     if (pathname.startsWith("/admin")) {
-      const loginUrl = new URL("/admin/login", request.url);
+      const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("from", pathname);
       return NextResponse.redirect(loginUrl);
     }

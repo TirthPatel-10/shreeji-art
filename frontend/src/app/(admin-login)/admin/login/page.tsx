@@ -1,11 +1,26 @@
 import type { Metadata } from "next";
-import AdminLoginForm from "./AdminLoginForm";
+import { redirect } from "next/navigation";
 
 export const metadata: Metadata = {
-  title: "Admin Login | Shreeji Art",
+  title: "Login | Shreeji Art",
   robots: { index: false, follow: false },
 };
 
-export default function AdminLoginPage() {
-  return <AdminLoginForm />;
+type AdminLoginPageProps = {
+  searchParams?: {
+    from?: string | string[];
+  };
+};
+
+export default function AdminLoginPage({ searchParams }: AdminLoginPageProps) {
+  const from =
+    typeof searchParams?.from === "string"
+      ? searchParams.from
+      : searchParams?.from?.[0];
+  const safeFrom =
+    from && from.startsWith("/admin") && from !== "/admin/login"
+      ? `?from=${encodeURIComponent(from)}`
+      : "";
+
+  redirect(`/login${safeFrom}`);
 }

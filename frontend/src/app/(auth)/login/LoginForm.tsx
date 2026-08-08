@@ -206,7 +206,7 @@ export default function LoginForm() {
           Welcome Back
         </h1>
         <p className="relative z-10 mt-2 text-sm leading-6 text-white/76">
-          Sign in to your Shreeji Art dashboard.
+          Sign in to your Shreeji Art account.
         </p>
 
         {error && (

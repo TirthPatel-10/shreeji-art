@@ -148,27 +148,27 @@ export default function CustomerDashboardPage() {
 
   return (
     <div className="space-y-8">
-      <section className="relative overflow-hidden rounded-[2rem] bg-brand-navy p-6 text-white shadow-sa-xl sm:p-8 lg:p-10">
+      <section className="relative overflow-hidden rounded-[2rem] bg-[#121426] p-6 text-white shadow-[0_24px_70px_rgba(18,20,38,0.20)] sm:p-8 lg:p-10">
         <div
-          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.22),transparent_30%),linear-gradient(135deg,rgba(255,255,255,0.08),transparent_42%)]"
+          className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(212,160,23,0.16),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.07),transparent_42%)]"
           aria-hidden="true"
         />
         <div className="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">
               Customer Dashboard
             </p>
-            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight sm:text-5xl">
+            <h1 className="mt-4 font-display text-4xl font-semibold tracking-tight text-[#FAF8F2] sm:text-5xl">
               Your signage workroom
             </h1>
-            <p className="mt-4 max-w-2xl text-sm leading-6 text-white/64 sm:text-base">
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-[#E8E4DA]/80 sm:text-base">
               Track quote requests, project progress, and next steps for your
               Shreeji Art signage projects.
             </p>
           </div>
           <Link
             href="/quote"
-            className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-[0_20px_45px_rgba(212,160,23,0.25)] transition-all hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transition-none"
+            className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-[0_14px_34px_rgba(212,160,23,0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_18px_42px_rgba(212,160,23,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy motion-reduce:transform-none motion-reduce:transition-none"
           >
             <Plus className="h-4 w-4" aria-hidden="true" />
             Request a Quote
@@ -265,24 +265,24 @@ function MetricCard({
   return (
     <Link
       href={href}
-      className="group rounded-[1.75rem] border border-white bg-white p-6 shadow-sa-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-sa-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
+      className="group rounded-[1.75rem] border border-[#E9E2D3] bg-[#fffefa] p-6 shadow-[0_16px_42px_rgba(18,20,38,0.07)] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-gold/35 hover:shadow-[0_20px_52px_rgba(18,20,38,0.10)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
     >
       <div className="flex items-start justify-between gap-4">
         <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-gold/10 text-brand-gold transition-colors group-hover:bg-brand-gold group-hover:text-brand-navy">
           <Icon className="h-5 w-5" aria-hidden="true" />
         </span>
         <ArrowRight
-          className="h-4 w-4 text-gray-300 transition-transform group-hover:translate-x-1 group-hover:text-brand-gold motion-reduce:transform-none"
+          className="h-4 w-4 text-gray-300 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-brand-gold motion-reduce:transform-none"
           aria-hidden="true"
         />
       </div>
-      <p className="mt-6 text-sm font-semibold uppercase tracking-[0.22em] text-gray-400">
+      <p className="mt-6 text-xs font-semibold uppercase tracking-[0.14em] text-gray-500">
         {title}
       </p>
-      <p className="mt-2 font-display text-5xl font-semibold text-brand-navy">
+      <p className="mt-2 text-5xl font-semibold tracking-tight text-brand-navy">
         {value}
       </p>
-      <p className="mt-3 text-sm leading-6 text-gray-500">{description}</p>
+      <p className="mt-3 text-sm leading-6 text-gray-600">{description}</p>
     </Link>
   );
 }
@@ -305,26 +305,46 @@ function ActivityPanel({
     : Boolean(children);
 
   return (
-    <section className="rounded-[2rem] border border-white bg-white p-6 shadow-sa-xl sm:p-8">
+    <section className="rounded-[2rem] border border-[#E9E2D3] bg-[#fffefa] p-6 shadow-[0_18px_48px_rgba(18,20,38,0.08)] sm:p-8">
       <div className="mb-6 flex items-center justify-between gap-4">
         <h2 className="font-display text-2xl font-semibold text-brand-navy">
           {title}
         </h2>
         <Link
           href={href}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-gold transition-colors hover:text-brand-gold-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+          className="group inline-flex items-center gap-1.5 text-sm font-semibold text-brand-gold transition-colors hover:text-brand-gold-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
         >
           View all
-          <ArrowRight className="h-3.5 w-3.5" aria-hidden="true" />
+          <ArrowRight
+            className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
+            aria-hidden="true"
+          />
         </Link>
       </div>
 
       {hasChildren ? (
         <div className="space-y-3">{children}</div>
       ) : (
-        <div className="rounded-[1.5rem] border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
-          <p className="font-semibold text-brand-navy">{emptyTitle}</p>
+        <div className="rounded-[1.5rem] border border-dashed border-[#DED6C8] bg-[#fbfaf6] p-8 text-center">
+          <span className="mx-auto flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-gold/10 text-brand-gold">
+            <FolderKanban className="h-5 w-5" aria-hidden="true" />
+          </span>
+          <p className="mt-4 font-semibold text-brand-navy">
+            {emptyTitle === "No projects yet" ? "No active projects yet" : emptyTitle}
+          </p>
           <p className="mt-2 text-sm leading-6 text-gray-500">{emptyText}</p>
+          {emptyTitle === "No projects yet" ? (
+            <Link
+              href="/quotes"
+              className="group mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-gold transition-colors hover:text-brand-gold-dark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2"
+            >
+              View My Quotes
+              <ArrowRight
+                className="h-3.5 w-3.5 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
+                aria-hidden="true"
+              />
+            </Link>
+          ) : null}
         </div>
       )}
     </section>
@@ -351,24 +371,24 @@ function ActivityItem({
   return (
     <Link
       href={href}
-      className="group block rounded-[1.4rem] border border-gray-100 bg-[#fbfaf6] p-4 transition-all duration-200 hover:border-brand-gold/35 hover:bg-white hover:shadow-sa-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
+      className="group block rounded-[1.4rem] border border-[#EEE7DA] bg-[#fbfaf6] p-4 transition-all duration-200 hover:border-brand-gold/35 hover:bg-white hover:shadow-[0_12px_28px_rgba(18,20,38,0.07)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <p className="truncate font-semibold text-brand-navy">{title}</p>
-          <p className="mt-1 font-mono text-xs text-gray-400">{reference}</p>
+          <p className="mt-1 font-mono text-xs text-gray-500">{reference}</p>
         </div>
         <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${statusClass(status)}`}>
           {statusLabel}
         </span>
       </div>
       {description ? (
-        <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-500">
+        <p className="mt-3 line-clamp-2 text-sm leading-6 text-gray-600">
           {description}
         </p>
       ) : null}
       {date ? (
-        <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-400">
+        <p className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-500">
           <Clock3 className="h-3.5 w-3.5 text-brand-gold" aria-hidden="true" />
           {formatDate(date)}
         </p>
@@ -379,7 +399,7 @@ function ActivityItem({
 
 function EmptyDashboard() {
   return (
-    <section className="overflow-hidden rounded-[2rem] border border-white bg-white shadow-sa-xl">
+    <section className="overflow-hidden rounded-[2rem] border border-[#E9E2D3] bg-[#fffefa] shadow-[0_18px_48px_rgba(18,20,38,0.08)]">
       <div className="grid gap-0 lg:grid-cols-[1fr_0.85fr]">
         <div className="p-8 sm:p-10">
           <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-gold/10 text-brand-gold">
@@ -388,20 +408,23 @@ function EmptyDashboard() {
           <h2 className="mt-6 font-display text-3xl font-semibold text-brand-navy">
             Ready to start your first signage project?
           </h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-500">
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-gray-600">
             Request a quote and our team will review your project details.
             Your quotes and projects will appear here once they are created.
           </p>
           <Link
             href="/quote"
-            className="mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-[0_18px_38px_rgba(212,160,23,0.22)] transition-all hover:bg-brand-gold-light focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transition-none"
+            className="group mt-7 inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-[0_14px_34px_rgba(212,160,23,0.22)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_18px_42px_rgba(212,160,23,0.28)] focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 motion-reduce:transform-none motion-reduce:transition-none"
           >
             Request a Quote
-            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none"
+              aria-hidden="true"
+            />
           </Link>
         </div>
         <div className="bg-brand-navy p-8 text-white sm:p-10">
-          <p className="text-xs font-semibold uppercase tracking-[0.28em] text-brand-gold">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-gold">
             What happens next
           </p>
           <div className="mt-6 space-y-4">
@@ -425,12 +448,12 @@ function EmptyDashboard() {
 function DashboardSkeleton() {
   return (
     <div className="space-y-8" aria-label="Loading customer dashboard">
-      <div className="h-56 animate-pulse rounded-[2rem] bg-brand-navy/90" />
+      <div className="h-56 animate-pulse rounded-[2rem] bg-brand-navy/90 shadow-[0_24px_70px_rgba(18,20,38,0.18)]" />
       <div className="grid gap-5 md:grid-cols-3">
         {Array.from({ length: 3 }, (_, index) => (
           <div
             key={index}
-            className="h-56 animate-pulse rounded-[1.75rem] border border-white bg-white shadow-sa-lg"
+            className="h-56 animate-pulse rounded-[1.75rem] border border-[#E9E2D3] bg-[#fffefa] shadow-[0_16px_42px_rgba(18,20,38,0.07)]"
           />
         ))}
       </div>
@@ -438,7 +461,7 @@ function DashboardSkeleton() {
         {Array.from({ length: 2 }, (_, index) => (
           <div
             key={index}
-            className="h-96 animate-pulse rounded-[2rem] border border-white bg-white shadow-sa-xl"
+            className="h-96 animate-pulse rounded-[2rem] border border-[#E9E2D3] bg-[#fffefa] shadow-[0_18px_48px_rgba(18,20,38,0.08)]"
           />
         ))}
       </div>
@@ -465,19 +488,19 @@ function formatDate(value: string) {
 
 function statusClass(status: string) {
   const map: Record<string, string> = {
-    PENDING: "bg-yellow-100 text-yellow-800",
-    DRAFT: "bg-gray-100 text-gray-700",
-    SENT: "bg-blue-100 text-blue-800",
-    ACCEPTED: "bg-emerald-100 text-emerald-800",
-    REJECTED: "bg-red-100 text-red-800",
-    EXPIRED: "bg-orange-100 text-orange-800",
-    PLANNED: "bg-slate-100 text-slate-700",
-    IN_PROGRESS: "bg-blue-100 text-blue-800",
-    QUALITY_CHECK: "bg-amber-100 text-amber-800",
-    INSTALLATION: "bg-violet-100 text-violet-800",
-    COMPLETED: "bg-emerald-100 text-emerald-800",
-    CANCELLED: "bg-red-100 text-red-800",
+    PENDING: "border border-amber-200/70 bg-amber-50 text-amber-800",
+    DRAFT: "border border-gray-200 bg-gray-100 text-gray-700",
+    SENT: "border border-sky-200/70 bg-sky-50 text-sky-800",
+    ACCEPTED: "border border-emerald-200/70 bg-emerald-50 text-emerald-800",
+    REJECTED: "border border-red-200/70 bg-red-50 text-red-700",
+    EXPIRED: "border border-orange-200/70 bg-orange-50 text-orange-800",
+    PLANNED: "border border-slate-200/70 bg-slate-50 text-slate-700",
+    IN_PROGRESS: "border border-sky-200/70 bg-sky-50 text-sky-800",
+    QUALITY_CHECK: "border border-amber-200/70 bg-amber-50 text-amber-800",
+    INSTALLATION: "border border-violet-200/70 bg-violet-50 text-violet-800",
+    COMPLETED: "border border-emerald-200/70 bg-emerald-50 text-emerald-800",
+    CANCELLED: "border border-red-200/70 bg-red-50 text-red-700",
   };
 
-  return map[status] ?? "bg-gray-100 text-gray-700";
+  return map[status] ?? "border border-gray-200 bg-gray-100 text-gray-700";
 }

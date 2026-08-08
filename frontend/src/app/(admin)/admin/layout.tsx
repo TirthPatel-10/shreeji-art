@@ -94,12 +94,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loading) {
       if (!user) {
-        router.replace("/admin/login");
+        router.replace(`/login?from=${encodeURIComponent(pathname)}`);
       } else if (!isAdmin) {
         router.replace("/dashboard");
       }
     }
-  }, [loading, user, isAdmin, router]);
+  }, [loading, user, isAdmin, pathname, router]);
 
   useEffect(() => {
     setMobileOpen(false);
@@ -118,7 +118,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   function handleLogout() {
     logout();
-    router.replace("/admin/login");
+    router.replace("/");
   }
 
   if (loading || !user || !isAdmin) {
@@ -259,7 +259,7 @@ function AdminSidebar({
   onLogout: () => void;
 }) {
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-white/10 bg-brand-navy-deep text-white shadow-2xl lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 flex-col border-r border-white/10 bg-brand-navy-deep text-white shadow-[18px_0_50px_rgba(0,0,0,0.18)] lg:flex">
       <div className="border-b border-white/10 p-6">
         <Link href="/" className="inline-flex items-center gap-3">
           <Image
@@ -267,7 +267,7 @@ function AdminSidebar({
             alt=""
             width={48}
             height={48}
-            className="rounded-full border border-brand-gold/30 object-cover shadow-[0_0_28px_rgba(212,160,23,0.18)]"
+            className="rounded-full border border-brand-gold/30 object-cover shadow-[0_0_22px_rgba(212,160,23,0.14)]"
           />
           <span>
             <span className="block font-display text-2xl font-semibold leading-none text-brand-gold">
@@ -304,8 +304,8 @@ function AdminSidebarContent({
   return (
     <>
       <div className="p-5">
-        <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.06] p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-brand-gold">
+        <div className="rounded-[1.5rem] border border-white/10 bg-white/[0.055] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-brand-gold">
             Signed in as
           </p>
           <p className="mt-2 truncate font-display text-xl font-semibold text-white">
@@ -319,7 +319,7 @@ function AdminSidebarContent({
         {adminLinkGroups.map((group) => (
           <div key={group.title ?? "dashboard"} className="space-y-1">
             {group.title ? (
-              <p className="px-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.24em] text-white/32">
+              <p className="px-4 pb-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/45">
                 {group.title}
               </p>
             ) : null}
@@ -337,13 +337,13 @@ function AdminSidebarContent({
                   className={[
                     "group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none",
                     active
-                      ? "bg-brand-gold text-brand-navy shadow-[0_18px_38px_rgba(212,160,23,0.22)]"
-                      : "text-white/62 hover:bg-white/[0.08] hover:text-white",
+                      ? "bg-brand-gold text-brand-navy shadow-[0_14px_30px_rgba(212,160,23,0.18)]"
+                      : "text-white/72 hover:bg-white/[0.08] hover:text-white",
                   ].join(" ")}
                 >
                   <Icon
                     className={`h-4 w-4 ${
-                      active ? "text-brand-navy" : "text-brand-gold"
+                      active ? "text-brand-navy" : "text-brand-gold/90"
                     }`}
                     aria-hidden="true"
                   />
@@ -358,7 +358,7 @@ function AdminSidebarContent({
       <div className="border-t border-white/10 p-4">
         <Link
           href="/admin/profile"
-          className="mb-2 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+          className="mb-2 flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
         >
           <BarChart3 className="h-4 w-4 text-brand-gold" aria-hidden="true" />
           Admin Profile
@@ -366,7 +366,7 @@ function AdminSidebarContent({
         <button
           type="button"
           onClick={onLogout}
-          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-white/60 transition-colors hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
+          className="flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-semibold text-white/70 transition-colors hover:bg-white/[0.08] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none"
         >
           <LogOut className="h-4 w-4 text-brand-gold" aria-hidden="true" />
           Sign Out
