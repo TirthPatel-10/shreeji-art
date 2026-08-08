@@ -8,6 +8,10 @@ const fromMap = {
     hidden: "opacity-0 translate-y-8",
     visible: "opacity-100 translate-y-0",
   },
+  rise: {
+    hidden: "opacity-0 translate-y-7",
+    visible: "opacity-100 translate-y-0",
+  },
   top: {
     hidden: "opacity-0 -translate-y-8",
     visible: "opacity-100 translate-y-0",

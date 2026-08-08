@@ -180,6 +180,49 @@ const HERO_TRUST_POINTS = [
   "Across Gujarat",
 ];
 
+const BRAND_LOGOS = [
+  {
+    name: "UBoat",
+    logo: "/brands/uboat.jpg",
+    alt: "UBoat logo",
+    width: 72,
+    height: 72,
+    logoClassName: "max-h-8 sm:max-h-10",
+  },
+  {
+    name: "Bansari Group",
+    logo: "/brands/bansari-group.png",
+    alt: "Bansari Group logo",
+    width: 52,
+    height: 72,
+    logoClassName: "max-h-9 sm:max-h-11",
+  },
+  {
+    name: "Subway",
+    logo: "/brands/subway.jpg",
+    alt: "Subway logo",
+    width: 144,
+    height: 42,
+    logoClassName: "max-w-[5.9rem] sm:max-w-[6.9rem]",
+  },
+  {
+    name: "Palm Glory",
+    logo: "/brands/palm-glory.jpg",
+    alt: "Palm Glory logo",
+    width: 112,
+    height: 54,
+    logoClassName: "max-w-[5.6rem] sm:max-w-[6.4rem]",
+  },
+  {
+    name: "Blue Sky Overseas",
+    logo: "/brands/blue-sky-overseas.jpg",
+    alt: "Blue Sky Overseas logo",
+    width: 128,
+    height: 44,
+    logoClassName: "max-w-[6.2rem] sm:max-w-[7.2rem]",
+  },
+] as const;
+
 const PREMIUM_TRANSITION =
   "transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none motion-reduce:transform-none";
 
@@ -285,6 +328,129 @@ function PortfolioSkeletonGrid() {
   );
 }
 
+function BrandLogoItem({ brand }: { brand: (typeof BRAND_LOGOS)[number] }) {
+  return (
+    <li className="group flex shrink-0 items-center gap-4 px-6 py-2 sm:gap-5 sm:px-10">
+      <span className="flex h-10 w-[5.75rem] shrink-0 items-center justify-center sm:h-12 sm:w-[6.75rem]">
+        <Image
+          src={brand.logo}
+          alt={brand.alt}
+          width={brand.width}
+          height={brand.height}
+          sizes="(min-width: 640px) 108px, 92px"
+          className={cn(
+            "h-auto w-auto max-h-7 max-w-[5.5rem] object-contain transition-transform duration-[220ms] ease-out group-hover:scale-[1.04] motion-reduce:transition-none motion-reduce:transform-none sm:max-h-9 sm:max-w-[6.5rem]",
+            brand.logoClassName
+          )}
+        />
+      </span>
+      <span className="whitespace-nowrap text-sm font-semibold tracking-[0.01em] text-[#E8E4DA] transition-colors duration-[220ms] group-hover:text-[#FFF9EA] sm:text-base">
+        {brand.name}
+      </span>
+      <span
+        className="ml-4 text-xs text-brand-gold/25 sm:ml-6"
+        aria-hidden="true"
+      >
+        ✦
+      </span>
+    </li>
+  );
+}
+
+function BrandMarquee() {
+  return (
+    <section
+      aria-labelledby="brands-title"
+      className="relative overflow-hidden border-y border-white/[0.05] bg-gradient-to-b from-[#111426] to-[#0D1020] py-8 sm:py-10"
+    >
+      <style jsx>{`
+        @keyframes brands-marquee-left-to-right {
+          from {
+            transform: translate3d(-50%, 0, 0);
+          }
+          to {
+            transform: translate3d(0, 0, 0);
+          }
+        }
+
+        .brands-marquee-track {
+          animation: brands-marquee-left-to-right 32s linear infinite;
+          will-change: transform;
+        }
+
+        .brands-marquee:hover .brands-marquee-track {
+          animation-play-state: paused;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .brands-marquee {
+            -webkit-mask-image: none;
+            mask-image: none;
+          }
+
+          .brands-marquee-track {
+            animation: none;
+            flex-wrap: wrap;
+            justify-content: center;
+            row-gap: 0.75rem;
+            transform: none;
+            width: auto;
+            will-change: auto;
+          }
+
+          .brands-marquee ul[aria-hidden="true"] {
+            display: none;
+          }
+        }
+      `}</style>
+      <div
+        className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-brand-gold/10 to-transparent"
+        aria-hidden="true"
+      />
+      <div
+        className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent"
+        aria-hidden="true"
+      />
+      <h2 id="brands-title" className="sr-only">
+        Brands We&apos;ve Worked With
+      </h2>
+      <div className="container-full">
+        <div className="mb-5 flex items-center justify-center gap-3 text-center sm:mb-6">
+          <span className="h-px w-10 bg-brand-gold/30" aria-hidden="true" />
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-brand-gold/85">
+            Brands We&apos;ve Worked With
+          </p>
+          <span className="h-px w-10 bg-brand-gold/30" aria-hidden="true" />
+        </div>
+      </div>
+      <div className="brands-marquee overflow-hidden [mask-image:linear-gradient(90deg,transparent,black_9%,black_91%,transparent)]">
+        <div className="brands-marquee-track flex w-max items-center">
+          <ul className="flex shrink-0 items-center">
+            {BRAND_LOGOS.map((brand) => (
+              <BrandLogoItem key={brand.name} brand={brand} />
+            ))}
+          </ul>
+          <ul className="flex shrink-0 items-center" aria-hidden="true">
+            {BRAND_LOGOS.map((brand) => (
+              <BrandLogoItem key={`${brand.name}-duplicate`} brand={brand} />
+            ))}
+          </ul>
+          <ul className="flex shrink-0 items-center" aria-hidden="true">
+            {BRAND_LOGOS.map((brand) => (
+              <BrandLogoItem key={`${brand.name}-duplicate-2`} brand={brand} />
+            ))}
+          </ul>
+          <ul className="flex shrink-0 items-center" aria-hidden="true">
+            {BRAND_LOGOS.map((brand) => (
+              <BrandLogoItem key={`${brand.name}-duplicate-3`} brand={brand} />
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function HomeClient({
   portfolio,
   portfolioStatus = "ready",
@@ -309,14 +475,7 @@ export default function HomeClient({
 
       <main>
         <section className="relative isolate overflow-hidden bg-[#05050c]">
-          <Image
-            src="/gallery/led-sign/led-sign-02.svg"
-            alt="Premium illuminated commercial signage background"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover opacity-50"
-          />
+          <div className="absolute inset-0 bg-[#05050c]" aria-hidden="true" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_30%,rgba(212,160,23,0.16),transparent_34%),linear-gradient(90deg,rgba(5,5,12,0.98)_0%,rgba(10,10,24,0.88)_48%,rgba(10,10,24,0.7)_100%)]" />
           <div className="absolute inset-0 bg-gradient-to-b from-brand-navy/35 via-transparent to-brand-navy/90" />
           <div
@@ -327,6 +486,34 @@ export default function HomeClient({
                 "linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px)",
               backgroundSize: "80px 80px",
             }}
+          />
+          <div
+            className="pointer-events-none absolute left-[6%] top-[18%] hidden h-px w-[28rem] bg-gradient-to-r from-transparent via-white/45 to-transparent opacity-[0.055] lg:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute left-[14%] top-[24%] hidden h-[18rem] w-px bg-gradient-to-b from-transparent via-brand-gold/60 to-transparent opacity-[0.05] lg:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-[20%] top-[18%] hidden h-52 w-52 rounded-full border border-white/35 opacity-[0.035] lg:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-[14%] top-[30%] hidden h-72 w-72 rounded-full border border-brand-gold/40 opacity-[0.035] lg:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-[9%] bottom-[24%] hidden h-px w-[22rem] rotate-[-18deg] bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-[0.045] lg:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute right-[8%] top-[22%] hidden h-10 w-10 border-r border-t border-brand-gold/45 opacity-[0.06] lg:block"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute bottom-[22%] left-[7%] hidden h-8 w-8 border-b border-l border-white/40 opacity-[0.05] lg:block"
+            aria-hidden="true"
           />
           <div
             className="absolute left-10 top-24 h-80 w-80 animate-pulse-subtle rounded-full bg-brand-gold/15 blur-[120px] motion-reduce:animate-none"
@@ -407,6 +594,8 @@ export default function HomeClient({
             </div>
           </div>
         </section>
+
+        <BrandMarquee />
 
         <section
           id="services"

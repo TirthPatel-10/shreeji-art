@@ -16,6 +16,10 @@ import {
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { AnimateIn } from "@/components/ui/animate-in";
+import {
+  InteractiveServiceCard,
+  type InteractiveServiceCardAccent,
+} from "@/components/ui/interactive-service-card";
 import { SERVICE_DETAILS, type ServiceDetail } from "@/lib/service-details";
 import { cn } from "@/lib/utils";
 import type { Service } from "@/types";
@@ -75,19 +79,19 @@ const FAQ_ITEMS = [
   },
 ];
 
-const SERVICE_METADATA: Partial<Record<ServiceDetail["slug"], string>> = {
-  "led-sign-boards": "Indoor & Outdoor",
-  "acrylic-signs": "Premium Finish",
-  "3d-letter-signs": "Architectural Depth",
-  "acp-signage": "Weather Resistant",
-  "stainless-steel-signs": "Premium Metal",
-  "glow-sign-boards": "High Visibility",
-  "office-branding": "Corporate",
-  "retail-branding": "Retail",
-  "industrial-signage": "Industrial",
-  wayfinding: "Navigation",
-  "custom-fabrication": "Custom Built",
-  installation: "Site Ready",
+const SERVICE_ACCENTS: Partial<Record<ServiceDetail["slug"], InteractiveServiceCardAccent>> = {
+  "led-sign-boards": "gold",
+  "acrylic-signs": "blue",
+  "3d-letter-signs": "purple",
+  "acp-signage": "green",
+  "stainless-steel-signs": "gold",
+  "glow-sign-boards": "orange",
+  "office-branding": "blue",
+  "retail-branding": "gold",
+  "industrial-signage": "green",
+  wayfinding: "purple",
+  "custom-fabrication": "gold",
+  installation: "orange",
 };
 
 function findLiveService(detail: ServiceDetail, services: Service[]) {
@@ -103,90 +107,6 @@ function getServiceTitle(detail: ServiceDetail, services: Service[]) {
 
 function getServiceDescription(detail: ServiceDetail, services: Service[]) {
   return findLiveService(detail, services)?.shortDescription || detail.summary;
-}
-
-function ServiceCard({
-  detail,
-  index,
-  services,
-}: {
-  detail: ServiceDetail;
-  index: number;
-  services: Service[];
-}) {
-  const title = getServiceTitle(detail, services);
-  const description = getServiceDescription(detail, services);
-  const isFeatured = index === 0 || index === 4;
-  const hasAccentBorder = (index + 1) % 4 === 0;
-  const metadata = SERVICE_METADATA[detail.slug] || detail.category;
-
-  return (
-    <AnimateIn from="bottom" delay={(index % 3) * 70}>
-      <article
-        className={cn(
-          "group flex h-full flex-col overflow-hidden rounded-[1.75rem] border bg-white shadow-sa-xs transition-all duration-[250ms] ease-out hover:-translate-y-1 hover:shadow-sa-premium motion-reduce:transform-none",
-          hasAccentBorder
-            ? "border-brand-gold/30 shadow-[0_18px_55px_rgba(18,20,38,0.08)]"
-            : "border-brand-navy/10",
-          isFeatured && "lg:-translate-y-2 lg:shadow-[0_22px_70px_rgba(18,20,38,0.10)]"
-        )}
-      >
-        <Link
-          href={`/services/${detail.slug}`}
-          className="relative block aspect-[4/3] overflow-hidden bg-brand-deep"
-          aria-label={`Learn more about ${title}`}
-        >
-          <Image
-            src={detail.image}
-            alt={`${title} by Shreeji Art`}
-            fill
-            sizes="(min-width: 1024px) 31vw, (min-width: 768px) 46vw, 92vw"
-            className="object-cover opacity-90 transition-transform duration-700 group-hover:scale-105"
-            unoptimized={detail.image.endsWith(".svg")}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-brand-navy/82 via-brand-navy/16 to-transparent" />
-          <div className="absolute inset-x-5 bottom-0 h-px bg-gradient-to-r from-transparent via-brand-gold/65 to-transparent opacity-0 transition-opacity duration-[250ms] group-hover:opacity-100" />
-          <div className="absolute left-4 top-4 flex flex-wrap gap-2">
-            <span className="rounded-full border border-white/15 bg-white/90 px-3 py-1 text-xs font-semibold text-brand-navy shadow-sm">
-              {detail.category}
-            </span>
-            <span className="rounded-full border border-brand-gold/30 bg-brand-navy/70 px-3 py-1 text-xs font-semibold text-white/85 backdrop-blur-sm">
-              {metadata}
-            </span>
-          </div>
-          {isFeatured ? (
-            <span className="absolute right-4 top-4 rounded-full border border-brand-gold/40 bg-brand-gold px-3 py-1 text-xs font-semibold text-brand-navy shadow-sa-gold">
-              {index === 0 ? "Recommended" : "Most Popular"}
-            </span>
-          ) : null}
-        </Link>
-
-        <div className="flex flex-1 flex-col p-6 sm:p-7">
-          <div className="mb-5 h-px w-12 bg-brand-gold/55 transition-all duration-[250ms] group-hover:w-16 group-hover:bg-brand-gold" />
-          <h2 className="font-display text-2xl font-semibold leading-tight text-brand-navy">
-            {title}
-          </h2>
-          <p className="mt-3 line-clamp-3 text-[15px] leading-7 text-gray-600">{description}</p>
-
-          <div className="mt-auto flex flex-col gap-3 pt-7 sm:flex-row">
-            <Link
-              href={`/services/${detail.slug}`}
-              className="inline-flex flex-1 items-center justify-center gap-2 rounded-full border border-brand-navy/10 bg-white px-4 py-3 text-sm font-semibold text-brand-navy transition-all duration-[250ms] hover:border-brand-gold hover:text-brand-gold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
-            >
-              Learn More
-              <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </Link>
-            <Link
-              href={`/quote?service=${encodeURIComponent(title)}`}
-              className="inline-flex flex-1 items-center justify-center rounded-full bg-brand-gold px-4 py-3 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-[250ms] hover:-translate-y-0.5 hover:bg-brand-gold-light hover:shadow-[0_16px_34px_rgba(217,165,20,0.24)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold motion-reduce:transform-none"
-            >
-              Request a Quote
-            </Link>
-          </div>
-        </div>
-      </article>
-    </AnimateIn>
-  );
 }
 
 function ProcessTimeline() {
@@ -393,10 +313,38 @@ export default function ServicesClient({ services }: ServicesClientProps) {
               </p>
             </AnimateIn>
 
-            <div className="mt-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-7">
-              {serviceCards.map((detail, index) => (
-                <ServiceCard key={detail.slug} detail={detail} index={index} services={services} />
-              ))}
+            <div className="mx-auto mt-16 grid max-w-6xl gap-7">
+              {serviceCards.map((detail, index) => {
+                const title = getServiceTitle(detail, services);
+                const description = getServiceDescription(detail, services);
+
+                return (
+                  <AnimateIn
+                    key={detail.slug}
+                    from="rise"
+                    delay={(index % 2) * 70}
+                    duration={620}
+                    threshold={0.16}
+                  >
+                    <InteractiveServiceCard
+                      title={title}
+                      slug={detail.slug}
+                      category={detail.category}
+                      description={description}
+                      imageSrc={detail.image}
+                      altText={`${title} by Shreeji Art`}
+                      features={detail.benefits}
+                      accent={SERVICE_ACCENTS[detail.slug] || "gold"}
+                      featured={
+                        detail.slug === "led-sign-boards" ||
+                        detail.slug === "acrylic-signs" ||
+                        detail.slug === "stainless-steel-signs"
+                      }
+                      reversed={index % 2 === 1}
+                    />
+                  </AnimateIn>
+                );
+              })}
             </div>
           </div>
         </section>

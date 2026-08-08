@@ -58,6 +58,21 @@ const ICONS: Record<ServiceIconKey, typeof Lightbulb> = {
   installation: Wrench,
 };
 
+const HERO_IMAGE_POSITIONS: Partial<Record<ServiceDetail["slug"], string>> = {
+  "led-sign-boards": "center center",
+  "acrylic-signs": "center center",
+  "3d-letter-signs": "center center",
+  "acp-signage": "center center",
+  "stainless-steel-signs": "center center",
+  "glow-sign-boards": "center center",
+  "office-branding": "center center",
+  "retail-branding": "center center",
+  "industrial-signage": "center top",
+  wayfinding: "center center",
+  "custom-fabrication": "center center",
+  installation: "center center",
+};
+
 function serviceMatchesText(service: ServiceDetail, text: string) {
   const normalized = text.toLowerCase();
   return [service.label, service.slug, ...(service.apiSlugs ?? []), ...service.relatedKeywords].some((keyword) =>
@@ -334,67 +349,92 @@ export default function ServiceDetailClient({ service }: { service: ServiceDetai
   const [openFaq, setOpenFaq] = useState(0);
   const Icon = ICONS[service.icon];
   const relatedServices = useMemo(() => getRelatedServices(service), [service]);
+  const heroImagePosition = HERO_IMAGE_POSITIONS[service.slug] ?? "center center";
 
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <Navbar />
 
       <main className="flex-1">
-        <section className="relative isolate overflow-hidden bg-brand-deep pt-20 text-white">
-          <div className="absolute inset-0 -z-10">
-            <Image
-              src={service.image}
-              alt=""
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover opacity-28"
-              unoptimized={service.image.endsWith(".svg")}
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-brand-deep via-brand-navy/90 to-brand-navy/65" />
-          </div>
-          <div className="absolute right-12 top-24 hidden h-44 w-44 rounded-full bg-brand-gold/15 blur-[70px] lg:block" aria-hidden="true" />
+        <section className="relative isolate overflow-hidden bg-[#0B0D1A] pt-20 text-white">
+          <div className="grid min-h-[620px] lg:min-h-[700px] lg:grid-cols-[0.48fr_0.52fr]">
+            <div className="relative isolate flex items-center overflow-hidden bg-[linear-gradient(135deg,#0B0D1A_0%,#111426_72%,#17192A_100%)]">
+              <div
+                className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_18%_28%,rgba(217,165,20,0.16),transparent_34%)]"
+                aria-hidden="true"
+              />
+              <div
+                className="absolute inset-0 -z-10 opacity-[0.035]"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(255,255,255,.22) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.22) 1px,transparent 1px)",
+                  backgroundSize: "72px 72px",
+                }}
+                aria-hidden="true"
+              />
+              <div
+                className="pointer-events-none absolute right-[-1px] top-0 z-10 hidden h-full w-24 bg-gradient-to-r from-transparent to-[#0B0D1A]/45 lg:block"
+                aria-hidden="true"
+              />
 
-          <div className="sa-container py-16 sm:py-20 lg:py-24">
-            <AnimateIn from="bottom" className="max-w-3xl">
-              <nav className="mb-7 flex items-center gap-2 text-sm text-white/55" aria-label="Breadcrumb">
-                <Link href="/" className="transition-colors hover:text-brand-gold">
-                  Home
-                </Link>
-                <span aria-hidden="true">/</span>
-                <Link href="/services" className="transition-colors hover:text-brand-gold">
-                  Services
-                </Link>
-                <span aria-hidden="true">/</span>
-                <span className="text-white/75">{service.label}</span>
-              </nav>
+              <div className="sa-container py-16 sm:py-20 lg:ml-auto lg:mr-0 lg:max-w-[720px] lg:py-24 lg:pr-14">
+                <AnimateIn from="bottom" className="max-w-[620px]">
+                  <nav className="mb-7 flex flex-wrap items-center gap-2 text-sm text-white/70" aria-label="Breadcrumb">
+                    <Link href="/" className="transition-colors hover:text-brand-gold">
+                      Home
+                    </Link>
+                    <span aria-hidden="true">/</span>
+                    <Link href="/services" className="transition-colors hover:text-brand-gold">
+                      Services
+                    </Link>
+                    <span aria-hidden="true">/</span>
+                    <span className="text-white/88">{service.label}</span>
+                  </nav>
 
-              <span className="inline-flex items-center gap-2 rounded-full border border-brand-gold/30 bg-brand-gold/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-brand-gold">
-                <Icon className="h-4 w-4" aria-hidden="true" />
-                {service.category}
-              </span>
-              <h1 className="mt-6 font-display text-[clamp(2.5rem,6vw,5.5rem)] font-semibold leading-[0.95] tracking-tight">
-                {service.label}
-              </h1>
-              <p className="mt-6 max-w-2xl text-base leading-7 text-white/72 sm:text-lg">
-                {service.description}
-              </p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Link
-                  href={`/quote?service=${encodeURIComponent(service.label)}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-gold-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
-                >
-                  Request Quote
-                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                </Link>
-                <Link
-                  href="/portfolio"
-                  className="inline-flex items-center justify-center gap-2 rounded-full border border-white/18 bg-white/8 px-7 py-3.5 text-sm font-semibold text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-gold/50 hover:bg-white/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
-                >
-                  View Related Work
-                </Link>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-brand-gold/35 bg-brand-gold/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.22em] text-brand-gold">
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                    {service.category}
+                  </span>
+                  <h1 className="mt-6 font-display text-[clamp(2.5rem,6vw,5.25rem)] font-semibold leading-[0.98] tracking-tight text-[#F8F6F1]">
+                    {service.label}
+                  </h1>
+                  <p className="mt-6 max-w-[600px] text-base leading-8 text-white/82 sm:text-lg">
+                    {service.description}
+                  </p>
+                  <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+                    <Link
+                      href={`/quote?service=${encodeURIComponent(service.label)}`}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-brand-gold px-7 py-3.5 text-sm font-semibold text-brand-navy shadow-sa-gold transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-gold-light focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
+                    >
+                      Request a Quote
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                    <Link
+                      href="/portfolio"
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/28 bg-white/8 px-7 py-3.5 text-sm font-semibold text-[#F8F6F1] transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-gold/55 hover:bg-white/12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-deep motion-reduce:transform-none motion-reduce:transition-none"
+                    >
+                      View Related Work
+                    </Link>
+                  </div>
+                </AnimateIn>
               </div>
-            </AnimateIn>
+            </div>
+
+            <div className="relative min-h-[320px] overflow-hidden bg-brand-deep lg:min-h-full">
+              <Image
+                src={service.image}
+                alt={`${service.label} service visual`}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 52vw"
+                className="object-cover saturate-[0.82]"
+                style={{ objectPosition: heroImagePosition }}
+                unoptimized={service.image.endsWith(".svg")}
+              />
+              <div className="absolute inset-0 bg-brand-navy/28" aria-hidden="true" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0B0D1A]/85 via-[#0B0D1A]/18 to-transparent lg:from-[#0B0D1A]/70 lg:via-[#0B0D1A]/8" aria-hidden="true" />
+              <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#0B0D1A]/65 to-transparent" aria-hidden="true" />
+            </div>
           </div>
         </section>
 

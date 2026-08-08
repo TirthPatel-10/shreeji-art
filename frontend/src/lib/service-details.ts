@@ -68,7 +68,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "LED Sign Boards",
     category: "Signage",
     icon: "lightbulb",
-    image: "/gallery/led-sign/led-sign-01.svg",
+    image: "/services/cards/led-sign-boards.jpg",
     summary: "High-visibility illuminated signage for storefronts, showrooms, hotels, and commercial buildings.",
     description:
       "Premium LED sign boards designed for strong night visibility, clean daytime finish, and dependable long-term performance.",
@@ -95,7 +95,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Acrylic Signs",
     category: "Signage",
     icon: "square",
-    image: "/gallery/acrylic/acrylic-01.svg",
+    image: "/services/cards/3d-letter-signs.jpg",
     summary: "Clean, polished acrylic signage for reception areas, retail interiors, nameplates, and brand displays.",
     description:
       "Elegant acrylic signs with precise cutting, polished edges, and optional illumination for a refined brand presence.",
@@ -121,7 +121,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "3D Letter Signs",
     category: "Signage",
     icon: "type",
-    image: "/gallery/3d-letters/3d-letters-01.svg",
+    image: "/services/cards/3d-letter-signs.jpg",
     summary: "Dimensional letters that add depth, shadow, and a premium architectural feel to your brand.",
     description:
       "Custom 3D letters fabricated in acrylic, metal, or composite materials with front-lit, backlit, or non-lit finishes.",
@@ -147,7 +147,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "ACP Signage",
     category: "Signage",
     icon: "layers",
-    image: "/gallery/acp/acp-01.svg",
+    image: "/services/cards/acp-signage.jpg",
     summary: "Durable ACP boards and facade panels for clean large-format commercial signage.",
     description:
       "ACP signage systems for storefront facades, panel boards, pylon signs, cladding, and branded building fronts.",
@@ -173,7 +173,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Stainless Steel Signs",
     category: "Branding",
     icon: "shield",
-    image: "/gallery/stainless-steel/stainless-steel-01.svg",
+    image: "/services/cards/stainless-steel-signs.jpg",
     summary: "Premium stainless steel letters, nameplates, and plaques for long-lasting professional branding.",
     description:
       "Brushed, mirror, satin, and gold-finish stainless steel signage for offices, hotels, hospitals, and premium storefronts.",
@@ -200,7 +200,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Glow Sign Boards",
     category: "Signage",
     icon: "sparkles",
-    image: "/gallery/glow-sign/glow-sign-01.svg",
+    image: "/services/cards/glow-sign-boards.jpg",
     summary: "Bright, practical glow signs for shops, clinics, restaurants, and everyday commercial visibility.",
     description:
       "Backlit glow sign boards built for clear visibility, fast turnaround, and strong value for street-facing businesses.",
@@ -226,7 +226,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Office Branding",
     category: "Branding",
     icon: "briefcase",
-    image: "/gallery/office-branding/office-branding-01.svg",
+    image: "/services/cards/office-branding.jpg",
     summary: "Reception signs, wall graphics, cabin labels, and workplace branding systems.",
     description:
       "Complete office branding solutions that make your workplace feel polished, navigable, and aligned with your brand.",
@@ -252,7 +252,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Retail Branding",
     category: "Branding",
     icon: "store",
-    image: "/gallery/retail-branding/retail-branding-01.svg",
+    image: "/services/cards/retail-branding.jpg",
     summary: "Storefront, interior, display, and promotional signage for retail brands.",
     description:
       "End-to-end retail branding that helps customers recognize, enter, navigate, and remember your store.",
@@ -278,7 +278,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Industrial Signage",
     category: "Branding",
     icon: "factory",
-    image: "/gallery/industrial-signage/industrial-signage-01.svg",
+    image: "/services/cards/industrial-signage.jpg",
     summary: "Durable safety, identification, directional, and facility signage for industrial sites.",
     description:
       "Industrial signage built for factories, warehouses, plants, and commercial facilities where clarity and durability matter.",
@@ -304,7 +304,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Wayfinding",
     category: "Branding",
     icon: "map",
-    image: "/gallery/wayfinding/wayfinding-01.svg",
+    image: "/services/cards/wayfinding.jpg",
     summary: "Directional signs, directories, room labels, and navigation systems for commercial spaces.",
     description:
       "Wayfinding signage that helps visitors, customers, and teams move through your space with confidence.",
@@ -330,7 +330,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Custom Fabrication",
     category: "Custom Solutions",
     icon: "wrench",
-    image: "/gallery/custom-fabrication/custom-fabrication-01.svg",
+    image: "/services/cards/custom-fabrication.jpg",
     summary: "Made-to-order signage structures, shapes, frames, panels, and installation-ready components.",
     description:
       "Custom fabrication for signage projects that need unique dimensions, finishes, structural details, or brand forms.",
@@ -356,7 +356,7 @@ export const SERVICE_DETAILS: ServiceDetail[] = [
     label: "Installation",
     category: "Custom Solutions",
     icon: "installation",
-    image: "/gallery/installation/installation-01.svg",
+    image: "/services/cards/led-sign-boards.jpg",
     summary: "Professional signage installation, mounting, wiring coordination, alignment, and final handover.",
     description:
       "Careful on-site installation for signage projects where finish, safety, alignment, and durability matter.",
