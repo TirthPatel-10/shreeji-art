@@ -39,6 +39,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 // Browser CORS preflight requests
                 .requestMatchers(HttpMethod.OPTIONS, "/api/**").permitAll()
+                // Health check (Railway reachability probe)
+                .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 // Public auth endpoints
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 // Public read endpoints
