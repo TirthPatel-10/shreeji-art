@@ -20,7 +20,7 @@ jwt:
   expiration-ms: 86400000
 
 app:
-  allowed-origins: http://localhost:3000
+  allowed-origins: http://localhost:3000,http://localhost:3001,https://shreeji-art.vercel.app
   expose-error-details: true
 
 media:
