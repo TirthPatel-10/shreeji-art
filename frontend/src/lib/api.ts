@@ -96,18 +96,23 @@ export const authApi = {
 // ─── Public endpoints ─────────────────────────────────────────────────────────
 
 export const publicApi = {
-  getServices: () => request("/services"),
-  getServiceById: (id: number) => request(`/services/${id}`),
-  getPortfolio: () => request("/portfolio"),
-  getPortfolioBySlug: (slug: string) => request(`/portfolio/${slug}`),
-  getPortfolioImagesBySlug: (slug: string) => request(`/portfolio/${slug}/images`),
-  getPortfolioItem: (id: number) => request(`/portfolio/${id}`),
+  getServices: () => request("/services", { cache: "no-store" }),
+  getServiceById: (id: number) => request(`/services/${id}`, { cache: "no-store" }),
+  getPortfolio: () => request("/portfolio", { cache: "no-store" }),
+  getPortfolioBySlug: (slug: string) =>
+    request(`/portfolio/${slug}`, { cache: "no-store" }),
+  getPortfolioImagesBySlug: (slug: string) =>
+    request(`/portfolio/${slug}/images`, { cache: "no-store" }),
+  getPortfolioItem: (id: number) =>
+    request(`/portfolio/${id}`, { cache: "no-store" }),
   getGallery: (category?: string) =>
-    request(`/gallery${category ? `?category=${encodeURIComponent(category)}` : ""}`),
+    request(`/gallery${category ? `?category=${encodeURIComponent(category)}` : ""}`, {
+      cache: "no-store",
+    }),
   getBlogs: () => request("/blogs"),
   getBlog: (slug: string) => request(`/blogs/${slug}`),
-  getTestimonials: () => request("/testimonials"),
-  getSettings: () => request("/settings"),
+  getTestimonials: () => request("/testimonials", { cache: "no-store" }),
+  getSettings: () => request("/settings", { cache: "no-store" }),
   submitContact: (body: unknown) =>
     request("/contact", { method: "POST", body: JSON.stringify(body) }),
   submitQuoteRequest: (body: unknown) =>

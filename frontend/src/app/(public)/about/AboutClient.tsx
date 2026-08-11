@@ -4,6 +4,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import {
   ArrowRight,
   Shield, Settings, Lightbulb, Layers, CheckCircle2, Users,
@@ -148,7 +149,11 @@ const TRUST_PILLARS = [
 
 // ─── Component ─────────────────────────────────────────────────────────────────
 
-export default function AboutClient() {
+export default function AboutClient({
+  contact = SITE_CONTACT,
+}: {
+  contact?: SiteContact;
+}) {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -700,7 +705,7 @@ export default function AboutClient() {
         </div>
       </section>
 
-      <Footer />
+      <Footer contact={contact} />
     </div>
   );
 }

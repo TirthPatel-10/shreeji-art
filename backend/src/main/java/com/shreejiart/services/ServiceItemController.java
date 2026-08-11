@@ -20,7 +20,7 @@ public class ServiceItemController {
 
     @GetMapping("/api/v1/services/{id}")
     public ResponseEntity<ApiResponse<ServiceItem>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(service.findById(id)));
+        return ResponseEntity.ok(ApiResponse.success(service.findActiveById(id)));
     }
 
     // ── Admin ────────────────────────────────────────────────────────────────

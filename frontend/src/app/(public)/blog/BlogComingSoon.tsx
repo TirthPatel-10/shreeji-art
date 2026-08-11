@@ -2,8 +2,13 @@ import Link from "next/link";
 import { ArrowRight, Clock3 } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 
-export default function BlogComingSoon() {
+export default function BlogComingSoon({
+  contact = SITE_CONTACT,
+}: {
+  contact?: SiteContact;
+}) {
   return (
     <>
       <Navbar />
@@ -41,7 +46,7 @@ export default function BlogComingSoon() {
           </div>
         </section>
       </main>
-      <Footer compact />
+      <Footer compact contact={contact} />
     </>
   );
 }

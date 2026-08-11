@@ -25,6 +25,11 @@ public class ServiceItemService {
                 .orElseThrow(() -> new ResourceNotFoundException("Service", id));
     }
 
+    public ServiceItem findActiveById(Long id) {
+        return repository.findByIdAndIsActiveTrue(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Service", id));
+    }
+
     public ServiceItem create(ServiceItem item) {
         item.setId(null);
         return repository.save(item);

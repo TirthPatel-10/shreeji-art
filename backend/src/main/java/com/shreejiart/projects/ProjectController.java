@@ -24,8 +24,10 @@ public class ProjectController {
     }
 
     @GetMapping("/api/v1/projects/{id}")
-    public ResponseEntity<ApiResponse<ProjectDto>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(service.findById(id)));
+    public ResponseEntity<ApiResponse<ProjectDto>> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(ApiResponse.success(service.findByIdForUser(id, user)));
     }
 
     // ── Admin ────────────────────────────────────────────────────────────────

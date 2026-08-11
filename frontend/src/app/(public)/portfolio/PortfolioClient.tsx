@@ -14,24 +14,15 @@ import {
   projectSummary,
   sortNewestProjects,
 } from "@/lib/public-projects";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import type { PortfolioItem } from "@/types";
 import {
   ArrowRight, Lightbulb, Square, Type, Building2, Shield,
-  Sparkles, Briefcase, ShoppingBag, Wrench, CheckCircle2,
+  Sparkles, Briefcase, ShoppingBag, Wrench,
   MessageSquare, Palette, Package, Settings, Zap,
-  Paintbrush, Truck, Users, Coffee, Activity, BookOpen,
+  Paintbrush, Truck, Coffee, Activity, BookOpen,
   Home, ShoppingCart, Star, ImageIcon, Search,
 } from "lucide-react";
-
-// ─── Categories ──────────────────────────────────────────────────────────────
-
-function buildCategories(items: PortfolioItem[]) {
-  const labels = Array.from(
-    new Set(items.map(projectCategoryLabel).filter(Boolean))
-  ).sort((a, b) => a.localeCompare(b));
-
-  return [{ id: "all", label: "All Projects" }, ...labels.map((label) => ({ id: label, label }))];
-}
 
 // ─── Visual helpers ──────────────────────────────────────────────────────────
 
@@ -59,14 +50,14 @@ function cardIcon(index: number) {
 // ─── Capabilities ────────────────────────────────────────────────────────────
 
 const CAPABILITIES = [
-  { icon: MessageSquare, title: "Consultation",     desc: "Free site survey and needs assessment before any design work." },
-  { icon: Palette,       title: "Concept Design",    desc: "2D layouts and 3D photo-realistic renders for your approval." },
+  { icon: MessageSquare, title: "Consultation",       desc: "Free site survey and needs assessment before any design work." },
+  { icon: Palette,       title: "Concept Design",     desc: "2D layouts and 3D photo-realistic renders for your approval." },
   { icon: Package,       title: "Material Selection", desc: "Curated substrates matched to your environment and budget." },
   { icon: Settings,      title: "Custom Fabrication", desc: "Precision in-house manufacturing at our Ahmedabad workshop." },
-  { icon: Zap,           title: "LED & Electrical",  desc: "Full wiring, drivers, controllers, and commissioning." },
-  { icon: Paintbrush,    title: "Finishing",          desc: "Powder coat, vinyl, paint, or chemical etch — any RAL colour." },
-  { icon: Truck,         title: "Delivery",           desc: "Careful protective packaging and on-time delivery to site." },
-  { icon: Wrench,        title: "Installation",       desc: "Certified team handles mounting, wiring, testing, and handover." },
+  { icon: Zap,           title: "LED & Electrical",   desc: "Full wiring, drivers, controllers, and commissioning." },
+  { icon: Paintbrush,    title: "Finishing",           desc: "Powder coat, vinyl, paint, or chemical etch — any RAL colour." },
+  { icon: Truck,         title: "Delivery",            desc: "Careful protective packaging and on-time delivery to site." },
+  { icon: Wrench,        title: "Installation",        desc: "Certified team handles mounting, wiring, testing, and handover." },
 ];
 
 // ─── Industries ──────────────────────────────────────────────────────────────
@@ -96,10 +87,9 @@ function PortfolioCardImage({
   if (!src || error) {
     return (
       <div
-        className={`absolute inset-0 bg-gradient-to-br ${gradient} flex items-center justify-center`}
+        className={`absolute inset-0 bg-gradient-to-br ${gradient} flex items-center justify-center transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none`}
         aria-hidden
       >
-        <div className="h-1 w-1" />
         <div
           className="absolute inset-0 opacity-[0.04]"
           style={{
@@ -118,10 +108,112 @@ function PortfolioCardImage({
       src={src}
       alt={alt}
       fill
-      className="object-cover"
+      className="object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
       onError={() => setError(true)}
     />
+  );
+}
+
+// Editorial hero card for the first featured project
+function EditorialFeaturedCard({ item }: { item: PortfolioItem }) {
+  const firstImage = projectCoverImage(item);
+  const summary = projectSummary(item);
+  const category = projectCategoryLabel(item);
+  const location = projectLocationLabel(item);
+  const gradient = CARD_GRADIENTS[item.id % CARD_GRADIENTS.length];
+  const Icon = cardIcon(item.id);
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <Link
+      href={`/portfolio/${item.slug}`}
+      className="group block rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold/30 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+      aria-label={`Featured project: ${item.title}`}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[320px] lg:min-h-[380px]">
+        {/* Image — 3/5 on desktop */}
+        <div className="relative lg:col-span-3 h-56 sm:h-72 lg:h-auto overflow-hidden bg-gray-900">
+          {firstImage && !imgError ? (
+            <Image
+              src={firstImage}
+              alt={item.title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
+              sizes="(max-width: 1024px) 100vw, 60vw"
+              onError={() => setImgError(true)}
+              priority
+            />
+          ) : (
+            <div className={`absolute inset-0 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+              <div
+                className="absolute inset-0 opacity-[0.04]"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(circle at 1px 1px,rgba(255,255,255,0.7) 1px,transparent 0)",
+                  backgroundSize: "24px 24px",
+                }}
+              />
+              <Icon className="h-16 w-16 text-white/20" aria-hidden />
+            </div>
+          )}
+          {/* Subtle edge fade on desktop to blend into content panel */}
+          <div className="absolute inset-y-0 right-0 w-12 bg-gradient-to-r from-transparent to-black/20 hidden lg:block" aria-hidden />
+          {/* Badges */}
+          <div className="absolute top-4 left-4 z-10 flex gap-1.5">
+            <span className="flex items-center gap-1 bg-brand-gold text-white text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-widest">
+              <Star className="h-2.5 w-2.5" aria-hidden="true" /> Featured
+            </span>
+            {category && (
+              <span className="bg-black/50 backdrop-blur-sm text-white text-[10px] font-medium px-2.5 py-1 rounded-full">
+                {category}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Content — 2/5 on desktop */}
+        <div className="lg:col-span-2 bg-white p-6 sm:p-8 flex flex-col justify-center gap-3">
+          {category && (
+            <p className="text-xs text-brand-gold font-semibold uppercase tracking-[0.12em]">
+              {category}
+            </p>
+          )}
+          <h3 className="font-display font-bold text-brand-navy text-[clamp(1.3rem,2.5vw,1.9rem)] leading-tight group-hover:text-brand-gold transition-colors duration-200">
+            {item.title}
+          </h3>
+          {(item.clientName || location) && (
+            <p className="text-sm text-gray-400">
+              {[item.clientName, location].filter(Boolean).join(" · ")}
+            </p>
+          )}
+          {summary && (
+            <p className="text-sm text-gray-600 leading-relaxed line-clamp-3">
+              {summary}
+            </p>
+          )}
+          {item.tags && item.tags.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {item.tags.slice(0, 3).map((tag) => (
+                <span
+                  key={tag}
+                  className="text-[10px] text-brand-gold/70 border border-brand-gold/20 rounded-full px-2 py-0.5"
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          )}
+          <span className="inline-flex items-center gap-2 text-sm font-semibold text-brand-gold mt-2">
+            View Case Study
+            <ArrowRight
+              className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none motion-reduce:transition-none"
+              aria-hidden="true"
+            />
+          </span>
+        </div>
+      </div>
+    </Link>
   );
 }
 
@@ -208,24 +300,21 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
 interface PortfolioClientProps {
   items: PortfolioItem[];
   status?: "ready" | "empty" | "error";
+  contact?: SiteContact;
 }
 
-export default function PortfolioClient({ items, status = "ready" }: PortfolioClientProps) {
-  const [activeCategory, setActiveCategory] = useState("all");
-
+export default function PortfolioClient({
+  items,
+  status = "ready",
+  contact = SITE_CONTACT,
+}: PortfolioClientProps) {
   const publishedItems = useMemo(
     () => sortNewestProjects(items.filter(isPublishedProject)),
     [items]
   );
-  const categories = useMemo(() => buildCategories(publishedItems), [publishedItems]);
   const featured = useMemo(() => publishedItems.filter((i) => i.isFeatured), [publishedItems]);
   const resolvedStatus =
     status === "ready" && publishedItems.length === 0 ? "empty" : status;
-
-  const filtered = useMemo(() => {
-    if (activeCategory === "all") return publishedItems;
-    return publishedItems.filter((item) => projectCategoryLabel(item) === activeCategory);
-  }, [publishedItems, activeCategory]);
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -300,13 +389,9 @@ export default function PortfolioClient({ items, status = "ready" }: PortfolioCl
               </Link>
             </div>
 
-            {/* Stats — only shown if there are real items */}
+            {/* Stats — project count intentionally omitted */}
             {publishedItems.length > 0 && (
               <div className="flex flex-wrap justify-center gap-8 mt-12 pt-12 border-t border-white/8">
-                <div className="text-center">
-                  <p className="font-display font-bold text-3xl text-brand-gold">{publishedItems.length}+</p>
-                  <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Projects Shown</p>
-                </div>
                 {featured.length > 0 && (
                   <div className="text-center">
                     <p className="font-display font-bold text-3xl text-brand-gold">{featured.length}</p>
@@ -315,7 +400,7 @@ export default function PortfolioClient({ items, status = "ready" }: PortfolioCl
                 )}
                 <div className="text-center">
                   <p className="font-display font-bold text-3xl text-brand-gold">
-                    {Math.max(categories.length - 1, 0)}
+                    {new Set(publishedItems.map(projectCategoryLabel).filter(Boolean)).size || "—"}
                   </p>
                   <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest">Sign Categories</p>
                 </div>
@@ -350,102 +435,92 @@ export default function PortfolioClient({ items, status = "ready" }: PortfolioCl
               </div>
             </AnimateIn>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {featured.slice(0, 3).map((item, i) => {
-                const gradient = CARD_GRADIENTS[i % CARD_GRADIENTS.length];
-                const firstImage = projectCoverImage(item);
-                const summary = projectSummary(item);
-                return (
-                  <AnimateIn key={item.id} from="bottom" delay={i * 100}>
-                    <Link
-                      href={`/portfolio/${item.slug}`}
-                      className="group block rounded-2xl overflow-hidden border border-white/8 hover:border-brand-gold/30 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
-                      aria-label={`Featured project: ${item.title}`}
-                    >
-                      <div className="relative h-52 overflow-hidden">
-                        <PortfolioCardImage
-                          src={firstImage}
-                          alt={item.title}
-                          gradient={gradient}
-                          iconIndex={i}
-                        />
-                        <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
-                          <span className="inline-flex items-center gap-2 text-white text-sm font-semibold">
-                            View Project <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                          </span>
+            {/* Editorial hero card for the first featured project */}
+            <AnimateIn from="bottom">
+              <EditorialFeaturedCard item={featured[0]} />
+            </AnimateIn>
+
+            {/* Additional featured items in a smaller grid */}
+            {featured.length > 1 && (
+              <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featured.slice(1, 4).map((item, i) => {
+                  const gradient = CARD_GRADIENTS[(i + 1) % CARD_GRADIENTS.length];
+                  const firstImage = projectCoverImage(item);
+                  const summary = projectSummary(item);
+                  const Icon = cardIcon(i + 1);
+                  return (
+                    <AnimateIn key={item.id} from="bottom" delay={(i + 1) * 100}>
+                      <Link
+                        href={`/portfolio/${item.slug}`}
+                        className="group block rounded-2xl overflow-hidden border border-white/8 hover:border-brand-gold/30 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+                        aria-label={`Featured project: ${item.title}`}
+                      >
+                        <div className="relative h-48 overflow-hidden">
+                          {firstImage ? (
+                            <Image
+                              src={firstImage}
+                              alt={item.title}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
+                              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                            />
+                          ) : (
+                            <div className={`absolute inset-0 bg-gradient-to-br ${gradient} flex items-center justify-center`}>
+                              <div
+                                className="absolute inset-0 opacity-[0.04]"
+                                style={{
+                                  backgroundImage:
+                                    "radial-gradient(circle at 1px 1px,rgba(255,255,255,0.7) 1px,transparent 0)",
+                                  backgroundSize: "20px 20px",
+                                }}
+                              />
+                              <Icon className="h-12 w-12 text-white/20" aria-hidden />
+                            </div>
+                          )}
+                          <div className="absolute inset-0 bg-brand-navy/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-10">
+                            <span className="inline-flex items-center gap-2 text-white text-sm font-semibold">
+                              View Project <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                            </span>
+                          </div>
+                          <div className="absolute top-3 left-3 z-10">
+                            <span className="flex items-center gap-1 bg-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
+                              <Star className="h-2.5 w-2.5" aria-hidden="true" /> Featured
+                            </span>
+                          </div>
                         </div>
-                        <div className="absolute top-3 left-3 z-10">
-                          <span className="flex items-center gap-1 bg-brand-gold text-white text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
-                            <Star className="h-2.5 w-2.5" aria-hidden="true" /> Featured
-                          </span>
+                        <div className="bg-white/[0.04] p-4 border-t border-white/5">
+                          <h3 className="font-semibold text-[15px] text-white group-hover:text-brand-gold transition-colors mb-1 line-clamp-1">
+                            {item.title}
+                          </h3>
+                          {item.clientName && (
+                            <p className="text-xs text-gray-500 mb-2">{item.clientName}</p>
+                          )}
+                          {summary && (
+                            <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
+                              {summary}
+                            </p>
+                          )}
                         </div>
-                      </div>
-                      <div className="bg-white/[0.04] p-4 border-t border-white/5">
-                        <h3 className="font-semibold text-[15px] text-white group-hover:text-brand-gold transition-colors mb-1 line-clamp-1">
-                          {item.title}
-                        </h3>
-                        {item.clientName && (
-                          <p className="text-xs text-gray-500 mb-2">{item.clientName}</p>
-                        )}
-                        {summary && (
-                          <p className="text-xs text-gray-400 leading-relaxed line-clamp-2">
-                            {summary}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  </AnimateIn>
-                );
-              })}
-            </div>
+                      </Link>
+                    </AnimateIn>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </section>
       )}
 
-      {/* ── CATEGORY FILTERS + FULL GRID ─────────────────────────────────── */}
+      {/* ── ALL PROJECTS MAGAZINE GRID ────────────────────────────────────── */}
       <section id="all-projects" className="scroll-mt-20 py-20 bg-white">
         <div className="container-wide">
           <AnimateIn from="bottom" className="mb-10">
-            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-              <div>
-                <p className="text-caption text-brand-gold mb-1.5">
-                  {activeCategory === "all" ? "Complete Portfolio" : categories.find((c) => c.id === activeCategory)?.label}
-                </p>
-                <h2 className="font-display font-bold text-brand-navy text-2xl sm:text-3xl" aria-live="polite">
-                  {filtered.length} Project{filtered.length !== 1 ? "s" : ""}
-                </h2>
-              </div>
-            </div>
-
-            {/* Filter pills */}
-            <div
-              className="flex flex-wrap gap-2"
-              role="group"
-              aria-label="Filter projects by category"
-            >
-              {categories.map((cat) => {
-                const isActive = activeCategory === cat.id;
-                return (
-                  <button
-                    type="button"
-                    key={cat.id}
-                    onClick={() => setActiveCategory(cat.id)}
-                    className={[
-                      "rounded-full px-4 py-2.5 text-xs font-medium transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold motion-reduce:transition-none",
-                      isActive
-                        ? "bg-brand-gold text-white shadow-sa-gold"
-                        : "border border-gray-200 text-gray-500 hover:border-brand-gold/40 hover:text-brand-gold bg-white",
-                    ].join(" ")}
-                    aria-pressed={isActive}
-                  >
-                    {cat.label}
-                  </button>
-                );
-              })}
-            </div>
+            <p className="text-caption text-brand-gold mb-1.5">Complete Portfolio</p>
+            <h2 className="font-display font-bold text-brand-navy text-2xl sm:text-3xl">
+              All Projects
+            </h2>
           </AnimateIn>
 
-          {/* Grid */}
           {resolvedStatus === "error" ? (
             <AnimateIn from="bottom" className="py-20 text-center">
               <div className="flex flex-col items-center gap-4">
@@ -484,33 +559,23 @@ export default function PortfolioClient({ items, status = "ready" }: PortfolioCl
                 </Link>
               </div>
             </AnimateIn>
-          ) : filtered.length === 0 ? (
-            <AnimateIn from="bottom" className="py-20 text-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gray-100">
-                  <Search className="h-7 w-7 text-gray-400" />
-                </div>
-                <h3 className="font-semibold text-gray-900 text-lg">No projects found</h3>
-                <p className="text-gray-500 text-sm max-w-xs mx-auto">
-                  We have not yet tagged projects in this category. Try{" "}
-                  <button
-                    type="button"
-                    onClick={() => setActiveCategory("all")}
-                    className="rounded-sm text-brand-gold underline underline-offset-2 hover:no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold"
-                  >
-                    All Projects
-                  </button>{" "}
-                  to see our complete portfolio.
-                </p>
-              </div>
-            </AnimateIn>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((item, i) => (
-                <AnimateIn key={item.id} from="bottom" delay={Math.min(i % 3, 2) * 80}>
-                  <PortfolioCard item={item} index={i} />
-                </AnimateIn>
-              ))}
+            /* Magazine layout: every 5th card (index % 5 === 0) spans 2/3 of the 12-col
+               grid, creating an alternating Wide+1 / 3-normal row rhythm. */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+              {publishedItems.map((item, i) => {
+                const isWide = i % 5 === 0;
+                return (
+                  <AnimateIn
+                    key={item.id}
+                    from="bottom"
+                    delay={Math.min(i % 3, 2) * 80}
+                    className={isWide ? "sm:col-span-2 lg:col-span-8" : "lg:col-span-4"}
+                  >
+                    <PortfolioCard item={item} index={i} />
+                  </AnimateIn>
+                );
+              })}
             </div>
           )}
         </div>
@@ -632,7 +697,7 @@ export default function PortfolioClient({ items, status = "ready" }: PortfolioCl
         </div>
       </section>
 
-      <Footer />
+      <Footer contact={contact} />
     </div>
   );
 }

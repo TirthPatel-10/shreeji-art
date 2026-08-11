@@ -10,7 +10,7 @@ import {
   MapPin,
   MessageCircle,
 } from "lucide-react";
-import { SITE_CONTACT } from "@/lib/contact";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 
 const QUICK_LINKS = [
   { href: "/", label: "Home" },
@@ -21,35 +21,43 @@ const QUICK_LINKS = [
 ] as const;
 
 const SOCIAL_LINKS = [
-  { href: "https://www.instagram.com/", label: "Instagram", icon: Instagram },
-  { href: "https://www.facebook.com/", label: "Facebook", icon: Facebook },
-  { href: "https://www.linkedin.com/", label: "LinkedIn", icon: Linkedin },
-] as const;
-
-const SHOW_SOCIAL_LINKS = false;
-
-const CONTACT_LINKS = [
-  {
-    href: SITE_CONTACT.whatsappHref,
-    label: "Phone / WhatsApp",
-    value: SITE_CONTACT.phone,
-    icon: MessageCircle,
-    external: true,
-  },
-  {
-    href: SITE_CONTACT.emailHref,
-    label: "Email",
-    value: SITE_CONTACT.email,
-    icon: Mail,
-    external: false,
-  },
+  { key: "instagramUrl", label: "Instagram", icon: Instagram },
+  { key: "facebookUrl", label: "Facebook", icon: Facebook },
+  { key: "linkedinUrl", label: "LinkedIn", icon: Linkedin },
 ] as const;
 
 const footerLinkClass =
   "text-sm text-white/55 transition-colors hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep";
 
-export default function Footer({ compact = false }: { compact?: boolean }) {
+export default function Footer({
+  compact = false,
+  contact = SITE_CONTACT,
+}: {
+  compact?: boolean;
+  contact?: SiteContact;
+}) {
   const currentYear = new Date().getFullYear();
+  const contactLinks = [
+    {
+      href: contact.whatsappHref,
+      label: "Phone / WhatsApp",
+      value: contact.phone,
+      icon: MessageCircle,
+      external: true,
+    },
+    {
+      href: contact.emailHref,
+      label: "Email",
+      value: contact.email,
+      icon: Mail,
+      external: false,
+    },
+  ] as const;
+  const socialLinks = SOCIAL_LINKS.map((social) => ({
+    ...social,
+    href: contact[social.key],
+  })).filter((social) => social.href);
+  const logoSrc = contact.logoUrl.startsWith("/") ? contact.logoUrl : SITE_CONTACT.logoUrl;
 
   return (
     <footer className="border-t border-brand-gold/20 bg-brand-navy-deep text-white">
@@ -69,7 +77,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
               className="group inline-flex items-center gap-3 rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep"
             >
               <Image
-                src="/shreeji-final-logo.png"
+                src={logoSrc}
                 alt=""
                 width={48}
                 height={48}
@@ -80,7 +88,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
                   id="footer-brand"
                   className="block font-display text-xl font-semibold leading-none text-brand-gold"
                 >
-                  Shreeji Art
+                  {contact.companyName}
                 </span>
                 <span className="mt-1 block text-[10px] font-semibold uppercase tracking-[0.2em] text-white/45">
                   Premium Signage Company
@@ -93,8 +101,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
                 compact ? "mt-3 leading-6" : "mt-4 leading-6"
               }`}
             >
-              Premium signage solutions crafted for businesses across Ahmedabad
-              and Gujarat.
+              {contact.companyDescription}
             </p>
 
             <div
@@ -109,7 +116,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
                 Request a Quote
               </Link>
               <a
-                href={SITE_CONTACT.whatsappHref}
+                href={contact.whatsappHref}
                 target="_blank"
                 rel="noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2.5 text-sm font-semibold text-white transition-all duration-200 hover:border-brand-gold/50 hover:text-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep motion-reduce:transition-none"
@@ -139,7 +146,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
             </h2>
 
             <address className="mt-4 space-y-3 not-italic">
-              {CONTACT_LINKS.map((item) => {
+              {contactLinks.map((item) => {
                 const Icon = item.icon;
 
                 return (
@@ -172,7 +179,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
                     Location
                   </span>
                   <span className="mt-1 block">
-                    {SITE_CONTACT.shortLocation}
+                    {contact.shortLocation}
                   </span>
                 </span>
               </p>
@@ -186,7 +193,7 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
                     Hours
                   </span>
                   <span className="mt-1 block">
-                    Mon–Sat · 9:00 AM–8:00 PM
+                    {contact.businessHours}
                   </span>
                 </span>
               </p>
@@ -200,13 +207,13 @@ export default function Footer({ compact = false }: { compact?: boolean }) {
           }`}
         >
           <div className="space-y-1 text-xs text-white/40">
-            <p>© {currentYear} Shreeji Art. All rights reserved.</p>
+            <p>© {currentYear} {contact.companyName}. All rights reserved.</p>
             <p className="text-white/35">Designed &amp; Developed by Tirth Patel</p>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            {SHOW_SOCIAL_LINKS
-              ? SOCIAL_LINKS.map((social) => {
+            {socialLinks.length > 0
+              ? socialLinks.map((social) => {
                   const Icon = social.icon;
 
                   return (

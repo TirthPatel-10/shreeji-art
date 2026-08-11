@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceDetail, SERVICE_SLUGS } from "@/lib/service-details";
+import { getPublicSiteContact } from "@/lib/site-settings";
 import ServiceDetailClient from "./ServiceDetailClient";
 
 interface Props {
@@ -34,10 +35,12 @@ export function generateMetadata({ params }: Props): Metadata {
   };
 }
 
-export default function ServiceDetailPage({ params }: Props) {
+export default async function ServiceDetailPage({ params }: Props) {
   const service = getServiceDetail(params.slug);
 
   if (!service) notFound();
 
-  return <ServiceDetailClient service={service} />;
+  const contact = await getPublicSiteContact();
+
+  return <ServiceDetailClient service={service} contact={contact} />;
 }

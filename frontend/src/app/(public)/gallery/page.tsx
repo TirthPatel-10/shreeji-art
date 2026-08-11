@@ -5,6 +5,7 @@ import {
   projectLocationLabel,
   projectSummary,
 } from "@/lib/public-projects";
+import { getPublicSiteContact } from "@/lib/site-settings";
 import type { GalleryItem, PortfolioItem } from "@/types";
 import { GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
@@ -56,6 +57,7 @@ function mapGalleryItem(
 export default async function GalleryPage() {
   let items: DisplayGalleryItem[] = [];
   let status: GalleryStatus = "empty";
+  const contact = await getPublicSiteContact();
 
   try {
     const [galleryResult, portfolioResult] = await Promise.allSettled([
@@ -67,7 +69,7 @@ export default async function GalleryPage() {
     const portfolioRes = portfolioResult.status === "fulfilled" ? portfolioResult.value : null;
     if (!galleryRes?.success) {
       status = "error";
-      return <GalleryClient items={items} status={status} />;
+      return <GalleryClient items={items} status={status} contact={contact} />;
     }
 
     const apiItems = galleryRes?.success && Array.isArray(galleryRes.data)
@@ -84,5 +86,5 @@ export default async function GalleryPage() {
     status = "error";
   }
 
-  return <GalleryClient items={items} status={status} />;
+  return <GalleryClient items={items} status={status} contact={contact} />;
 }

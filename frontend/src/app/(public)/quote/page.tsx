@@ -8,6 +8,7 @@ import {
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
+import { getPublicSiteContact } from "@/lib/site-settings";
 import QuoteForm from "./QuoteForm";
 
 export const metadata: Metadata = {
@@ -40,7 +41,9 @@ const PROCESS_POINTS = [
   },
 ] as const;
 
-export default function QuotePage() {
+export default async function QuotePage() {
+  const contact = await getPublicSiteContact();
+
   return (
     <>
       <Navbar />
@@ -87,7 +90,7 @@ export default function QuotePage() {
 
         <section className="px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <div className="mx-auto max-w-6xl">
-            <QuoteForm />
+            <QuoteForm contact={contact} />
           </div>
         </section>
 
@@ -126,7 +129,7 @@ export default function QuotePage() {
           </div>
         </section>
       </main>
-      <Footer compact />
+      <Footer compact contact={contact} />
     </>
   );
 }

@@ -4,12 +4,15 @@ import com.shreejiart.common.exception.ResourceNotFoundException;
 import com.shreejiart.customers.Customer;
 import com.shreejiart.customers.CustomerRepository;
 import com.shreejiart.users.User;
+import com.shreejiart.users.UserRole;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -64,6 +67,14 @@ public class QuoteService {
         return QuoteDto.of(quote);
     }
 
+    @Transactional(readOnly = true)
+    public QuoteDto findByIdForUser(Long id, User user) {
+        Quote quote = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Quote", id));
+        ensureCanReadQuote(quote, user);
+        return QuoteDto.of(quote);
+    }
+
     @Transactional
     public QuoteDto updateStatus(Long id, QuoteStatus status) {
         Quote quote = repository.findById(id)
@@ -76,5 +87,23 @@ public class QuoteService {
         int year = LocalDate.now().getYear();
         String uid = UUID.randomUUID().toString().replace("-", "").substring(0, 6).toUpperCase();
         return "SA-" + year + "-" + uid;
+    }
+
+    private void ensureCanReadQuote(Quote quote, User user) {
+        if (user == null) {
+            throw new AccessDeniedException("Access denied");
+        }
+
+        if (user.getRole() == UserRole.ROLE_ADMIN) {
+            return;
+        }
+
+        Long ownerUserId = quote.getCustomer() != null && quote.getCustomer().getUser() != null
+                ? quote.getCustomer().getUser().getId()
+                : null;
+
+        if (!Objects.equals(ownerUserId, user.getId())) {
+            throw new AccessDeniedException("Access denied");
+        }
     }
 }

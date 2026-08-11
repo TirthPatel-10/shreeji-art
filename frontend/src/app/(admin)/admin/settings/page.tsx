@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { adminApi } from "@/lib/api";
+import { SITE_CONTACT } from "@/lib/contact";
 
 interface SiteSetting {
   key: string;
@@ -10,6 +11,116 @@ interface SiteSetting {
 }
 
 type SaveStatus = "idle" | "saving" | "saved" | "error";
+
+const PUBLIC_SETTING_DEFAULTS: SiteSetting[] = [
+  {
+    key: "company_name",
+    value: SITE_CONTACT.companyName,
+    description: "Company display name",
+  },
+  {
+    key: "company_phone",
+    value: SITE_CONTACT.phone,
+    description: "Primary contact phone",
+  },
+  {
+    key: "company_email",
+    value: SITE_CONTACT.email,
+    description: "Primary contact email",
+  },
+  {
+    key: "company_address",
+    value: SITE_CONTACT.address,
+    description: "Full business address for contact page and SEO",
+  },
+  {
+    key: "short_location",
+    value: SITE_CONTACT.shortLocation,
+    description: "Short location used in footer and compact CTAs",
+  },
+  {
+    key: "company_city",
+    value: "Ahmedabad",
+    description: "Business city",
+  },
+  {
+    key: "company_state",
+    value: "Gujarat",
+    description: "Business state",
+  },
+  {
+    key: "business_hours",
+    value: SITE_CONTACT.businessHours,
+    description: "Public business hours",
+  },
+  {
+    key: "whatsapp_number",
+    value: SITE_CONTACT.phone.replace(/\D/g, ""),
+    description: "WhatsApp number with country code, digits only",
+  },
+  {
+    key: "company_description",
+    value: SITE_CONTACT.companyDescription,
+    description: "Short public company description",
+  },
+  {
+    key: "google_maps_directions_url",
+    value: SITE_CONTACT.mapsHref,
+    description: "Google Maps directions URL",
+  },
+  {
+    key: "google_maps_search_url",
+    value: SITE_CONTACT.mapsSearchHref,
+    description: "Google Maps search URL",
+  },
+  {
+    key: "google_maps_embed_url",
+    value: SITE_CONTACT.mapsEmbedSrc,
+    description: "Google Maps iframe embed URL",
+  },
+  {
+    key: "company_latitude",
+    value: String(SITE_CONTACT.latitude),
+    description: "Latitude used as map fallback",
+  },
+  {
+    key: "company_longitude",
+    value: String(SITE_CONTACT.longitude),
+    description: "Longitude used as map fallback",
+  },
+  {
+    key: "facebook_url",
+    value: SITE_CONTACT.facebookUrl,
+    description: "Facebook page URL",
+  },
+  {
+    key: "instagram_url",
+    value: SITE_CONTACT.instagramUrl,
+    description: "Instagram profile URL",
+  },
+  {
+    key: "linkedin_url",
+    value: SITE_CONTACT.linkedinUrl,
+    description: "LinkedIn page URL",
+  },
+  {
+    key: "logo_url",
+    value: SITE_CONTACT.logoUrl,
+    description: "Public logo URL if a custom setting is supported",
+  },
+];
+
+function mergePublicSettingDefaults(settings: SiteSetting[]) {
+  const byKey = new Map(settings.map((setting) => [setting.key, setting]));
+
+  for (const defaultSetting of PUBLIC_SETTING_DEFAULTS) {
+    if (!byKey.has(defaultSetting.key)) {
+      byKey.set(defaultSetting.key, defaultSetting);
+    }
+  }
+
+  return Array.from(byKey.values()).sort((a, b) => a.key.localeCompare(b.key));
+}
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState<SiteSetting[]>([]);
@@ -22,7 +133,7 @@ export default function AdminSettingsPage() {
     adminApi
       .getSettings()
       .then((res) => {
-        const data = (res.data as SiteSetting[]) ?? [];
+        const data = mergePublicSettingDefaults((res.data as SiteSetting[]) ?? []);
         setSettings(data);
         const initial: Record<string, string> = {};
         data.forEach((s) => { initial[s.key] = s.value; });

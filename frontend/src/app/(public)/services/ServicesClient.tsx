@@ -20,12 +20,14 @@ import {
   InteractiveServiceCard,
   type InteractiveServiceCardAccent,
 } from "@/components/ui/interactive-service-card";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import { SERVICE_DETAILS, type ServiceDetail } from "@/lib/service-details";
 import { cn } from "@/lib/utils";
 import type { Service } from "@/types";
 
 interface ServicesClientProps {
   services: Service[];
+  contact?: SiteContact;
 }
 
 const PROCESS_STEPS = [
@@ -215,7 +217,10 @@ function FaqSection() {
   );
 }
 
-export default function ServicesClient({ services }: ServicesClientProps) {
+export default function ServicesClient({
+  services,
+  contact = SITE_CONTACT,
+}: ServicesClientProps) {
   const serviceCards = useMemo(() => SERVICE_DETAILS, []);
 
   return (
@@ -376,7 +381,7 @@ export default function ServicesClient({ services }: ServicesClientProps) {
         </section>
       </main>
 
-      <Footer />
+      <Footer contact={contact} />
     </div>
   );
 }

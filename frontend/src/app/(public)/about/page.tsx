@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import AboutClient from "./AboutClient";
+import { getPublicSiteContact } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "About Shreeji Art | Premium Signage & Branding Company, Ahmedabad",
@@ -13,6 +14,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function AboutPage() {
-  return <AboutClient />;
+export default async function AboutPage() {
+  const contact = await getPublicSiteContact();
+
+  return <AboutClient contact={contact} />;
 }

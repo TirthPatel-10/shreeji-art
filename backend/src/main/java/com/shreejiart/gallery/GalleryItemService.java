@@ -58,6 +58,7 @@ public class GalleryItemService {
     @Transactional
     public GalleryItem create(GalleryItem item) {
         item.setId(null);
+        validateImageUrl(item.getImageUrl());
         validateOptionalProject(item.getProjectId());
         item.setStoragePath(null);
         return repository.save(item);
@@ -66,8 +67,10 @@ public class GalleryItemService {
     @Transactional
     public GalleryItem update(Long id, GalleryItem updates) {
         GalleryItem existing = findByIdAdmin(id);
+        validateImageUrl(updates.getImageUrl());
         validateOptionalProject(updates.getProjectId());
         existing.setTitle(updates.getTitle());
+        existing.setImageUrl(updates.getImageUrl());
         existing.setAltText(updates.getAltText());
         existing.setCaption(updates.getCaption());
         existing.setCategory(updates.getCategory());
@@ -201,6 +204,12 @@ public class GalleryItemService {
     private void validateOptionalProject(Long projectId) {
         if (projectId != null && !portfolioRepository.existsById(projectId)) {
             throw new ResourceNotFoundException("Portfolio item", projectId);
+        }
+    }
+
+    private void validateImageUrl(String imageUrl) {
+        if (!StringUtils.hasText(imageUrl)) {
+            throw new IllegalArgumentException("Gallery image URL is required.");
         }
     }
 

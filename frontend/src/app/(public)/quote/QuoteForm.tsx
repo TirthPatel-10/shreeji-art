@@ -17,7 +17,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { customerApi, publicApi } from "@/lib/api";
-import { SITE_CONTACT } from "@/lib/contact";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import { useAuth } from "@/context/AuthContext";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -79,7 +79,11 @@ const SUPPORT_ITEMS = [
   },
 ] as const;
 
-export default function QuoteForm() {
+export default function QuoteForm({
+  contact = SITE_CONTACT,
+}: {
+  contact?: SiteContact;
+}) {
   const router = useRouter();
   const { user, isCustomer, loading: authLoading } = useAuth();
   const [form, setForm] = useState(emptyForm);
@@ -432,7 +436,7 @@ export default function QuoteForm() {
         </div>
 
         <a
-          href={SITE_CONTACT.whatsappHref}
+          href={contact.whatsappHref}
           target="_blank"
           rel="noreferrer"
           className="mt-8 inline-flex w-full items-center justify-center gap-2 rounded-2xl border border-brand-gold/35 bg-brand-gold/10 px-5 py-3 text-sm font-semibold text-brand-gold transition-colors hover:bg-brand-gold hover:text-brand-navy focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold focus-visible:ring-offset-2 focus-visible:ring-offset-brand-navy-deep"

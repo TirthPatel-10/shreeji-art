@@ -5,6 +5,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import { ArrowRight, ChevronDown, Calendar, Clock } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -238,7 +239,11 @@ function BlogCard({ post }: { post: MockPost }) {
 
 // ─── BlogClient ───────────────────────────────────────────────────────────────
 
-export default function BlogClient() {
+export default function BlogClient({
+  contact = SITE_CONTACT,
+}: {
+  contact?: SiteContact;
+}) {
   const [activeCategory, setActiveCategory] = useState("All");
   const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
 
@@ -470,7 +475,7 @@ export default function BlogClient() {
         </div>
       </section>
 
-      <Footer />
+      <Footer contact={contact} />
     </>
   );
 }

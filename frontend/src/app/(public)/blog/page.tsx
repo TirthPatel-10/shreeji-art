@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import BlogComingSoon from "./BlogComingSoon";
+import { getPublicSiteContact } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: "Blog Coming Soon | Shreeji Art",
@@ -11,6 +12,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BlogPage() {
-  return <BlogComingSoon />;
+export default async function BlogPage() {
+  const contact = await getPublicSiteContact();
+
+  return <BlogComingSoon contact={contact} />;
 }

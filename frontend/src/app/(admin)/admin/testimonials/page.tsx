@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { adminApi } from "@/lib/api";
+import { adminApi, apiErrorMessage, caughtApiErrorMessage } from "@/lib/api";
 import type { Testimonial } from "@/types";
 
 type Mode = "list" | "create" | "edit";
@@ -22,7 +22,17 @@ export default function AdminTestimonialsPage() {
   function reload() {
     setLoading(true);
     adminApi.getTestimonials()
-      .then((res) => setItems((res.data as Testimonial[]) ?? []))
+      .then((res) => {
+        if (!res.success) {
+          setError(apiErrorMessage(res, "Failed to load testimonials."));
+          setItems([]);
+          return;
+        }
+        setItems((res.data as Testimonial[]) ?? []);
+      })
+      .catch((error) =>
+        setError(caughtApiErrorMessage(error, "Connection error while loading testimonials."))
+      )
       .finally(() => setLoading(false));
   }
 
@@ -66,20 +76,38 @@ export default function AdminTestimonialsPage() {
 
   async function handleDelete(id: number) {
     if (!confirm("Delete this testimonial?")) return;
-    await adminApi.deleteTestimonial(id);
-    reload();
+    setError("");
+    try {
+      const res = await adminApi.deleteTestimonial(id);
+      if (!res.success) {
+        setError(apiErrorMessage(res, "Failed to delete testimonial."));
+        return;
+      }
+      reload();
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while deleting testimonial."));
+    }
   }
 
   async function toggleApprove(t: Testimonial) {
     const isApproved = !(t as unknown as Record<string, boolean>).isApproved;
-    await adminApi.updateTestimonial(t.id, { ...t, isApproved });
-    reload();
+    setError("");
+    try {
+      const res = await adminApi.updateTestimonial(t.id, { ...t, isApproved });
+      if (!res.success) {
+        setError(apiErrorMessage(res, "Failed to update testimonial approval."));
+        return;
+      }
+      reload();
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while updating testimonial."));
+    }
   }
 
   if (mode !== "list") {
     return (
       <div className="max-w-lg">
-        <button onClick={() => setMode("list")} className="text-brand-gold text-sm hover:underline mb-4 block">
+        <button type="button" onClick={() => setMode("list")} className="text-brand-gold text-sm hover:underline mb-4 block">
           ← Back to Testimonials
         </button>
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
@@ -138,7 +166,7 @@ export default function AdminTestimonialsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Testimonials</h1>
-        <button onClick={openCreate}
+        <button type="button" onClick={openCreate}
           className="bg-brand-gold text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-gold-dark transition-colors">
           + Add Testimonial
         </button>
@@ -171,11 +199,11 @@ export default function AdminTestimonialsPage() {
                     {isApproved ? "Approved" : "Pending"}
                   </span>
                   <div className="flex gap-2">
-                    <button onClick={() => toggleApprove(t)} className="text-xs text-blue-500 hover:underline">
+                    <button type="button" onClick={() => toggleApprove(t)} className="text-xs text-blue-500 hover:underline">
                       {isApproved ? "Unapprove" : "Approve"}
                     </button>
-                    <button onClick={() => openEdit(t)} className="text-brand-gold text-xs hover:underline">Edit</button>
-                    <button onClick={() => handleDelete(t.id)} className="text-red-400 text-xs hover:underline">Delete</button>
+                    <button type="button" onClick={() => openEdit(t)} className="text-brand-gold text-xs hover:underline">Edit</button>
+                    <button type="button" onClick={() => handleDelete(t.id)} className="text-red-400 text-xs hover:underline">Delete</button>
                   </div>
                 </div>
               </div>

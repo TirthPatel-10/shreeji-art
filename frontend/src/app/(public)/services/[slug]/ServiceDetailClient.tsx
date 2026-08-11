@@ -25,6 +25,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
 import { publicApi } from "@/lib/api";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import { cn } from "@/lib/utils";
 import {
   getRelatedServices,
@@ -345,7 +346,13 @@ function FaqItem({
   );
 }
 
-export default function ServiceDetailClient({ service }: { service: ServiceDetail }) {
+export default function ServiceDetailClient({
+  service,
+  contact = SITE_CONTACT,
+}: {
+  service: ServiceDetail;
+  contact?: SiteContact;
+}) {
   const [openFaq, setOpenFaq] = useState(0);
   const Icon = ICONS[service.icon];
   const relatedServices = useMemo(() => getRelatedServices(service), [service]);
@@ -580,7 +587,7 @@ export default function ServiceDetailClient({ service }: { service: ServiceDetai
         </section>
       </main>
 
-      <Footer />
+      <Footer contact={contact} />
     </div>
   );
 }

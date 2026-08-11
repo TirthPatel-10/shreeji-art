@@ -27,7 +27,7 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 import { AnimateIn } from "@/components/ui/animate-in";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SITE_CONTACT } from "@/lib/contact";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import {
   projectCategoryLabel,
   projectCoverImage,
@@ -47,6 +47,7 @@ interface HomeClientProps {
   portfolio: PortfolioItem[];
   portfolioStatus?: PortfolioStatus;
   testimonials: Testimonial[];
+  contact?: SiteContact;
 }
 
 interface IconCard {
@@ -455,6 +456,7 @@ export default function HomeClient({
   portfolio,
   portfolioStatus = "ready",
   testimonials,
+  contact = SITE_CONTACT,
 }: HomeClientProps) {
   const [activePortfolioFilter, setActivePortfolioFilter] = useState("All");
   const sortedPortfolio = useMemo(() => sortNewestPortfolio(portfolio), [portfolio]);
@@ -1060,17 +1062,17 @@ export default function HomeClient({
                 </Link>
               </div>
               <div className="mt-10 flex flex-col items-center justify-center gap-4 text-sm text-white/45 sm:flex-row sm:gap-6">
-                <a href={SITE_CONTACT.phoneHref} className="inline-flex items-center gap-2 transition duration-300 hover:-translate-y-0.5 hover:text-brand-gold motion-reduce:transition-none motion-reduce:transform-none">
+                <a href={contact.phoneHref} className="inline-flex items-center gap-2 transition duration-300 hover:-translate-y-0.5 hover:text-brand-gold motion-reduce:transition-none motion-reduce:transform-none">
                   <Phone className="h-4 w-4 text-brand-gold" aria-hidden="true" />
-                  {SITE_CONTACT.phone}
+                  {contact.phone}
                 </a>
-                <a href={SITE_CONTACT.emailHref} className="inline-flex items-center gap-2 transition duration-300 hover:-translate-y-0.5 hover:text-brand-gold motion-reduce:transition-none motion-reduce:transform-none">
+                <a href={contact.emailHref} className="inline-flex items-center gap-2 transition duration-300 hover:-translate-y-0.5 hover:text-brand-gold motion-reduce:transition-none motion-reduce:transform-none">
                   <Mail className="h-4 w-4 text-brand-gold" aria-hidden="true" />
-                  {SITE_CONTACT.email}
+                  {contact.email}
                 </a>
                 <span className="inline-flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-brand-gold" aria-hidden="true" />
-                  {SITE_CONTACT.shortLocation}
+                  {contact.shortLocation}
                 </span>
               </div>
             </AnimateIn>
@@ -1078,7 +1080,7 @@ export default function HomeClient({
         </section>
       </main>
 
-      <Footer />
+      <Footer contact={contact} />
     </div>
   );
 }

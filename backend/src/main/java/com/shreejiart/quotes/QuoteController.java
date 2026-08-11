@@ -39,8 +39,10 @@ public class QuoteController {
     }
 
     @GetMapping("/api/v1/quotes/{id}")
-    public ResponseEntity<ApiResponse<QuoteDto>> getById(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(service.findById(id)));
+    public ResponseEntity<ApiResponse<QuoteDto>> getById(
+            @PathVariable Long id,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(ApiResponse.success(service.findByIdForUser(id, user)));
     }
 
     // ── Admin ────────────────────────────────────────────────────────────────

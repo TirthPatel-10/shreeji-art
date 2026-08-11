@@ -42,7 +42,8 @@ public class SecurityConfig {
                 // Health check (Railway reachability probe)
                 .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
                 // Public auth endpoints
-                .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/register").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                 // Public read endpoints
                 .requestMatchers(HttpMethod.GET, "/api/v1/services/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/portfolio/**").permitAll()

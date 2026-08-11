@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import HomeClient, { type PortfolioStatus, type ServicesStatus } from "./HomeClient";
 import { publicApi } from "@/lib/api";
+import { getPublicSiteContact } from "@/lib/site-settings";
 import { isPublishedProject, sortNewestProjects } from "@/lib/public-projects";
 import type { Service, PortfolioItem, Testimonial } from "@/types";
 
@@ -81,7 +82,9 @@ async function fetchHomeData(): Promise<{
 }
 
 export default async function HomePage() {
-  const { services, servicesStatus, portfolio, portfolioStatus, testimonials } = await fetchHomeData();
+  const [{ services, servicesStatus, portfolio, portfolioStatus, testimonials }, contact] =
+    await Promise.all([fetchHomeData(), getPublicSiteContact()]);
+
   return (
     <HomeClient
       services={services}
@@ -89,6 +92,7 @@ export default async function HomePage() {
       portfolio={portfolio}
       portfolioStatus={portfolioStatus}
       testimonials={testimonials}
+      contact={contact}
     />
   );
 }

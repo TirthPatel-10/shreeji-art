@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { adminApi } from "@/lib/api";
+import { adminApi, apiErrorMessage, caughtApiErrorMessage } from "@/lib/api";
 import type { Service } from "@/types";
 
 type Mode = "list" | "create" | "edit";
@@ -11,7 +11,8 @@ const emptyForm = {
   slug: "",
   shortDescription: "",
   description: "",
-  iconName: "",
+  icon: "",
+  imageUrl: "",
   displayOrder: 0,
   isActive: true,
 };
@@ -33,7 +34,17 @@ export default function AdminServicesPage() {
     setLoading(true);
     adminApi
       .getServices()
-      .then((res) => setServices((res.data as Service[]) ?? []))
+      .then((res) => {
+        if (!res.success) {
+          setError(apiErrorMessage(res, "Failed to load services."));
+          setServices([]);
+          return;
+        }
+        setServices((res.data as Service[]) ?? []);
+      })
+      .catch((error) =>
+        setError(caughtApiErrorMessage(error, "Connection error while loading services."))
+      )
       .finally(() => setLoading(false));
   }
 
@@ -51,9 +62,10 @@ export default function AdminServicesPage() {
       slug: s.slug,
       shortDescription: s.shortDescription ?? "",
       description: s.description ?? "",
-      iconName: (s as unknown as Record<string, unknown>).iconName as string ?? "",
+      icon: s.icon ?? "",
+      imageUrl: s.imageUrl ?? "",
       displayOrder: s.displayOrder,
-      isActive: true,
+      isActive: s.isActive ?? s.active ?? true,
     });
     setError("");
     setMode("edit");
@@ -82,12 +94,22 @@ export default function AdminServicesPage() {
     setSaving(true);
     setError("");
     try {
+      const payload = {
+        ...form,
+        active: form.isActive,
+      };
       if (mode === "create") {
-        const res = await adminApi.createService(form);
-        if (!res.success) { setError(res.message || "Failed to create."); return; }
+        const res = await adminApi.createService(payload);
+        if (!res.success) {
+          setError(res.message || "Failed to create.");
+          return;
+        }
       } else if (editing) {
-        const res = await adminApi.updateService(editing.id, form);
-        if (!res.success) { setError(res.message || "Failed to update."); return; }
+        const res = await adminApi.updateService(editing.id, payload);
+        if (!res.success) {
+          setError(res.message || "Failed to update.");
+          return;
+        }
       }
       reload();
       setMode("list");
@@ -100,14 +122,24 @@ export default function AdminServicesPage() {
 
   async function handleDelete(id: number) {
     if (!confirm("Delete this service?")) return;
-    await adminApi.deleteService(id);
-    reload();
+    setError("");
+    try {
+      const res = await adminApi.deleteService(id);
+      if (!res.success) {
+        setError(apiErrorMessage(res, "Failed to delete service."));
+        return;
+      }
+      reload();
+    } catch (error) {
+      setError(caughtApiErrorMessage(error, "Connection error while deleting service."));
+    }
   }
 
   if (mode !== "list") {
     return (
       <div className="max-w-2xl">
         <button
+          type="button"
           onClick={() => setMode("list")}
           className="text-brand-gold text-sm hover:underline mb-4 block"
         >
@@ -171,11 +203,11 @@ export default function AdminServicesPage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Icon Name</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Icon</label>
               <input
                 type="text"
-                value={form.iconName}
-                onChange={set("iconName")}
+                value={form.icon}
+                onChange={set("icon")}
                 placeholder="e.g. monitor"
                 className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
               />
@@ -190,6 +222,27 @@ export default function AdminServicesPage() {
               />
             </div>
           </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Image URL</label>
+            <input
+              type="url"
+              value={form.imageUrl}
+              onChange={set("imageUrl")}
+              placeholder="https://..."
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-gold"
+            />
+          </div>
+          <label className="flex items-center gap-3 rounded-lg border border-gray-200 px-4 py-3 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={form.isActive}
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, isActive: e.target.checked }))
+              }
+              className="h-4 w-4 rounded border-gray-300 text-brand-gold focus:ring-brand-gold"
+            />
+            Visible on public Services page
+          </label>
           <div className="flex gap-3 pt-2">
             <button
               type="submit"
@@ -216,6 +269,7 @@ export default function AdminServicesPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Services</h1>
         <button
+          type="button"
           onClick={openCreate}
           className="bg-brand-gold text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-gold-dark transition-colors"
         >
@@ -236,6 +290,7 @@ export default function AdminServicesPage() {
               <tr>
                 <th className="px-4 py-3 text-left">Name</th>
                 <th className="px-4 py-3 text-left hidden md:table-cell">Slug</th>
+                <th className="px-4 py-3 text-center hidden lg:table-cell">Status</th>
                 <th className="px-4 py-3 text-center hidden lg:table-cell">Order</th>
                 <th className="px-4 py-3 text-right">Actions</th>
               </tr>
@@ -247,17 +302,30 @@ export default function AdminServicesPage() {
                   <td className="px-4 py-3 text-gray-400 font-mono text-xs hidden md:table-cell">
                     {s.slug}
                   </td>
+                  <td className="px-4 py-3 text-center hidden lg:table-cell">
+                    <span
+                      className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                        (s.isActive ?? s.active ?? true)
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-gray-100 text-gray-500"
+                      }`}
+                    >
+                      {(s.isActive ?? s.active ?? true) ? "Active" : "Hidden"}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-center text-gray-400 hidden lg:table-cell">
                     {s.displayOrder}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <button
+                      type="button"
                       onClick={() => openEdit(s)}
                       className="text-brand-gold text-xs hover:underline mr-3"
                     >
                       Edit
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleDelete(s.id)}
                       className="text-red-400 text-xs hover:underline"
                     >

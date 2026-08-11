@@ -77,6 +77,17 @@ class CorsSecurityIntegrationTest {
                 .andExpect(header().doesNotExist(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS));
     }
 
+    // Test B2: auth/me requires a valid JWT and must not reach the controller with a null principal.
+    @Test
+    void meEndpointRejectsUnauthenticatedRequestsBeforeController() throws Exception {
+        var result = mockMvc.perform(get("/api/v1/auth/me")
+                        .header(HttpHeaders.ORIGIN, PRODUCTION_ORIGIN))
+                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, PRODUCTION_ORIGIN))
+                .andReturn();
+
+        assertThat(result.getResponse().getStatus()).isIn(401, 403);
+    }
+
     // Test C: protected admin endpoint rejects unauthenticated requests (but still sends CORS headers)
     @Test
     void protectedAdminEndpointStillRejectsUnauthenticatedRequests() throws Exception {

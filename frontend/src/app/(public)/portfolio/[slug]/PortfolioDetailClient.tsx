@@ -6,6 +6,7 @@ import Link from "next/link";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import {
   projectCategoryLabel,
   projectCoverImage,
@@ -106,7 +107,7 @@ function ImageGallery({
 
   if (images.length === 0) {
     return (
-      <div className="relative rounded-2xl overflow-hidden h-64 sm:h-96 bg-gray-100">
+      <div className="relative rounded-2xl overflow-hidden h-72 sm:h-[480px] bg-gray-100">
         <GradientHero item={item} />
       </div>
     );
@@ -122,7 +123,7 @@ function ImageGallery({
   return (
     <div>
       {/* Main image */}
-      <div className="relative rounded-2xl overflow-hidden h-64 sm:h-96 bg-gray-100 mb-3">
+      <div className="relative rounded-2xl overflow-hidden h-72 sm:h-[480px] bg-gray-100 mb-3">
         <DetailImage
           src={images[active].imageUrl}
           alt={images[active].altText || `${item.title} image ${active + 1}`}
@@ -256,21 +257,39 @@ interface PortfolioDetailClientProps {
   item: PortfolioItem;
   images: PortfolioImage[];
   related: PortfolioItem[];
+  contact?: SiteContact;
 }
 
 export default function PortfolioDetailClient({
-  item, images, related,
+  item,
+  images,
+  related,
+  contact = SITE_CONTACT,
 }: PortfolioDetailClientProps) {
   const category = projectCategoryLabel(item);
   const location = projectLocationLabel(item);
   const description = projectFullDescription(item);
+  const coverImage = projectCoverImage(item);
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Hero strip */}
-      <div className="bg-[#080814] pt-16 pb-6">
-        <div className="container-wide">
+      {/* Hero strip — cover image fades in as background for case-study feel */}
+      <div className="relative bg-[#080814] pt-16 pb-6 overflow-hidden">
+        {coverImage && (
+          <div className="absolute inset-0" aria-hidden>
+            <Image
+              src={coverImage}
+              alt=""
+              fill
+              className="object-cover opacity-[0.18]"
+              sizes="100vw"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#080814]/70 via-[#080814]/88 to-[#080814]" />
+          </div>
+        )}
+        <div className="container-wide relative z-10">
           {/* Breadcrumb */}
           <nav className="flex items-center gap-2 text-xs text-gray-500 mb-6" aria-label="Breadcrumb">
             <Link href="/" className="hover:text-brand-gold transition-colors">Home</Link>
@@ -509,7 +528,7 @@ export default function PortfolioDetailClient({
         </div>
       </section>
 
-      <Footer />
+      <Footer contact={contact} />
     </div>
   );
 }

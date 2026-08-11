@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { publicApi } from "@/lib/api";
 import { isPublishedProject } from "@/lib/public-projects";
+import { getPublicSiteContact } from "@/lib/site-settings";
 import type { PortfolioImage, PortfolioItem } from "@/types";
 import PortfolioDetailClient from "./PortfolioDetailClient";
 
@@ -36,6 +37,7 @@ export default async function PortfolioDetailPage({ params }: Props) {
   let item: PortfolioItem | null = null;
   let images: PortfolioImage[] = [];
   let related: PortfolioItem[] = [];
+  const contact = await getPublicSiteContact();
 
   try {
     const [itemRes, imagesRes, allRes] = await Promise.allSettled([
@@ -66,5 +68,12 @@ export default async function PortfolioDetailPage({ params }: Props) {
 
   if (!item || !isPublishedProject(item)) notFound();
 
-  return <PortfolioDetailClient item={item} images={images} related={related} />;
+  return (
+    <PortfolioDetailClient
+      item={item}
+      images={images}
+      related={related}
+      contact={contact}
+    />
+  );
 }

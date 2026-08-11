@@ -95,7 +95,7 @@ export default function AdminBlogPage() {
   if (mode !== "list") {
     return (
       <div className="max-w-2xl">
-        <button onClick={() => setMode("list")} className="text-brand-gold text-sm hover:underline mb-4 block">
+        <button type="button" onClick={() => setMode("list")} className="text-brand-gold text-sm hover:underline mb-4 block">
           ← Back to Blog
         </button>
         <h1 className="text-2xl font-bold text-gray-900 mb-6">
@@ -152,7 +152,7 @@ export default function AdminBlogPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Blog</h1>
-        <button onClick={openCreate}
+        <button type="button" onClick={openCreate}
           className="bg-brand-gold text-white text-sm font-semibold px-4 py-2 rounded-lg hover:bg-brand-gold-dark transition-colors">
           + New Post
         </button>
@@ -190,8 +190,8 @@ export default function AdminBlogPage() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <button onClick={() => openEdit(p)} className="text-brand-gold text-xs hover:underline mr-3">Edit</button>
-                    <button onClick={() => handleDelete(p.id)} className="text-red-400 text-xs hover:underline">Delete</button>
+                    <button type="button" onClick={() => openEdit(p)} className="text-brand-gold text-xs hover:underline mr-3">Edit</button>
+                    <button type="button" onClick={() => handleDelete(p.id)} className="text-red-400 text-xs hover:underline">Delete</button>
                   </td>
                 </tr>
               ))}

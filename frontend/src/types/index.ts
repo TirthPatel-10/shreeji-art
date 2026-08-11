@@ -132,6 +132,8 @@ export interface Service {
   description: string;
   icon?: string;
   imageUrl?: string;
+  isActive?: boolean;
+  active?: boolean;
   displayOrder: number;
 }
 

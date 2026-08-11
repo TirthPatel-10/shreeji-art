@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { publicApi } from "@/lib/api";
+import { getPublicSiteContact } from "@/lib/site-settings";
 import type { PortfolioItem } from "@/types";
 import PortfolioClient from "./PortfolioClient";
 
@@ -14,6 +15,8 @@ export const metadata: Metadata = {
 export default async function PortfolioPage() {
   let items: PortfolioItem[] = [];
   let status: "ready" | "empty" | "error" = "empty";
+  const contact = await getPublicSiteContact();
+
   try {
     const res = await publicApi.getPortfolio();
     items = res.success ? ((res.data as PortfolioItem[]) ?? []) : [];
@@ -21,5 +24,5 @@ export default async function PortfolioPage() {
   } catch {
     status = "error";
   }
-  return <PortfolioClient items={items} status={status} />;
+  return <PortfolioClient items={items} status={status} contact={contact} />;
 }

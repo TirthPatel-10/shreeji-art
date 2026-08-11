@@ -13,46 +13,50 @@ import {
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
-import { SITE_CONTACT } from "@/lib/contact";
+import { SITE_CONTACT, type SiteContact } from "@/lib/contact";
 import ContactForm from "./ContactForm";
 
-const CONTACT_ITEMS = [
-  {
-    icon: MessageCircle,
-    label: "WhatsApp",
-    value: SITE_CONTACT.phone,
-    href: SITE_CONTACT.whatsappHref,
-    external: true,
-  },
-  {
-    icon: Phone,
-    label: "Phone",
-    value: SITE_CONTACT.phone,
-    href: SITE_CONTACT.phoneHref,
-    external: false,
-  },
-  {
-    icon: Mail,
-    label: "Email",
-    value: SITE_CONTACT.email,
-    href: SITE_CONTACT.emailHref,
-    external: false,
-  },
-  {
-    icon: MapPin,
-    label: "Address",
-    value: SITE_CONTACT.address,
-    href: SITE_CONTACT.mapsHref,
-    external: true,
-  },
-  {
-    icon: Clock,
-    label: "Business Hours",
-    value: SITE_CONTACT.businessHours,
-  },
-] as const;
+export default function ContactClient({
+  contact = SITE_CONTACT,
+}: {
+  contact?: SiteContact;
+}) {
+  const contactItems = [
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: contact.phone,
+      href: contact.whatsappHref,
+      external: true,
+    },
+    {
+      icon: Phone,
+      label: "Phone",
+      value: contact.phone,
+      href: contact.phoneHref,
+      external: false,
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      value: contact.email,
+      href: contact.emailHref,
+      external: false,
+    },
+    {
+      icon: MapPin,
+      label: "Address",
+      value: contact.address,
+      href: contact.mapsHref,
+      external: true,
+    },
+    {
+      icon: Clock,
+      label: "Business Hours",
+      value: contact.businessHours,
+    },
+  ] as const;
 
-export default function ContactClient() {
   return (
     <>
       <Navbar />
@@ -105,7 +109,7 @@ export default function ContactClient() {
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </Link>
                   <a
-                    href={SITE_CONTACT.whatsappHref}
+                    href={contact.whatsappHref}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 rounded-full border border-white/24 bg-white/10 px-6 py-3.5 text-base font-semibold text-white transition-colors duration-200 hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
@@ -127,7 +131,7 @@ export default function ContactClient() {
                   Contact Details
                 </h2>
                 <div className="mt-7 space-y-4">
-                  {CONTACT_ITEMS.map((item) => {
+                  {contactItems.map((item) => {
                     const Icon = item.icon;
                     const content = (
                       <span className="flex gap-4">
@@ -193,7 +197,7 @@ export default function ContactClient() {
                   installation projects across Ahmedabad and Gujarat.
                 </p>
                 <a
-                  href={SITE_CONTACT.mapsHref}
+                  href={contact.mapsHref}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="mt-6 inline-flex items-center gap-2 rounded-full border border-[#E5E7EB] px-5 py-3 text-base font-semibold text-[#121426] transition-colors duration-200 hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 motion-reduce:transition-none"
@@ -205,7 +209,7 @@ export default function ContactClient() {
               <div className="h-72 bg-[#FAF8F2] lg:h-[340px]">
                 <iframe
                   title="Shreeji Art - Ahmedabad, Gujarat"
-                  src={SITE_CONTACT.mapsEmbedSrc}
+                  src={contact.mapsEmbedSrc}
                   width="100%"
                   height="100%"
                   style={{ border: 0, display: "block" }}
@@ -237,7 +241,7 @@ export default function ContactClient() {
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </Link>
               <a
-                href={SITE_CONTACT.phoneHref}
+                href={contact.phoneHref}
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3.5 text-base font-semibold text-white transition-colors duration-200 hover:border-[#D9A514] hover:text-[#D9A514] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#D9A514] focus-visible:ring-offset-2 focus-visible:ring-offset-[#121426] motion-reduce:transition-none"
               >
                 <Phone className="h-4 w-4" aria-hidden="true" />
@@ -248,7 +252,7 @@ export default function ContactClient() {
         </section>
       </main>
 
-      <Footer compact />
+      <Footer compact contact={contact} />
     </>
   );
 }

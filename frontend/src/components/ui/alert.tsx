@@ -69,6 +69,7 @@ export function Alert({
       </div>
       {dismissible && (
         <button
+          type="button"
           onClick={() => setVisible(false)}
           className="shrink-0 -mt-0.5 -mr-1 p-1 rounded-md opacity-50 hover:opacity-100 transition-opacity focus:outline-none focus:ring-2 focus:ring-current"
           aria-label="Dismiss"

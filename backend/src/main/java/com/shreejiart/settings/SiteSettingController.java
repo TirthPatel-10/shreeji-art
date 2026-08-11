@@ -16,7 +16,7 @@ public class SiteSettingController {
 
     @GetMapping("/api/v1/settings")
     public ResponseEntity<ApiResponse<Map<String, String>>> list() {
-        return ResponseEntity.ok(ApiResponse.success(service.findAllAsMap()));
+        return ResponseEntity.ok(ApiResponse.success(service.findPublicAsMap()));
     }
 
     // ── Admin ────────────────────────────────────────────────────────────────
