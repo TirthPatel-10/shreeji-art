@@ -1,33 +1,60 @@
 import type { PortfolioImage, PortfolioItem } from "@/types";
 
+type PortfolioItemImageAliases = PortfolioItem & {
+  cover_image_url?: string | null;
+  imageUrl?: string | null;
+  image_url?: string | null;
+};
+
+function cleanImageUrl(value: unknown) {
+  return typeof value === "string" && value.trim().length > 0
+    ? value.trim()
+    : undefined;
+}
+
 export function isPublishedProject(project: PortfolioItem) {
   return project.published !== false;
 }
 
 export function sortedProjectImages(project: PortfolioItem): PortfolioImage[] {
   const imageRecords = (project.imageRecords ?? [])
-    .filter((image) => image.published !== false && Boolean(image.imageUrl))
-    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0));
+    .filter((image) => image.published !== false && Boolean(cleanImageUrl(image.imageUrl)))
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+    .map((image) => ({
+      ...image,
+      imageUrl: cleanImageUrl(image.imageUrl) ?? image.imageUrl,
+    }));
 
   if (imageRecords.length > 0) return imageRecords;
 
   return (project.images ?? [])
-    .filter(Boolean)
+    .map(cleanImageUrl)
+    .filter((imageUrl): imageUrl is string => Boolean(imageUrl))
     .map((imageUrl, index) => ({
       id: index,
       imageUrl,
       sortOrder: index,
-      coverImage: project.coverImageUrl === imageUrl || index === 0,
+      coverImage: cleanImageUrl(project.coverImageUrl) === imageUrl || index === 0,
       published: true,
       altText: project.title,
     }));
 }
 
 export function projectCoverImage(project: PortfolioItem) {
+  const projectWithAliases = project as PortfolioItemImageAliases;
+  const explicitCover =
+    cleanImageUrl(project.coverImageUrl) ??
+    cleanImageUrl(projectWithAliases.cover_image_url) ??
+    cleanImageUrl(projectWithAliases.imageUrl) ??
+    cleanImageUrl(projectWithAliases.image_url);
+
+  if (explicitCover) return explicitCover;
+
+  const images = sortedProjectImages(project);
+
   return (
-    project.coverImageUrl ||
-    sortedProjectImages(project).find((image) => image.coverImage)?.imageUrl ||
-    sortedProjectImages(project)[0]?.imageUrl
+    cleanImageUrl(images.find((image) => image.coverImage)?.imageUrl) ||
+    cleanImageUrl(images[0]?.imageUrl)
   );
 }
 

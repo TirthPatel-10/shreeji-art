@@ -109,7 +109,7 @@ function PortfolioCardImage({
       alt={alt}
       fill
       className="object-cover transition-transform duration-700 group-hover:scale-105 motion-reduce:transform-none"
-      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 580px"
       onError={() => setError(true)}
     />
   );
@@ -128,12 +128,12 @@ function EditorialFeaturedCard({ item }: { item: PortfolioItem }) {
   return (
     <Link
       href={`/portfolio/${item.slug}`}
-      className="group block rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold/30 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+      className="group mx-auto block max-w-5xl rounded-2xl overflow-hidden border border-white/10 hover:border-brand-gold/30 transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
       aria-label={`Featured project: ${item.title}`}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[320px] lg:min-h-[380px]">
+      <div className="grid grid-cols-1 lg:grid-cols-5 min-h-[280px] lg:min-h-[320px]">
         {/* Image — 3/5 on desktop */}
-        <div className="relative lg:col-span-3 h-56 sm:h-72 lg:h-auto overflow-hidden bg-gray-900">
+        <div className="relative lg:col-span-3 h-52 sm:h-64 lg:h-auto overflow-hidden bg-gray-900">
           {firstImage && !imgError ? (
             <Image
               src={firstImage}
@@ -173,7 +173,7 @@ function EditorialFeaturedCard({ item }: { item: PortfolioItem }) {
         </div>
 
         {/* Content — 2/5 on desktop */}
-        <div className="lg:col-span-2 bg-white p-6 sm:p-8 flex flex-col justify-center gap-3">
+        <div className="lg:col-span-2 bg-white p-5 sm:p-6 flex flex-col justify-center gap-3">
           {category && (
             <p className="text-xs text-brand-gold font-semibold uppercase tracking-[0.12em]">
               {category}
@@ -227,12 +227,12 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
   return (
     <Link
       href={`/portfolio/${item.slug}`}
-      className="group block rounded-2xl overflow-hidden border border-gray-100 hover:border-brand-gold/30 shadow-sm hover:shadow-sa-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
+      className="group mx-auto block w-full max-w-[580px] rounded-2xl overflow-hidden border border-gray-100 hover:border-brand-gold/30 shadow-sm hover:shadow-md transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-gold"
       tabIndex={0}
       aria-label={`View portfolio project: ${item.title}`}
     >
       {/* Image area */}
-      <div className="relative aspect-video overflow-hidden bg-gray-100">
+      <div className="relative aspect-[3/2] overflow-hidden bg-gray-100">
         <PortfolioCardImage
           src={firstImage}
           alt={item.title}
@@ -263,8 +263,8 @@ function PortfolioCard({ item, index }: { item: PortfolioItem; index: number }) 
       </div>
 
       {/* Card body */}
-      <div className="bg-white p-4">
-        <h3 className="font-semibold text-[15px] text-brand-navy leading-tight line-clamp-1 group-hover:text-brand-gold transition-colors duration-200 mb-1">
+      <div className="bg-white p-4 sm:p-5">
+        <h3 className="font-semibold text-base text-brand-navy leading-tight line-clamp-1 group-hover:text-brand-gold transition-colors duration-200 mb-1">
           {item.title}
         </h3>
         {item.clientName && (
@@ -511,10 +511,10 @@ export default function PortfolioClient({
         </section>
       )}
 
-      {/* ── ALL PROJECTS MAGAZINE GRID ────────────────────────────────────── */}
-      <section id="all-projects" className="scroll-mt-20 py-20 bg-white">
+      {/* ── ALL PROJECTS GRID ─────────────────────────────────────────────── */}
+      <section id="all-projects" className="scroll-mt-20 py-14 sm:py-16 bg-white">
         <div className="container-wide">
-          <AnimateIn from="bottom" className="mb-10">
+          <AnimateIn from="bottom" className="mb-7 sm:mb-8">
             <p className="text-caption text-brand-gold mb-1.5">Complete Portfolio</p>
             <h2 className="font-display font-bold text-brand-navy text-2xl sm:text-3xl">
               All Projects
@@ -560,22 +560,23 @@ export default function PortfolioClient({
               </div>
             </AnimateIn>
           ) : (
-            /* Magazine layout: every 5th card (index % 5 === 0) spans 2/3 of the 12-col
-               grid, creating an alternating Wide+1 / 3-normal row rhythm. */
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
-              {publishedItems.map((item, i) => {
-                const isWide = i % 5 === 0;
-                return (
-                  <AnimateIn
-                    key={item.id}
-                    from="bottom"
-                    delay={Math.min(i % 3, 2) * 80}
-                    className={isWide ? "sm:col-span-2 lg:col-span-8" : "lg:col-span-4"}
-                  >
-                    <PortfolioCard item={item} index={i} />
-                  </AnimateIn>
-                );
-              })}
+            <div
+              className={
+                publishedItems.length === 1
+                  ? "mx-auto grid max-w-[580px] grid-cols-1 gap-6"
+                  : "mx-auto grid max-w-6xl grid-cols-1 gap-6 sm:grid-cols-2"
+              }
+            >
+              {publishedItems.map((item, i) => (
+                <AnimateIn
+                  key={item.id}
+                  from="bottom"
+                  delay={Math.min(i % 3, 2) * 80}
+                  className="w-full"
+                >
+                  <PortfolioCard item={item} index={i} />
+                </AnimateIn>
+              ))}
             </div>
           )}
         </div>
