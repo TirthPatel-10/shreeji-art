@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getServiceDetail, SERVICE_SLUGS } from "@/lib/service-details";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 import ServiceDetailClient from "./ServiceDetailClient";
 
 interface Props {
@@ -17,22 +18,17 @@ export function generateMetadata({ params }: Props): Metadata {
 
   if (!service) {
     return {
-      title: "Service Not Found",
+      title: { absolute: "Service Not Found | Shreeji Art" },
+      robots: { index: false, follow: false },
     };
   }
 
-  return {
-    title: `${service.label} | Shreeji Art`,
+  return pageMetadata({
+    title: `${service.label} in Ahmedabad | Shreeji Art`,
     description: service.description,
-    alternates: {
-      canonical: `/services/${service.slug}`,
-    },
-    openGraph: {
-      title: `${service.label} | Shreeji Art`,
-      description: service.description,
-      type: "website",
-    },
-  };
+    path: `/services/${service.slug}`,
+    image: service.image,
+  });
 }
 
 export default async function ServiceDetailPage({ params }: Props) {

@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
 import { publicApi } from "@/lib/api";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 import type { PortfolioItem } from "@/types";
 import PortfolioClient from "./PortfolioClient";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Portfolio | Shreeji Art — Premium Signage Projects",
+export const metadata: Metadata = pageMetadata({
+  title: "Signage Projects & Portfolio | Shreeji Art",
   description:
-    "Explore Shreeji Art's portfolio of completed LED signs, acrylic letters, 3D signage, retail branding, and office branding projects across Gujarat.",
-};
+    "Explore Shreeji Art signage projects and portfolio work across Gujarat, including LED signs, acrylic letters, 3D signage, retail branding and office branding.",
+  path: "/portfolio",
+});
 
 export default async function PortfolioPage() {
   let items: PortfolioItem[] = [];

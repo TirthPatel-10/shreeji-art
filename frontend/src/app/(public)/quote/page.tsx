@@ -9,13 +9,15 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { AnimateIn } from "@/components/ui/animate-in";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 import QuoteForm from "./QuoteForm";
 
-export const metadata: Metadata = {
-  title: "Request a Quote | Shreeji Art",
+export const metadata: Metadata = pageMetadata({
+  title: "Request a Quote | Shreeji Art Signage Ahmedabad",
   description:
-    "Request a tailored signage quotation from Shreeji Art in Ahmedabad. Share your requirements for LED signs, acrylic signs, 3D letters, ACP signage, branding, and installation.",
-};
+    "Request a tailored signage quotation from Shreeji Art in Ahmedabad for LED signs, acrylic signs, 3D letters, ACP signage, branding and installation.",
+  path: "/quote",
+});
 
 const TRUST_CHIPS = [
   "No-obligation quote",

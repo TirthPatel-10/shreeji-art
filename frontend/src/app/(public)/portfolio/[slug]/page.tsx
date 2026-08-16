@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { publicApi } from "@/lib/api";
-import { isPublishedProject } from "@/lib/public-projects";
+import { isPublishedProject, projectCoverImage } from "@/lib/public-projects";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 import type { PortfolioImage, PortfolioItem } from "@/types";
 import PortfolioDetailClient from "./PortfolioDetailClient";
 
@@ -15,21 +16,33 @@ interface Props {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await publicApi.getPortfolioBySlug(params.slug);
-    if (!res.success) return { title: "Project Not Found | Shreeji Art" };
+    if (!res.success) {
+      return {
+        title: { absolute: "Project Not Found | Shreeji Art" },
+        robots: { index: false, follow: false },
+      };
+    }
 
     const item = res.data as PortfolioItem | null;
     if (!item || !isPublishedProject(item)) {
-      return { title: "Project Not Found | Shreeji Art" };
+      return {
+        title: { absolute: "Project Not Found | Shreeji Art" },
+        robots: { index: false, follow: false },
+      };
     }
 
-    return {
-      title: `${item.title} | Portfolio — Shreeji Art`,
-      description:
-        (item.shortDescription || item.description || item.fullDescription)?.slice(0, 160) ||
-        `${item.clientName ? `${item.clientName} — ` : ""}Premium signage project by Shreeji Art, Ahmedabad.`,
-    };
+    const description =
+      (item.shortDescription || item.description || item.fullDescription)?.slice(0, 160) ||
+      `${item.clientName ? `${item.clientName} signage project by ` : ""}Shreeji Art, Ahmedabad.`;
+
+    return pageMetadata({
+      title: `${item.title} | Signage Project by Shreeji Art`,
+      description,
+      path: `/portfolio/${item.slug}`,
+      image: projectCoverImage(item) || "/shreeji-final-logo.png",
+    });
   } catch {
-    return { title: "Portfolio Project | Shreeji Art" };
+    return { title: { absolute: "Portfolio Project | Shreeji Art" } };
   }
 }
 

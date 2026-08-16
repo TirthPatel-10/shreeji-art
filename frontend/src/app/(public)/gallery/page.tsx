@@ -6,6 +6,7 @@ import {
   projectSummary,
 } from "@/lib/public-projects";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 import type { GalleryItem, PortfolioItem } from "@/types";
 import { GALLERY_FALLBACK_IMAGE } from "@/data/gallery";
 import type { DisplayGalleryItem } from "@/data/gallery";
@@ -13,17 +14,12 @@ import GalleryClient, { type GalleryStatus } from "./GalleryClient";
 
 export const revalidate = 60;
 
-export const metadata: Metadata = {
-  title: "Our Work | Shreeji Art Gallery",
+export const metadata: Metadata = pageMetadata({
+  title: "Signage Gallery | Shreeji Art Ahmedabad",
   description:
-    "Explore Shreeji Art's gallery of premium signage projects, including LED sign boards, acrylic signs, 3D letters, ACP signage, retail branding, and industrial signage.",
-  openGraph: {
-    title: "Our Work | Shreeji Art Gallery",
-    description:
-      "Browse real signage and branding projects crafted by Shreeji Art for commercial, retail, corporate, and industrial spaces.",
-    type: "website",
-  },
-};
+    "Browse the Shreeji Art gallery of signage, fabrication, branding and installation work, including LED signs, acrylic signs, 3D letters, ACP signage and retail branding.",
+  path: "/gallery",
+});
 
 type GalleryApiItem = GalleryItem & {
   projectName?: string;

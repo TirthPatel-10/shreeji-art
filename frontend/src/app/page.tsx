@@ -3,32 +3,31 @@ import HomeClient, { type PortfolioStatus, type ServicesStatus } from "./HomeCli
 import { publicApi } from "@/lib/api";
 import { getPublicSiteContact } from "@/lib/site-settings";
 import { isPublishedProject, sortNewestProjects } from "@/lib/public-projects";
+import {
+  DEFAULT_SEO_DESCRIPTION,
+  DEFAULT_SEO_TITLE,
+  pageMetadata,
+} from "@/lib/seo";
 import type { Service, PortfolioItem, Testimonial } from "@/types";
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Shreeji Art — Premium Signage & Branding, Ahmedabad",
-  description:
-    "Premium signage company in Ahmedabad crafting LED signs, acrylic letters, 3D letters, ACP signage, office branding, and custom manufacturing for Gujarat brands.",
+  ...pageMetadata({
+    title: DEFAULT_SEO_TITLE,
+    description: DEFAULT_SEO_DESCRIPTION,
+    path: "/",
+  }),
   keywords: [
-    "premium signage Ahmedabad",
-    "LED signs Ahmedabad",
-    "acrylic letters Gujarat",
-    "3D letter signs",
-    "ACP signage",
-    "office branding Ahmedabad",
+    "signage company Ahmedabad",
     "sign board manufacturer Ahmedabad",
+    "LED sign boards Ahmedabad",
+    "acrylic signage Gujarat",
+    "3D letter signage",
+    "ACP signage Ahmedabad",
+    "office branding Ahmedabad",
     "Shreeji Art",
   ],
-  openGraph: {
-    title: "Shreeji Art — Premium Signage & Branding, Ahmedabad",
-    description:
-      "Premium signage manufacturing for LED signs, acrylic letters, ACP facades, 3D letters, and office branding in Ahmedabad.",
-    type: "website",
-    locale: "en_IN",
-    siteName: "Shreeji Art",
-  },
 };
 
 async function fetchHomeData(): Promise<{
@@ -46,29 +45,34 @@ async function fetchHomeData(): Promise<{
     ]);
 
     return {
-      services: svcRes.status === "fulfilled" && svcRes.value.data
-        ? (svcRes.value.data as Service[]).slice(0, 8)
-        : [] as Service[],
-      servicesStatus: svcRes.status === "rejected"
-        ? "error"
-        : svcRes.value.data && (svcRes.value.data as Service[]).length > 0
-        ? "ready"
-        : "empty",
-      portfolio: portRes.status === "fulfilled" && portRes.value.data
-        ? sortNewestProjects(
-            (portRes.value.data as PortfolioItem[])
-              .filter(isPublishedProject)
-              .filter((project) => project.isFeatured)
-          ).slice(0, 12)
-        : [] as PortfolioItem[],
-      portfolioStatus: portRes.status === "rejected" || !portRes.value.success
-        ? "error"
-        : portRes.value.data && (portRes.value.data as PortfolioItem[]).length > 0
-        ? "ready"
-        : "empty",
-      testimonials: testRes.status === "fulfilled" && testRes.value.data
-        ? (testRes.value.data as Testimonial[]).slice(0, 3)
-        : [] as Testimonial[],
+      services:
+        svcRes.status === "fulfilled" && svcRes.value.data
+          ? (svcRes.value.data as Service[]).slice(0, 8)
+          : ([] as Service[]),
+      servicesStatus:
+        svcRes.status === "rejected"
+          ? "error"
+          : svcRes.value.data && (svcRes.value.data as Service[]).length > 0
+            ? "ready"
+            : "empty",
+      portfolio:
+        portRes.status === "fulfilled" && portRes.value.data
+          ? sortNewestProjects(
+              (portRes.value.data as PortfolioItem[])
+                .filter(isPublishedProject)
+                .filter((project) => project.isFeatured)
+            ).slice(0, 12)
+          : ([] as PortfolioItem[]),
+      portfolioStatus:
+        portRes.status === "rejected" || !portRes.value.success
+          ? "error"
+          : portRes.value.data && (portRes.value.data as PortfolioItem[]).length > 0
+            ? "ready"
+            : "empty",
+      testimonials:
+        testRes.status === "fulfilled" && testRes.value.data
+          ? (testRes.value.data as Testimonial[]).slice(0, 3)
+          : ([] as Testimonial[]),
     };
   } catch {
     return {

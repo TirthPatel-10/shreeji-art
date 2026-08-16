@@ -1,18 +1,14 @@
 import type { Metadata } from "next";
 import AboutClient from "./AboutClient";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About Shreeji Art | Premium Signage & Branding Company, Ahmedabad",
+export const metadata: Metadata = pageMetadata({
+  title: "About Shreeji Art | Signage Company Ahmedabad",
   description:
-    "Learn about Shreeji Art — an Ahmedabad-based signage company providing custom LED signs, acrylic signage, 3D letters, ACP signage, wayfinding, office and retail branding, fabrication, and installation.",
-  openGraph: {
-    title: "About Shreeji Art | Premium Signage & Branding Company",
-    description:
-      "Shreeji Art designs, fabricates, and installs premium custom signage for commercial, retail, corporate, and industrial clients across Gujarat.",
-    type: "website",
-  },
-};
+    "Learn about Shreeji Art, an Ahmedabad signage company providing LED signs, acrylic signage, 3D letters, ACP signage, wayfinding, branding, fabrication and installation.",
+  path: "/about",
+});
 
 export default async function AboutPage() {
   const contact = await getPublicSiteContact();

@@ -1,16 +1,14 @@
 import type { Metadata } from "next";
 import BlogComingSoon from "./BlogComingSoon";
 import { getPublicSiteContact } from "@/lib/site-settings";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Blog Coming Soon | Shreeji Art",
   description: "Shreeji Art signage and branding insights are coming soon.",
-  openGraph: {
-    title: "Blog Coming Soon | Shreeji Art",
-    description: "Shreeji Art signage and branding insights are coming soon.",
-    type: "website",
-  },
-};
+  path: "/blog",
+  noIndex: true,
+});
 
 export default async function BlogPage() {
   const contact = await getPublicSiteContact();
